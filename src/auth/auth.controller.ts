@@ -1,7 +1,8 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Post, Res } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { CreateUserDto } from "../users/dto/create-user.dto";
 import { AuthService } from "./auth.service";
+import { Response } from "express";
 
 @ApiTags('Авторизация')
 @Controller('auth')
@@ -15,7 +16,12 @@ export class AuthController {
   }
 
   @Post('/registration')
-  registration(@Body() userDto: CreateUserDto) {
-    return this.authService.registration(userDto)
+  registration(@Body() userDto: CreateUserDto,
+               @Res() response: Response) {
+    const userData = this.authService.registration(userDto)
+    response.cookie('refreshToken',
+      userData,
+      {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+    return userData
   }
 }
