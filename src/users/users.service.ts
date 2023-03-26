@@ -26,8 +26,7 @@ export class UsersService {
 
   async getUserByEmail(email: string) {
     return await this.userRepository.findOne({
-      where: {email}, include: {all: true
-      }})
+      where: {email}})
   }
 
   async addRole(dto: AddRoleDto) {
