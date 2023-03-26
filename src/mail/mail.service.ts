@@ -24,7 +24,7 @@ export class MailService {
       to: dto.email,
       subject: 'Активация аккаунта на TD-Market',
       text: '',
-      template: './templates/confirmation',
+      template: './confirmation',
       context: {
         randomCode
       }
