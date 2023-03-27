@@ -16,12 +16,13 @@ export class AuthController {
   }
 
   @Post('/registration')
-  registration(@Body() userDto: CreateUserDto,
+  async registration(@Body() userDto: CreateUserDto,
                @Res() response: Response) {
-    const userData = this.authService.registration(userDto)
+    const userData = await this.authService.registration(userDto)
     response.cookie('refreshToken',
       userData,
       {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+    console.log('userData AuthController', userData);
     return userData
   }
 }

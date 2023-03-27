@@ -3,7 +3,7 @@ import { CreateUserDto } from "../users/dto/create-user.dto";
 import { UsersService } from "../users/users.service";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from 'bcryptjs'
-import { User } from "../users/users.model";
+import { GenerateTokensDto } from "./dto/generate-tokens.dto";
 
 @Injectable()
 export class AuthService {
@@ -13,7 +13,7 @@ export class AuthService {
 
   async login(userDto: CreateUserDto) {
     const user = await this.validateUser(userDto)
-    return this.generateToken(user)
+    return this.generateTokens({email: user.email, userId: user.id})
   }
 
   async registration(userDto: CreateUserDto) {
@@ -26,13 +26,30 @@ export class AuthService {
     }
     const hashPassword = await bcrypt.hash(userDto.password, 5)
     const user = await this.userService.createUser({...userDto, password: hashPassword})
-    return this.generateToken(user)
+    return await this.generateTokens({email: user.email, userId: user.id})
   }
 
-   private async generateToken(user: User) {
-    const payload = {email: user.email, id: user.id, roles: user.roles}
+   private async generateTokens(user: GenerateTokensDto) {
+    const accessToken = this.jwtService.sign(
+      user,
+      {
+        expiresIn: '30m',
+        privateKey: process.env.JWT_ACCESS_SECRET,
+
+      }
+    )
+
+     const refreshToken = this.jwtService.sign(
+       user,
+       {
+         expiresIn: '30d',
+         privateKey: process.env.JWT_REFRESH_SECRET,
+
+       }
+     )
     return {
-      token: this.jwtService.sign(payload)
+      accessToken,
+      refreshToken
     }
   }
 
