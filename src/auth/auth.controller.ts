@@ -1,8 +1,9 @@
-import { Body, Controller, Post, Res } from "@nestjs/common";
+import { Body, Controller, Post, Req, Res } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { CreateUserDto } from "../users/dto/create-user.dto";
 import { AuthService } from "./auth.service";
-import { Response } from "express";
+import { Request, Response } from "express";
+import { EnterUserDto } from "../users/dto/enter-user.dto";
 
 @ApiTags('Авторизация')
 @Controller('auth')
@@ -11,8 +12,13 @@ export class AuthController {
   }
 
   @Post('/login')
-  login(@Body() userDto: CreateUserDto) {
-    return this.authService.login(userDto)
+  async login(@Body() userDto: EnterUserDto,
+        @Res() response: Response) {
+    const userData = await this.authService.login(userDto)
+    response.cookie('refreshToken',
+      userData,
+      {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+    return response.json(userData)
   }
 
   @Post('/registration')
@@ -22,7 +28,14 @@ export class AuthController {
     response.cookie('refreshToken',
       userData,
       {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
-    console.log('userData AuthController', userData);
-    return userData
+    return response.json(userData)
+  }
+
+  @Post('/logout')
+  async logout(@Body() userDto: CreateUserDto,
+                     @Req() request: Request,
+                     @Res() response: Response) {
+    const {refreshToken} = request.cookies
+    const token = await this.authService.logout(refreshToken)
   }
 }
