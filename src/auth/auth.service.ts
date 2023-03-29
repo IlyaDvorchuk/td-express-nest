@@ -13,7 +13,9 @@ export class AuthService {
 
   async login(userDto: EnterUserDto) {
     const user = await this.validateUser(userDto)
-    return this.tokensService.generateTokens({email: user.email, userId: user.id})
+    const tokens = await this.tokensService.generateTokens({email: user.email, userId: user._id})
+    await this.tokensService.saveToken(user._id, tokens.refreshToken)
+    return {...tokens, user}
   }
 
   async registration(userDto: CreateUserDto) {
@@ -26,9 +28,10 @@ export class AuthService {
     }
     const hashPassword = await bcrypt.hash(userDto.password, 5)
     const user = await this.userService.createUser({...userDto, password: hashPassword})
-    return await this.tokensService.generateTokens({email: user.email, userId: user.id})
+    const tokens = await this.tokensService.generateTokens({email: user.email, userId: user._id})
+    await this.tokensService.saveToken(user._id, tokens.refreshToken)
+    return {...tokens, user}
   }
-
 
 
   // async removeToken(refreshToken: string) {
@@ -40,7 +43,7 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException({message: 'Некорректный емайл или пароль'})
     }
-    const passwordEquals = await bcrypt.compare(userDto?.password, user?.password)
+    const passwordEquals = await bcrypt.compare(userDto?.password, user?.passwordHash)
     if (user && passwordEquals) {
       return user
     }
@@ -48,10 +51,14 @@ export class AuthService {
   }
 
   async logout(refreshToken: string) {
-    // return await
+    return await this.tokensService.removeToken(refreshToken)
   }
 
   async checkEmail(userDto: { email: string }) {
     return Boolean(this.userService.getUserByEmail(userDto.email))
+  }
+
+  async refresh(refreshToken: string) {
+    
   }
 }

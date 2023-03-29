@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { GenerateTokensDto } from "../auth/dto/generate-tokens.dto";
 import { JwtService } from "@nestjs/jwt";
+import { Model } from "mongoose";
+import { Token, TokenDocument } from "./tokens.schema";
+import { InjectModel } from "@nestjs/mongoose";
 
 @Injectable()
 export class TokensService {
-  constructor(private jwtService: JwtService) {
+  constructor(@InjectModel(Token.name) private tokenRepository: Model<TokenDocument>,
+              private jwtService: JwtService) {
   }
 
   async generateTokens(user: GenerateTokensDto) {
@@ -31,7 +35,16 @@ export class TokensService {
     }
   }
 
-  async saveToken() {
+  async saveToken(userId: any, refreshToken: string) {
+    const tokenData = await this.tokenRepository.findOne({user: userId})
+    if (tokenData) {
+      tokenData.refreshToken = refreshToken
+      return tokenData.save()
+    }
+    return await this.tokenRepository.create({user: userId, refreshToken})
+  }
 
+  async removeToken(refreshToken: string) {
+    return this.tokenRepository.deleteOne({ refreshToken });
   }
 }

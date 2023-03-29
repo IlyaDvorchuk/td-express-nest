@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, Res } from "@nestjs/common";
+import { Body, Controller, Get, Post, Req, Res } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { CreateUserDto } from "../users/dto/create-user.dto";
 import { AuthService } from "./auth.service";
@@ -28,6 +28,7 @@ export class AuthController {
     response.cookie('refreshToken',
       userData,
       {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+    // TODO if will https - add secure: true
     return response.json(userData)
   }
 
@@ -37,10 +38,19 @@ export class AuthController {
                      @Res() response: Response) {
     const {refreshToken} = request.cookies
     const token = await this.authService.logout(refreshToken)
+    response.clearCookie('refreshToken')
+    return response.json(token)
   }
 
-  @Post('/logout')
+  @Post('/check')
   async checkEmail(@Body() userDto: {email: string}) {
     return await this.authService.checkEmail(userDto)
+  }
+
+  @Get('/refresh')
+  async refresh(@Req() request: Request,
+                @Res() response: Response) {
+    const {refreshToken} = request.cookies
+    const userData = await this.authService.refresh(refreshToken)
   }
 }

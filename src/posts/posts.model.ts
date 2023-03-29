@@ -1,5 +1,4 @@
-import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from "sequelize-typescript";
-import { User } from "../users/users.model";
+import { Column, DataType, Model, Table } from "sequelize-typescript";
 
 interface PostCreationAttr {
   title: string,
@@ -22,10 +21,10 @@ export class Post extends Model<Post, PostCreationAttr> {
   @Column({type: DataType.STRING})
   image: string
 
-  @ForeignKey(() => User)
-  @Column({type: DataType.STRING})
-  userId: number
-
-  @BelongsTo(() => User)
-  author: User
+  // @ForeignKey(() => User)
+  // @Column({type: DataType.STRING})
+  // userId: number
+  //
+  // @BelongsTo(() => User)
+  // author: User
 }

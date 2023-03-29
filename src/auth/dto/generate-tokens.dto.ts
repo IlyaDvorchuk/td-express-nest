@@ -8,5 +8,5 @@ export class GenerateTokensDto {
   readonly email: string;
 
   @IsNumber({}, {message: 'Должно быть числом'})
-  readonly userId: number
+  readonly userId: any
 }
