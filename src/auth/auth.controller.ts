@@ -38,4 +38,9 @@ export class AuthController {
     const {refreshToken} = request.cookies
     const token = await this.authService.logout(refreshToken)
   }
+
+  @Post('/logout')
+  async checkEmail(@Body() userDto: {email: string}) {
+    return await this.authService.checkEmail(userDto)
+  }
 }

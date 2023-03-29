@@ -1,20 +1,19 @@
 import {HttpException, HttpStatus, Injectable, UnauthorizedException} from "@nestjs/common";
 import { CreateUserDto } from "../users/dto/create-user.dto";
 import { UsersService } from "../users/users.service";
-import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from 'bcryptjs'
-import { GenerateTokensDto } from "./dto/generate-tokens.dto";
 import { EnterUserDto } from "../users/dto/enter-user.dto";
+import { TokensService } from "../tokens/tokens.service";
 
 @Injectable()
 export class AuthService {
   constructor(private userService: UsersService,
-              private jwtService: JwtService) {
+              private tokensService: TokensService) {
   }
 
   async login(userDto: EnterUserDto) {
     const user = await this.validateUser(userDto)
-    return this.generateTokens({email: user.email, userId: user.id})
+    return this.tokensService.generateTokens({email: user.email, userId: user.id})
   }
 
   async registration(userDto: CreateUserDto) {
@@ -27,32 +26,10 @@ export class AuthService {
     }
     const hashPassword = await bcrypt.hash(userDto.password, 5)
     const user = await this.userService.createUser({...userDto, password: hashPassword})
-    return await this.generateTokens({email: user.email, userId: user.id})
+    return await this.tokensService.generateTokens({email: user.email, userId: user.id})
   }
 
-   private async generateTokens(user: GenerateTokensDto) {
-    const accessToken = this.jwtService.sign(
-      user,
-      {
-        expiresIn: '30m',
-        privateKey: process.env.JWT_ACCESS_SECRET,
 
-      }
-    )
-
-     const refreshToken = this.jwtService.sign(
-       user,
-       {
-         expiresIn: '30d',
-         privateKey: process.env.JWT_REFRESH_SECRET,
-
-       }
-     )
-    return {
-      accessToken,
-      refreshToken
-    }
-  }
 
   // async removeToken(refreshToken: string) {
   //   return await this.jwtService.de
@@ -72,5 +49,9 @@ export class AuthService {
 
   async logout(refreshToken: string) {
     // return await
+  }
+
+  async checkEmail(userDto: { email: string }) {
+    return Boolean(this.userService.getUserByEmail(userDto.email))
   }
 }
