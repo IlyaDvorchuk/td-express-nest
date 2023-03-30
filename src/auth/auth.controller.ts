@@ -52,5 +52,10 @@ export class AuthController {
                 @Res() response: Response) {
     const {refreshToken} = request.cookies
     const userData = await this.authService.refresh(refreshToken)
+    response.cookie('refreshToken',
+      userData,
+      {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+    // TODO if will https - add secure: true
+    return response.json(userData)
   }
 }

@@ -59,6 +59,17 @@ export class AuthService {
   }
 
   async refresh(refreshToken: string) {
-    
+    if (!refreshToken) {
+      throw new UnauthorizedException({message: 'Пользователь не авторизован'})
+    }
+    const userData = await this.tokensService.validateRefreshToken(refreshToken)
+    const tokenFromDb = await this.tokensService.findToken(refreshToken)
+    if (!userData || !tokenFromDb) {
+      throw new UnauthorizedException({message: 'Пользователь не авторизован'})
+    }
+    const user = await this.userService.getUserByEmail(userData.email)
+    const tokens = await this.tokensService.generateTokens({email: user.email, userId: user._id})
+    await this.tokensService.saveToken(user._id, tokens.refreshToken)
+    return {...tokens, user}
   }
 }

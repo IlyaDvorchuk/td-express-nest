@@ -44,7 +44,21 @@ export class TokensService {
     return await this.tokenRepository.create({user: userId, refreshToken})
   }
 
+  async findToken(refreshToken: string) {
+    return this.tokenRepository.findOne({ refreshToken });
+  }
+
   async removeToken(refreshToken: string) {
     return this.tokenRepository.deleteOne({ refreshToken });
+  }
+
+  validateRefreshToken(token) {
+    try {
+      return this.jwtService.verifyAsync(token, {
+        secret: process.env.JWT_REFRESH_SECRET
+      })
+    } catch (e) {
+      return null
+    }
   }
 }
