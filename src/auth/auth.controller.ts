@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Post, Req, Res } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Get, Post, Req, Res, UsePipes } from "@nestjs/common";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CreateUserDto } from "../users/dto/create-user.dto";
 import { AuthService } from "./auth.service";
 import { Request, Response } from "express";
 import { EnterUserDto } from "../users/dto/enter-user.dto";
+import { ValidationPipe } from "../pipes/validation.pipe";
 
 @ApiTags('Авторизация')
 @Controller('auth')
@@ -11,6 +12,9 @@ export class AuthController {
   constructor(private authService: AuthService) {
   }
 
+  @ApiOperation({summary: 'Логин'})
+  @ApiResponse({status: 200, type: 'sddsf'})
+  @UsePipes(ValidationPipe)
   @Post('/login')
   async login(@Body() userDto: EnterUserDto,
         @Res() response: Response) {
@@ -21,6 +25,7 @@ export class AuthController {
     return response.json(userData)
   }
 
+  @UsePipes(ValidationPipe)
   @Post('/registration')
   async registration(@Body() userDto: CreateUserDto,
                @Res() response: Response) {
@@ -32,6 +37,7 @@ export class AuthController {
     return response.json(userData)
   }
 
+  @UsePipes(ValidationPipe)
   @Post('/logout')
   async logout(@Body() userDto: CreateUserDto,
                      @Req() request: Request,
@@ -42,11 +48,13 @@ export class AuthController {
     return response.json(token)
   }
 
+  @UsePipes(ValidationPipe)
   @Post('/check')
   async checkEmail(@Body() userDto: {email: string}) {
     return await this.authService.checkEmail(userDto)
   }
 
+  @UsePipes(ValidationPipe)
   @Get('/refresh')
   async refresh(@Req() request: Request,
                 @Res() response: Response) {

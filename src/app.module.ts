@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from "@nestjs/config";
 import { AuthModule } from './auth/auth.module';
@@ -9,6 +9,7 @@ import { MailModule } from './mail/mail.module';
 import { TokensModule } from './tokens/tokens.module';
 import * as path from "path";
 import { MongooseModule } from "@nestjs/mongoose";
+import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   controllers: [],
@@ -29,8 +30,15 @@ import { MongooseModule } from "@nestjs/mongoose";
     FilesModule,
     MailModule,
     TokensModule,
+    CategoriesModule,
   ]
 })
-export class AppModule {
+export class AppModule implements NestModule{
+  configure(consumer: MiddlewareConsumer) {
+    // consumer.apply(cors({
+    //   origin: process.env.CLIENT_URL,
+    //   credentials: true
+    // })).forRoutes('*')
+  }
 
 }
