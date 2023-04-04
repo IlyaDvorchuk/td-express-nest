@@ -10,6 +10,7 @@ import { TokensModule } from './tokens/tokens.module';
 import * as path from "path";
 import { MongooseModule } from "@nestjs/mongoose";
 import { CategoriesModule } from './categories/categories.module';
+import { SheltersModule } from './shelters/shelters.module';
 
 @Module({
   controllers: [],
@@ -18,10 +19,8 @@ import { CategoriesModule } from './categories/categories.module';
     ConfigModule.forRoot({
       envFilePath: `.${process.env.NODE_ENV}.env`
     }),
-    ServeStaticModule.forRootAsync({
-      useFactory: () => [{
-        rootPath: path.resolve(__dirname, 'static'),
-      }]
+    ServeStaticModule.forRoot({
+      rootPath: path.join(__dirname, '..', 'static'),
     }),
     MongooseModule.forRoot(process.env.DB_URL),
     UsersModule,
@@ -31,6 +30,7 @@ import { CategoriesModule } from './categories/categories.module';
     MailModule,
     TokensModule,
     CategoriesModule,
+    SheltersModule,
   ]
 })
 export class AppModule implements NestModule{
