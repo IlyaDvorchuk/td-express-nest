@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, Res, UsePipes } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Req, Res, UsePipes } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CreateUserDto } from "../users/dto/create-user.dto";
 import { AuthService } from "./auth.service";
@@ -55,9 +55,10 @@ export class AuthController {
   }
 
   @UsePipes(ValidationPipe)
-  @Get('/refresh')
+  @Get('/refresh/:id')
   async refresh(@Req() request: Request,
-                @Res() response: Response) {
+                @Res() response: Response,
+                @Param() param) {
     const {refreshToken} = request.cookies
     const userData = await this.authService.refresh(refreshToken)
     response.cookie('refreshToken',

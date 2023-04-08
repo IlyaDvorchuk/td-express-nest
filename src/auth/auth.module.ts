@@ -5,6 +5,8 @@ import { UsersModule } from "../users/users.module";
 import { TokensModule } from "../tokens/tokens.module";
 import { AuthShelterController } from "./auth-shelter.controller";
 import { AuthShelterService } from "./auth-shelter.service";
+import { SheltersModule } from "../shelters/shelters.module";
+import { FilesModule } from "../files/files.module";
 
 @Module({
   providers: [AuthService, AuthShelterService],
@@ -12,6 +14,8 @@ import { AuthShelterService } from "./auth-shelter.service";
   imports: [
     forwardRef(() => UsersModule),
     TokensModule,
+    SheltersModule,
+    FilesModule
   ],
   exports: [
       AuthService,

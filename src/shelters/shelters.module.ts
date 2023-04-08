@@ -11,6 +11,7 @@ import { Shelter, ShelterSchema } from "./shelters.schema";
     MongooseModule.forFeature([
       {name: Shelter.name, schema: ShelterSchema}
     ]),
-  ]
+  ],
+  exports: [SheltersService]
 })
 export class SheltersModule {}

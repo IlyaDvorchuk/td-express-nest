@@ -4,11 +4,13 @@ import { UsersService } from "../users/users.service";
 import * as bcrypt from 'bcryptjs'
 import { EnterUserDto } from "../users/dto/enter-user.dto";
 import { TokensService } from "../tokens/tokens.service";
+import { SheltersService } from "../shelters/shelters.service";
 
 @Injectable()
 export class AuthService {
   constructor(private userService: UsersService,
-              private tokensService: TokensService) {
+              private tokensService: TokensService,
+              private shelterService: SheltersService) {
   }
 
   async login(userDto: EnterUserDto) {
@@ -58,7 +60,7 @@ export class AuthService {
     return Boolean(this.userService.getUserByEmail(userDto.email))
   }
 
-  async refresh(refreshToken: string) {
+  async refresh(refreshToken: string, param?: unknown) {
     if (!refreshToken) {
       throw new UnauthorizedException({message: 'Пользователь не авторизован'})
     }
@@ -67,8 +69,15 @@ export class AuthService {
     if (!userData || !tokenFromDb) {
       throw new UnauthorizedException({message: 'Пользователь не авторизован'})
     }
-    const user = await this.userService.getUserByEmail(userData.email)
-    const tokens = await this.tokensService.generateTokens({email: user.email, userId: user._id})
+    let user
+    let tokens
+    if (!param) {
+      user = await this.userService.getUserByEmail(userData.email)
+      tokens = await this.tokensService.generateTokens({email: user.email, userId: user._id})
+    } else {
+      user = await this.shelterService.getUserByEmail(userData.email)
+      tokens = await this.tokensService.generateTokens({email: user.email, userId: user._id})
+    }
     await this.tokensService.saveToken(user._id, tokens.refreshToken)
     return {...tokens, user}
   }
