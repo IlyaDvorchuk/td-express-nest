@@ -4,13 +4,11 @@ import { CheckShelterDto } from "./dto/check-shelter.dto";
 import { CreateShelterDto } from "../shelters/dto/create-shelter.dto";
 import { SheltersService } from "../shelters/shelters.service";
 import * as bcrypt from 'bcryptjs'
-import { FilesService } from "../files/files.service";
 
 @Injectable()
 export class AuthShelterService {
   constructor(private shelterService: SheltersService,
-              private tokensService: TokensService,
-              private fileService: FilesService) {
+              private tokensService: TokensService) {
   }
 
 
@@ -18,7 +16,7 @@ export class AuthShelterService {
     return Promise.resolve(userDto);
   }
 
-  async registration(shelterDto: CreateShelterDto, image) {
+  async registration(shelterDto: CreateShelterDto, photoPath: string) {
     const candidate = await this.shelterService.getUserByEmail(shelterDto.email)
     if (candidate) {
       throw new HttpException(
@@ -27,8 +25,13 @@ export class AuthShelterService {
       )
     }
     const hashPassword = await bcrypt.hash(shelterDto.password, 5)
-    const fileName = await this.fileService.createFile(image)
-    const shelter = await this.shelterService.createShelter({...shelterDto, password: hashPassword}, fileName)
+    for (let field of Object.keys(shelterDto)) {
+      if (field === 'closePerson' || field === 'personalData' || field === 'entity') {
+        // @ts-ignore
+        shelterDto[field] = JSON.parse(shelterDto[field])
+      }
+    }
+    const shelter = await this.shelterService.createShelter({...shelterDto, password: hashPassword}, photoPath)
     const tokens = await this.tokensService.generateTokens({email: shelter.email, userId: shelter._id})
     await this.tokensService.saveToken(shelter._id, tokens.refreshToken)
     return {...tokens, shelter}

@@ -7,12 +7,14 @@ import { AuthShelterController } from "./auth-shelter.controller";
 import { AuthShelterService } from "./auth-shelter.service";
 import { SheltersModule } from "../shelters/shelters.module";
 import { FilesModule } from "../files/files.module";
+import { NestjsFormDataModule } from "nestjs-form-data";
 
 @Module({
   providers: [AuthService, AuthShelterService],
   controllers: [AuthController, AuthShelterController],
   imports: [
     forwardRef(() => UsersModule),
+    NestjsFormDataModule,
     TokensModule,
     SheltersModule,
     FilesModule

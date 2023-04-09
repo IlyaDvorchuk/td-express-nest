@@ -8,11 +8,13 @@ export class FilesService {
   async createFile(file): Promise<string> {
     try {
       const fileName = uuid.v4() + '.jpg'
-      const filePath = path.resolve(__dirname, '..', 'static')
+      const filePath = path.resolve(__dirname, '../..', 'static')
+      console.log('filePath', filePath);
       fs.access(
         filePath,
         (err) => {
           if (err) {
+            console.log('err 16', err);
             throw new HttpException('Нет доступа к папке', HttpStatus.INTERNAL_SERVER_ERROR)
           }
           fs.mkdir(

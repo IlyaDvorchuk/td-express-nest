@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsBoolean, IsEmail, IsString, Length, ValidateNested } from "class-validator";
+import { HasMimeType, IsFile, MaxFileSize, MemoryStoredFile } from "nestjs-form-data";
 
 export class ClosePerson {
   @ApiProperty({example: 'Борис', description: 'Имя близкого человека'})
@@ -86,6 +87,12 @@ export class CreateShelterDto {
   @IsString({message: 'Должно быть строкой'})
   @Length(7, 16, {message: 'Не меньше 1 и не больше 16'})
   readonly phone: string
+
+  @ApiProperty({example: 'Фото(скан)', description: 'Фото ИП или юр.лица продавцп'})
+  @IsFile()
+  @MaxFileSize ( 1e6 )
+  @HasMimeType ( [ 'image / jpeg' , ' image/png ' ] )
+  readonly photo: MemoryStoredFile
 
   @ValidateNested()
   readonly closePerson: ClosePerson

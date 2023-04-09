@@ -11,6 +11,7 @@ import * as path from "path";
 import { MongooseModule } from "@nestjs/mongoose";
 import { CategoriesModule } from './categories/categories.module';
 import { SheltersModule } from './shelters/shelters.module';
+import { MulterModule } from "@nestjs/platform-express";
 
 @Module({
   controllers: [],
@@ -23,6 +24,9 @@ import { SheltersModule } from './shelters/shelters.module';
       rootPath: path.join(__dirname, '..', 'static'),
     }),
     MongooseModule.forRoot(process.env.DB_URL),
+    MulterModule.register({
+      dest: './static'
+    }),
     UsersModule,
     AuthModule,
     PostsModule,

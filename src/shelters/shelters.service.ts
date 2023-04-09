@@ -13,7 +13,7 @@ export class SheltersService {
     return this.shelterRepository.findOne({ email });
   }
 
-  async createShelter(dto: CreateShelterDto, image: string) {
-    return await this.shelterRepository.create({...dto, photo: image})
+  async createShelter(dto: CreateShelterDto, filename: string) {
+    return await this.shelterRepository.create({...dto, photo: filename})
   }
 }
