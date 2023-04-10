@@ -11,7 +11,6 @@ export class MailService {
 
   async activateMail(dto: ActivateMailDto) {
     const candidate = await this.userService.getUserByEmail(dto.email)
-    console.log('candidate', candidate);
     if (candidate) {
       throw new HttpException(
         'Пользователь с таким email существет',

@@ -1,5 +1,5 @@
 import { Body, Controller, Post, Res, UploadedFile, UseInterceptors, UsePipes } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ValidationPipe } from "../pipes/validation.pipe";
 import { AuthShelterService } from "./auth-shelter.service";
 import { CheckShelterDto } from "./dto/check-shelter.dto";
@@ -8,6 +8,7 @@ import { CreateShelterDto } from "../shelters/dto/create-shelter.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import { editFileName, imageFileFilter } from "../utils/file-upload.utils";
+import { EnterUserDto } from "../users/dto/enter-user.dto";
 
 @ApiTags('Авторизация продавца')
 @Controller('auth-shelter')
@@ -29,6 +30,7 @@ export class AuthShelterController {
   async registration(@Body() shelterDto: CreateShelterDto,
                      @UploadedFile() image,
                      @Res() response: Response) {
+    console.log('shelterDto', shelterDto);
     const photoPath = `${process.env.SERVER_URL}/shelter-scan/${image.filename}`
     const shelterData = await this.authService.registration(shelterDto, photoPath)
     response.cookie('refreshToken-shelter',
@@ -39,6 +41,18 @@ export class AuthShelterController {
     return response.json(shelterData)
   }
 
+  @ApiOperation({summary: 'Логин продавца'})
+  @ApiResponse({status: 200, type: 'sddsf'})
+  @UsePipes(ValidationPipe)
+  @Post('/login')
+  async login(@Body() userDto: EnterUserDto,
+              @Res() response: Response) {
+    const userData = await this.authService.login(userDto)
+    response.cookie('refreshToken-shelter',
+      userData,
+      {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+    return response.json(userData)
+  }
 
   @UsePipes(ValidationPipe)
   @Post('/check')
