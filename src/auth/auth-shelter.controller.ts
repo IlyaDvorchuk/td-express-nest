@@ -9,6 +9,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import { editFileName, imageFileFilter } from "../utils/file-upload.utils";
 import { EnterUserDto } from "../users/dto/enter-user.dto";
+import { NewPasswordDto } from "./dto/new-password.dto";
 
 @ApiTags('Авторизация продавца')
 @Controller('auth-shelter')
@@ -58,5 +59,11 @@ export class AuthShelterController {
   @Post('/check')
   async checkEmail(@Body() userDto: CheckShelterDto) {
     return await this.authService.checkEmail(userDto)
+  }
+
+  @UsePipes(ValidationPipe)
+  @Post('/create-password')
+  async createNewPassword(@Body() passwordDto: NewPasswordDto) {
+    return await this.authService.createNewPassword(passwordDto)
   }
 }
