@@ -61,7 +61,6 @@ export class AuthShelterController {
     return await this.authService.checkEmail(userDto)
   }
 
-  @UsePipes(ValidationPipe)
   @Post('/create-password')
   async createNewPassword(@Body() passwordDto: NewPasswordDto) {
     return await this.authService.createNewPassword(passwordDto)
