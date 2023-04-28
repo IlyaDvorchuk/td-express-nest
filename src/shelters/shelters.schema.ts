@@ -52,6 +52,35 @@ export class Entity extends Document {
 
 export const EntitySchema = SchemaFactory.createForClass(Entity)
 
+@Schema()
+class PointIssue {
+  @Prop({ required: true })
+  city: string;
+
+  @Prop({ required: true })
+  address: string;
+
+  @Prop()
+  nameShop?: string;
+
+  @Prop()
+  description?: string;
+}
+
+@Schema()
+export class Shop extends Document {
+  @Prop({required: true})
+  nameMarket: string
+
+  @Prop()
+  description?: string
+
+  @Prop({ required: true, type: [PointIssue] })
+  pointsIssue: PointIssue[];
+}
+
+export const ShopSchema = SchemaFactory.createForClass(Shop)
+
 export type ShelterDocument = HydratedDocument<Shelter>
 
 @Schema({timestamps: true})
@@ -73,6 +102,9 @@ export class Shelter extends Document {
   @Prop({required: true})
   photo: string
 
+  @Prop({required: true})
+  photoShop: string
+
   @Prop({type: PersonalDataSchema, required: true})
   personalData: PersonalData
 
@@ -81,7 +113,9 @@ export class Shelter extends Document {
 
   @Prop({type: EntitySchema, required: true})
   entity: Entity
+
+  @Prop({type: ShopSchema, required: true})
+  shop: Shop
 }
 
 export const ShelterSchema = SchemaFactory.createForClass(Shelter)
-

@@ -14,7 +14,7 @@ export class SheltersService {
     return this.shelterRepository.findOne({ email }).exec();
   }
 
-  async createShelter(dto: CreateShelterDto, filename: string) {
-    return await this.shelterRepository.create({...dto, photo: filename})
+  async createShelter(dto: CreateShelterDto, filename: string, fileNameShop: string) {
+    return await this.shelterRepository.create({...dto, photo: filename, photoShop: fileNameShop})
   }
 }

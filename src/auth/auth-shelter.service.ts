@@ -31,7 +31,7 @@ export class AuthShelterService {
     return true;
   }
 
-  async registration(shelterDto: CreateShelterDto, photoPath: string) {
+  async registration(shelterDto: CreateShelterDto, photoPath: string, photoShopPath: string) {
     const candidate = await this.shelterService.getUserByEmail(shelterDto.email)
     if (candidate) {
       throw new HttpException(
@@ -46,7 +46,7 @@ export class AuthShelterService {
         shelterDto[field] = JSON.parse(shelterDto[field])
       }
     }
-    const shelter = await this.shelterService.createShelter({...shelterDto, password: hashPassword}, photoPath)
+    const shelter = await this.shelterService.createShelter({...shelterDto, password: hashPassword}, photoPath, photoShopPath)
     const tokens = await this.tokensService.generateTokens({email: shelter.email, userId: shelter._id})
     await this.tokensService.saveToken(shelter._id, tokens.refreshToken)
     return {...tokens, shelter}
