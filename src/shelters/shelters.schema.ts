@@ -67,6 +67,8 @@ class PointIssue {
   description?: string;
 }
 
+export const PointIssueSchema = SchemaFactory.createForClass(PointIssue)
+
 @Schema()
 export class Shop extends Document {
   @Prop({required: true})
@@ -75,7 +77,7 @@ export class Shop extends Document {
   @Prop()
   description?: string
 
-  @Prop({ required: true, type: [PointIssue] })
+  @Prop({ required: true, type: [PointIssueSchema] })
   pointsIssue: PointIssue[];
 }
 
