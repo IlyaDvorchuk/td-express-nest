@@ -10,11 +10,10 @@ export class SheltersService {
   }
 
   async getUserByEmail(email: string) {
-    console.log('email 13', email);
     return this.shelterRepository.findOne({ email }).exec();
   }
 
   async createShelter(dto: CreateShelterDto, filename: string, fileNameShop: string) {
-    return await this.shelterRepository.create({...dto, photo: filename, photoShop: fileNameShop})
+    return await this.shelterRepository.create({...dto, fileScan: filename, imageShop: fileNameShop})
   }
 }

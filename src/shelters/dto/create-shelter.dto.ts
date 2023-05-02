@@ -67,6 +67,54 @@ export class Entity {
   readonly check: string
 }
 
+export class ShelterData {
+  @ValidateNested()
+  readonly closePerson: ClosePerson
+
+  @ValidateNested()
+  readonly personalData: PersonalData
+
+  @ValidateNested()
+  readonly entity: Entity
+}
+
+export class DeliveryPoint {
+  @ApiProperty({example: 'Тирасполь', description: 'Населённый пункт'})
+  @IsString({message: 'Должно быть строкой'})
+  @Length(1, 16, {message: 'Не меньше 1 и не больше 125'})
+  readonly city: string
+
+  @ApiProperty({example: 'ул. Колотушкина, д. Пушкина', description: 'Адрес магазина'})
+  @IsString({message: 'Должно быть строкой'})
+  @Length(1, 5000, {message: 'Не меньше 1 и не больше 5000'})
+  readonly address: string
+
+  @ApiProperty({example: 'У Витька', description: 'Название торговой точки'})
+  @IsString({message: 'Должно быть строкой'})
+  @Length(1, 40, {message: 'Не меньше 1 и не больше 5000'})
+  readonly shopName?: string
+
+  @ApiProperty({example: 'В подвале кожвена', description: 'Примечания'})
+  @IsString({message: 'Должно быть строкой'})
+  @Length(1, 5000, {message: 'Не меньше 1 и не больше 5000'})
+  readonly notes?: string
+}
+
+export class ShelterShop {
+  @ApiProperty({example: 'Пятёрочка', description: 'Название магазина'})
+  @IsString({message: 'Должно быть строкой'})
+  @Length(1, 16, {message: 'Не меньше 1 и не больше 16'})
+  readonly name: string
+
+  @ApiProperty({example: 'Лучший магазин', description: 'Описание магазина'})
+  @IsString({message: 'Должно быть строкой'})
+  @Length(1, 5000, {message: 'Не меньше 1 и не больше 5000'})
+  readonly description: string
+
+  @ValidateNested()
+  readonly shop: DeliveryPoint[]
+}
+
 export class CreateShelterDto {
   @ApiProperty({example: 'user@mail.com', description: 'Почта'})
   @IsString({message: 'Должно быть строкой'})
@@ -92,15 +140,17 @@ export class CreateShelterDto {
   @IsFile()
   @MaxFileSize ( 1e6 )
   @HasMimeType ( [ 'image / jpeg' , ' image/png ' ] )
-  readonly photo: MemoryStoredFile
+  readonly fileScan: MemoryStoredFile
+
+  @ApiProperty({example: 'Логотип магазина', description: 'Логотип магазина'})
+  @IsFile()
+  @MaxFileSize ( 1e6 )
+  @HasMimeType ( [ 'image / jpeg' , ' image/png ' ] )
+  readonly imageShop: MemoryStoredFile
 
   @ValidateNested()
-  readonly closePerson: ClosePerson
+  readonly shelterData: ShelterData
 
   @ValidateNested()
-  readonly personalData: PersonalData
-
-  @ValidateNested()
-  readonly entity: Entity
+  readonly shop: ShelterShop
 }
-

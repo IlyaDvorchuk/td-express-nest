@@ -53,6 +53,20 @@ export class Entity extends Document {
 export const EntitySchema = SchemaFactory.createForClass(Entity)
 
 @Schema()
+export class ShelterData extends Document {
+  @Prop({type: PersonalDataSchema, required: true})
+  personalData: PersonalData
+
+  @Prop({type: ClosePersonSchema, required: true})
+  closePerson: ClosePerson
+
+  @Prop({type: EntitySchema, required: true})
+  entity: Entity
+}
+
+export const ShelterDataSchema = SchemaFactory.createForClass(ShelterData)
+
+@Schema()
 class PointIssue {
   @Prop({ required: true })
   city: string;
@@ -69,6 +83,7 @@ class PointIssue {
 
 export const PointIssueSchema = SchemaFactory.createForClass(PointIssue)
 
+
 @Schema()
 export class Shop extends Document {
   @Prop({required: true})
@@ -83,12 +98,12 @@ export class Shop extends Document {
 
 export const ShopSchema = SchemaFactory.createForClass(Shop)
 
+
+
 export type ShelterDocument = HydratedDocument<Shelter>
 
 @Schema({timestamps: true})
 export class Shelter extends Document {
-
-
   @Prop({required: true, unique: true})
   phone: string
 
@@ -102,19 +117,13 @@ export class Shelter extends Document {
   name: string
 
   @Prop({required: true})
-  photo: string
+  fileScan: string
 
   @Prop({required: true})
-  photoShop: string
+  imageShop: string
 
-  @Prop({type: PersonalDataSchema, required: true})
-  personalData: PersonalData
-
-  @Prop({type: ClosePersonSchema, required: true})
-  closePerson: ClosePerson
-
-  @Prop({type: EntitySchema, required: true})
-  entity: Entity
+  @Prop({type: ShelterDataSchema, required: true})
+  shelterData: ShelterData
 
   @Prop({type: ShopSchema, required: true})
   shop: Shop

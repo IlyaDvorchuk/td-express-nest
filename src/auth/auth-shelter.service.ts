@@ -41,11 +41,12 @@ export class AuthShelterService {
     }
     const hashPassword = await bcrypt.hash(shelterDto.password, 5)
     for (let field of Object.keys(shelterDto)) {
-      if (field === 'closePerson' || field === 'personalData' || field === 'entity') {
+      if (field === 'shelterData' || field === 'shop') {
         // @ts-ignore
         shelterDto[field] = JSON.parse(shelterDto[field])
       }
     }
+    console.log('shelterDto', shelterDto);
     const shelter = await this.shelterService.createShelter({...shelterDto, password: hashPassword}, photoPath, photoShopPath)
     const tokens = await this.tokensService.generateTokens({email: shelter.email, userId: shelter._id})
     await this.tokensService.saveToken(shelter._id, tokens.refreshToken)

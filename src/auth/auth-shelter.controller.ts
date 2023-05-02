@@ -5,7 +5,7 @@ import { AuthShelterService } from "./auth-shelter.service";
 import { CheckShelterDto } from "./dto/check-shelter.dto";
 import { Response } from "express";
 import { CreateShelterDto } from "../shelters/dto/create-shelter.dto";
-import { FileInterceptor } from "@nestjs/platform-express";
+import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import { editFileName, imageFileFilter } from "../utils/file-upload.utils";
 import { EnterUserDto } from "../users/dto/enter-user.dto";
@@ -20,29 +20,42 @@ export class AuthShelterController {
   // @UsePipes(ValidationPipe)
   @Post('/registration')
   @UseInterceptors(
-      FileInterceptor('photo', {
-        storage: diskStorage({
-          destination: './static/shelter-scan',
-          filename: editFileName
-        }),
-        fileFilter: imageFileFilter,
+    FileFieldsInterceptor([
+      { name: 'fileScan', maxCount: 1 },
+      { name: 'imageShop', maxCount: 1 },
+    ], {
+      storage: diskStorage({
+        destination: './static',
+        filename: editFileName
       }),
-      FileInterceptor('imageShop', {
-        storage: diskStorage({
-          destination: './static/shelter-scan',
-          filename: editFileName
-        }),
-        fileFilter: imageFileFilter,
-      })
+      fileFilter: imageFileFilter,
+    })
+      // FileInterceptor('fileScan', {
+      //   storage: diskStorage({
+      //     destination: './static/shelter-scan',
+      //     filename: editFileName
+      //   }),
+      //   fileFilter: imageFileFilter,
+      // }),
+      // FileInterceptor('imageShop', {
+      //   storage: diskStorage({
+      //     destination: './static/shelter-shop',
+      //     filename: editFileName
+      //   }),
+      //   fileFilter: imageFileFilter,
+      // })
   )
   async registration(
       @Body() shelterDto: CreateShelterDto,
-      @UploadedFiles() images,
+      @UploadedFiles() images: { fileScan?: Express.Multer.File, imageShop?: Express.Multer.File },
       @Res() response: Response
   ) {
-    console.log('shelterDto', shelterDto);
-    const photoPath = `${process.env.SERVER_URL}/shelter-scan/${images[0].filename}`
-    const photoShopPath = `${process.env.SERVER_URL}/shelter-scan/${images[1].filename}`
+    // console.log('shelterDto', shelterDto);
+    const {fileScan, imageShop} = images
+    // console.log('fileScan', fileScan);
+    // console.log('imageShop', imageShop);
+    const photoPath = `${process.env.SERVER_URL}/shelter-scan/${fileScan[0].filename}`
+    const photoShopPath = `${process.env.SERVER_URL}/shelter-scan/${imageShop[0].filename}`
     const shelterData = await this.authService.registration(
         shelterDto,
         photoPath,
