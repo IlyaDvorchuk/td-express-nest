@@ -25,41 +25,30 @@ export class AuthShelterController {
       { name: 'imageShop', maxCount: 1 },
     ], {
       storage: diskStorage({
-        destination: './static',
+        destination: (req, file, cb) => {
+          let destination = './static/shelter-scans';
+          if (file.fieldname === 'imageShop') {
+            destination = './static/shelter-shops';
+          }
+          cb(null, destination);
+        },
         filename: editFileName
       }),
       fileFilter: imageFileFilter,
     })
-      // FileInterceptor('fileScan', {
-      //   storage: diskStorage({
-      //     destination: './static/shelter-scan',
-      //     filename: editFileName
-      //   }),
-      //   fileFilter: imageFileFilter,
-      // }),
-      // FileInterceptor('imageShop', {
-      //   storage: diskStorage({
-      //     destination: './static/shelter-shop',
-      //     filename: editFileName
-      //   }),
-      //   fileFilter: imageFileFilter,
-      // })
   )
   async registration(
-      @Body() shelterDto: CreateShelterDto,
-      @UploadedFiles() images: { fileScan?: Express.Multer.File, imageShop?: Express.Multer.File },
-      @Res() response: Response
+    @Body() shelterDto: CreateShelterDto,
+    @UploadedFiles() images: { fileScan?: Express.Multer.File, imageShop?: Express.Multer.File },
+    @Res() response: Response
   ) {
-    // console.log('shelterDto', shelterDto);
     const {fileScan, imageShop} = images
-    // console.log('fileScan', fileScan);
-    // console.log('imageShop', imageShop);
-    const photoPath = `${process.env.SERVER_URL}/shelter-scan/${fileScan[0].filename}`
-    const photoShopPath = `${process.env.SERVER_URL}/shelter-scan/${imageShop[0].filename}`
+    const photoPath = `${process.env.SERVER_URL}/shelter-scans/${fileScan[0].filename}`
+    const photoShopPath = `${process.env.SERVER_URL}/shelter-shops/${imageShop[0].filename}`
     const shelterData = await this.authService.registration(
-        shelterDto,
-        photoPath,
-        photoShopPath
+      shelterDto,
+      photoPath,
+      photoShopPath
     )
     response.cookie('refreshToken-shelter', shelterData, {
       maxAge: 30 * 24 * 60 * 60 * 1000,

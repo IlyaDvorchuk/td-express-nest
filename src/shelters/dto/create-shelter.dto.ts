@@ -112,7 +112,7 @@ export class ShelterShop {
   readonly description: string
 
   @ValidateNested()
-  readonly shop: DeliveryPoint[]
+  readonly deliveryPoints: DeliveryPoint[]
 }
 
 export class CreateShelterDto {
