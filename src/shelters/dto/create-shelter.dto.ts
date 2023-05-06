@@ -110,9 +110,6 @@ export class ShelterShop {
   @IsString({message: 'Должно быть строкой'})
   @Length(1, 5000, {message: 'Не меньше 1 и не больше 5000'})
   readonly description: string
-
-  @ValidateNested()
-  readonly deliveryPoints: DeliveryPoint[]
 }
 
 export class CreateShelterDto {
@@ -153,4 +150,7 @@ export class CreateShelterDto {
 
   @ValidateNested()
   readonly shop: ShelterShop
+
+  @ValidateNested()
+  readonly deliveryPoints: DeliveryPoint[]
 }

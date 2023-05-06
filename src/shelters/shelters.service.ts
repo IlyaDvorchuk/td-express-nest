@@ -14,6 +14,8 @@ export class SheltersService {
   }
 
   async createShelter(dto: CreateShelterDto, filename: string, fileNameShop: string) {
+    console.log('shelterDto', dto);
+
     return await this.shelterRepository.create({...dto, fileScan: filename, imageShop: fileNameShop})
   }
 }
