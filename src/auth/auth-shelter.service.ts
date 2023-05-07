@@ -6,10 +6,12 @@ import { SheltersService } from "../shelters/shelters.service";
 import * as bcrypt from "bcryptjs";
 import { EnterUserDto } from "../users/dto/enter-user.dto";
 import { NewPasswordDto } from "./dto/new-password.dto";
+import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
 export class AuthShelterService {
   constructor(private shelterService: SheltersService,
+              private jwtService: JwtService,
               private tokensService: TokensService) {
   }
 
@@ -46,10 +48,7 @@ export class AuthShelterService {
         shelterDto[field] = JSON.parse(shelterDto[field])
       }
     }
-    const shelter = await this.shelterService.createShelter({...shelterDto, password: hashPassword}, photoPath, photoShopPath)
-    const tokens = await this.tokensService.generateTokens({email: shelter.email, userId: shelter._id})
-    await this.tokensService.saveToken(shelter._id, tokens.refreshToken)
-    return {...tokens, shelter}
+    return await this.shelterService.createShelter({...shelterDto, password: hashPassword}, photoPath, photoShopPath)
   }
 
   async login(shelterDto: EnterUserDto) {
@@ -70,6 +69,11 @@ export class AuthShelterService {
     }
     console.log('aloha 59');
     throw new UnauthorizedException({message: 'Некорректный емайл или пароль'})
+  }
+
+  createAccessToken(shelter) {
+    const payload = { sub: shelter.id, email: shelter.email };
+    return this.jwtService.signAsync(payload);
   }
 }
 

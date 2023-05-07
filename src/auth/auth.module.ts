@@ -8,6 +8,7 @@ import { AuthShelterService } from "./auth-shelter.service";
 import { SheltersModule } from "../shelters/shelters.module";
 import { FilesModule } from "../files/files.module";
 import { NestjsFormDataModule } from "nestjs-form-data";
+import { JwtModule } from "@nestjs/jwt";
 
 @Module({
   providers: [AuthService, AuthShelterService],
@@ -17,7 +18,13 @@ import { NestjsFormDataModule } from "nestjs-form-data";
     NestjsFormDataModule,
     TokensModule,
     SheltersModule,
-    FilesModule
+    FilesModule,
+    JwtModule.register({
+      secret: process.env.PRIVATE_KEY || 'SECRET',
+      signOptions: {
+        expiresIn: '24h'
+      }
+    })
   ],
   exports: [
       AuthService,

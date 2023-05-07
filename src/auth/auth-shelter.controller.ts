@@ -40,23 +40,25 @@ export class AuthShelterController {
   async registration(
     @Body() shelterDto: CreateShelterDto,
     @UploadedFiles() images: { fileScan?: Express.Multer.File, imageShop?: Express.Multer.File },
-    @Res() response: Response
+    @Res({passthrough: true}) response: Response
   ) {
     const {fileScan, imageShop} = images
     const photoPath = `${process.env.SERVER_URL}/shelter-scans/${fileScan[0].filename}`
     const photoShopPath = `${process.env.SERVER_URL}/shelter-shops/${imageShop[0].filename}`
-    const shelterData = await this.authService.registration(
+    const shelter = await this.authService.registration(
       shelterDto,
       photoPath,
       photoShopPath
     )
-    response.cookie('refreshToken-shelter', shelterData, {
+    const token = this.authService.createAccessToken(shelter);
+    response.cookie('access_token_shelter', token, {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
+      sameSite: 'strict',
     })
     // TODO if will https - add secure: true
-    console.log('shelterData', shelterData);
-    return response.json(shelterData)
+    console.log('shelterData', shelter);
+    return shelter
   }
 
   @ApiOperation({summary: 'Логин продавца'})
