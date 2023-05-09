@@ -1,4 +1,14 @@
-import {Body, Controller, Post, Res, UploadedFiles, UseInterceptors, UsePipes} from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Res,
+  UploadedFiles,
+  UseInterceptors,
+  UsePipes
+} from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ValidationPipe } from "../pipes/validation.pipe";
 import { AuthShelterService } from "./auth-shelter.service";
@@ -50,10 +60,9 @@ export class AuthShelterController {
       photoPath,
       photoShopPath
     )
-    const token = this.authService.createAccessToken(shelter);
+    const token = await this.authService.createAccessToken(shelter);
     response.cookie('access_token_shelter', token, {
       maxAge: 30 * 24 * 60 * 60 * 1000,
-      httpOnly: true,
       sameSite: 'strict',
     })
     // TODO if will https - add secure: true
@@ -61,17 +70,23 @@ export class AuthShelterController {
     return shelter
   }
 
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({summary: 'Логин продавца'})
   @ApiResponse({status: 200, type: 'sddsf'})
   @UsePipes(ValidationPipe)
   @Post('/login')
   async login(@Body() userDto: EnterUserDto,
-              @Res() response: Response) {
-    const userData = await this.authService.login(userDto)
-    response.cookie('refreshToken-shelter',
-      userData,
-      {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
-    return response.json(userData)
+              @Res({passthrough: true}) response: Response) {
+    const shelter = await this.authService.login(userDto)
+    const token = await this.authService.createAccessToken(shelter);
+    console.log('token 82', token);
+    response.cookie('access_token_shelter', token, {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      sameSite: 'strict',
+    })
+    // TODO if will https - add secure: true
+    console.log('response', response);
+    return shelter
   }
 
   @UsePipes(ValidationPipe)

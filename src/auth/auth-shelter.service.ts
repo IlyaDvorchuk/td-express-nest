@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Injectable, UnauthorizedException } from "@nestjs/common";
-import { TokensService } from "../tokens/tokens.service";
 import { CheckShelterDto } from "./dto/check-shelter.dto";
 import { CreateShelterDto } from "../shelters/dto/create-shelter.dto";
 import { SheltersService } from "../shelters/shelters.service";
@@ -11,8 +10,8 @@ import { JwtService } from "@nestjs/jwt";
 @Injectable()
 export class AuthShelterService {
   constructor(private shelterService: SheltersService,
-              private jwtService: JwtService,
-              private tokensService: TokensService) {
+              private jwtService: JwtService
+            ) {
   }
 
 
@@ -52,10 +51,7 @@ export class AuthShelterService {
   }
 
   async login(shelterDto: EnterUserDto) {
-    const shelter = await this.validateShelter(shelterDto)
-    const tokens = await this.tokensService.generateTokens({email: shelter.email, userId: shelter._id})
-    await this.tokensService.saveToken(shelter._id, tokens.refreshToken)
-    return {...tokens, shelter}
+    return await this.validateShelter(shelterDto)
   }
 
   private async validateShelter(userDto: EnterUserDto) {
