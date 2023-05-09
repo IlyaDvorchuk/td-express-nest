@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from "@nestjs/config";
 import { AuthModule } from './auth/auth.module';
@@ -37,12 +37,9 @@ import { MulterModule } from "@nestjs/platform-express";
     SheltersModule,
   ]
 })
-export class AppModule implements NestModule{
-  configure(consumer: MiddlewareConsumer) {
+export class AppModule{
     // consumer.apply(cors({
     //   origin: process.env.CLIENT_URL,
     //   credentials: true
     // })).forRoutes('*')
-  }
-
 }

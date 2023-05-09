@@ -35,12 +35,15 @@ export class AuthShelterService {
   async registration(shelterDto: CreateShelterDto, photoPath: string, photoShopPath: string) {
     const candidate = await this.shelterService.getUserByEmail(shelterDto.email)
     if (candidate) {
+      console.log('candidate', candidate);
+
       throw new HttpException(
         'Продавец с таким email существует',
         HttpStatus.BAD_REQUEST
       )
     }
     const hashPassword = await bcrypt.hash(shelterDto.password, 5)
+
     for (let field of Object.keys(shelterDto)) {
       if (field === 'shelterData' || field === 'shop' || field === 'deliveryPoints') {
         // @ts-ignore
@@ -70,6 +73,10 @@ export class AuthShelterService {
   createAccessToken(shelter) {
     const payload = { sub: shelter.id, email: shelter.email };
     return this.jwtService.signAsync(payload);
+  }
+
+  async getUserById(id: string) {
+    return await this.shelterService.findById(id);
   }
 }
 

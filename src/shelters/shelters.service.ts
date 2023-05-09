@@ -18,4 +18,14 @@ export class SheltersService {
 
     return await this.shelterRepository.create({...dto, fileScan: filename, imageShop: fileNameShop})
   }
+
+  async getDeliveryPoints(shelterId: string) {
+    const shelter = await this.shelterRepository.findById(shelterId).populate('deliveryPoints').exec();
+    console.log('shelter', shelter);
+    return shelter.deliveryPoints;
+  }
+
+  async findById(shelterId: string) {
+    return this.shelterRepository.findById(shelterId).exec();
+  }
 }
