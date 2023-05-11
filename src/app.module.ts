@@ -1,20 +1,17 @@
 import { Module } from "@nestjs/common";
-import { SequelizeModule } from "@nestjs/sequelize";
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from "@nestjs/config";
-import { User } from "./users/users.model";
-import { RolesModule } from './roles/roles.module';
-import { Role } from "./roles/roles.model";
-import { UserRoles } from "./roles/user-role.model";
 import { AuthModule } from './auth/auth.module';
-import { PostsModule } from './posts/posts.module';
-import { Post } from "./posts/posts.model";
+import { GoodsModule } from './goods/goods.module';
 import { FilesModule } from './files/files.module';
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { MailModule } from './mail/mail.module';
 import { TokensModule } from './tokens/tokens.module';
 import * as path from "path";
-import { Token } from "./tokens/tokens.model";
+import { MongooseModule } from "@nestjs/mongoose";
+import { CategoriesModule } from './categories/categories.module';
+import { SheltersModule } from './shelters/shelters.module';
+import { MulterModule } from "@nestjs/platform-express";
 
 @Module({
   controllers: [],
@@ -23,33 +20,26 @@ import { Token } from "./tokens/tokens.model";
     ConfigModule.forRoot({
       envFilePath: `.${process.env.NODE_ENV}.env`
     }),
-    ServeStaticModule.forRootAsync({
-      useFactory: () => [{
-        rootPath: path.resolve(__dirname, 'static'),
-      }]
+    ServeStaticModule.forRoot({
+      rootPath: path.join(__dirname, '..', 'static'),
     }),
-    SequelizeModule.forRootAsync({
-      useFactory: () => ({
-        dialect: 'postgres',
-        host: process.env.POSTGRES_HOST,
-        port: Number(process.env.POSTGRES_PORT),
-        username: process.env.POSTGRES_USER,
-        password: process.env.POSTGRES_PASSWORD,
-        database: process.env.POSTGRES_DB,
-        models: [User, Role, UserRoles, Post, Token],
-        autoLoadModels: true,
-      })
+    MongooseModule.forRoot(process.env.DB_URL),
+    MulterModule.register({
+      dest: './static'
     }),
-
     UsersModule,
-    RolesModule,
     AuthModule,
-    PostsModule,
+    GoodsModule,
     FilesModule,
     MailModule,
     TokensModule,
+    CategoriesModule,
+    SheltersModule,
   ]
 })
-export class AppModule {
-
+export class AppModule{
+    // consumer.apply(cors({
+    //   origin: process.env.CLIENT_URL,
+    //   credentials: true
+    // })).forRoutes('*')
 }

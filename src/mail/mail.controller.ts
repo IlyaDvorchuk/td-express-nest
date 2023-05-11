@@ -9,7 +9,7 @@ export class MailController {
   }
 
   @ApiOperation({summary: 'Отправка активационного кода'})
-  @ApiResponse({status: 200, type: '545765'})
+  @ApiResponse({status: 201, type: '545765'})
   @Post()
   async activateMail(@Body() dto: ActivateMailDto) {
     return this.mailService.activateMail(dto)

@@ -2,17 +2,35 @@ import {forwardRef, Module} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UsersModule } from "../users/users.module";
-import { TokensService } from "../tokens/tokens.service";
+import { TokensModule } from "../tokens/tokens.module";
+import { AuthShelterController } from "./auth-shelter.controller";
+import { AuthShelterService } from "./auth-shelter.service";
+import { SheltersModule } from "../shelters/shelters.module";
+import { FilesModule } from "../files/files.module";
+import { NestjsFormDataModule } from "nestjs-form-data";
+import { JwtModule } from "@nestjs/jwt";
+import { PassportModule } from "@nestjs/passport";
 
 @Module({
-  providers: [AuthService],
-  controllers: [AuthController],
+  providers: [AuthService, AuthShelterService],
+  controllers: [AuthController, AuthShelterController],
   imports: [
     forwardRef(() => UsersModule),
+    NestjsFormDataModule,
+    TokensModule,
+    SheltersModule,
+    FilesModule,
+    JwtModule.register({
+      secret: process.env.PRIVATE_KEY || 'SECRET',
+      signOptions: {
+        expiresIn: '24d'
+      }
+    }),
+    PassportModule,
+    // JwtStrategy
   ],
   exports: [
       AuthService,
-      TokensService,
   ]
 })
 export class AuthModule {}

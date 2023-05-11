@@ -1,9 +1,10 @@
-import { Body, Controller, Post, Req, Res } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Post, Req, Res, UsePipes } from "@nestjs/common";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CreateUserDto } from "../users/dto/create-user.dto";
 import { AuthService } from "./auth.service";
 import { Request, Response } from "express";
 import { EnterUserDto } from "../users/dto/enter-user.dto";
+import { ValidationPipe } from "../pipes/validation.pipe";
 
 @ApiTags('Авторизация')
 @Controller('auth')
@@ -11,36 +12,57 @@ export class AuthController {
   constructor(private authService: AuthService) {
   }
 
+  @ApiOperation({summary: 'Логин'})
+  @ApiResponse({status: 200})
+  @UsePipes(ValidationPipe)
   @Post('/login')
   async login(@Body() userDto: EnterUserDto,
         @Res() response: Response) {
     const userData = await this.authService.login(userDto)
-    response.cookie('refreshToken',
+    response.cookie('access_token_user',
       userData,
-      {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+      {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure: Boolean(process.env.HTTPS_BOOLEAN)})
     return response.json(userData)
   }
 
+  @UsePipes(ValidationPipe)
   @Post('/registration')
   async registration(@Body() userDto: CreateUserDto,
                @Res() response: Response) {
     const userData = await this.authService.registration(userDto)
-    response.cookie('refreshToken',
+    response.cookie('access_token_user',
       userData,
-      {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+      {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure: Boolean(process.env.HTTPS_BOOLEAN)})
     return response.json(userData)
   }
 
+  @UsePipes(ValidationPipe)
   @Post('/logout')
   async logout(@Body() userDto: CreateUserDto,
                      @Req() request: Request,
                      @Res() response: Response) {
     const {refreshToken} = request.cookies
     const token = await this.authService.logout(refreshToken)
+    response.clearCookie('access_token_user')
+    return response.json(token)
   }
 
-  @Post('/logout')
+  @UsePipes(ValidationPipe)
+  @Post('/check')
   async checkEmail(@Body() userDto: {email: string}) {
     return await this.authService.checkEmail(userDto)
   }
+
+  // @UsePipes(ValidationPipe)
+  // @Get('/refresh/:id')
+  // async refresh(@Req() request: Request,
+  //               @Res() response: Response,
+  //               @Param() param) {
+  //   const {refreshToken} = request.cookies
+  //   const userData = await this.authService.refresh(refreshToken)
+  //   response.cookie('refreshToken',
+  //     userData,
+  //     {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure: Boolean(process.env.HTTPS_BOOLEAN)})
+  //   return response.json(userData)
+  // }
 }
