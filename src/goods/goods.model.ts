@@ -1,14 +1,14 @@
 import { Column, DataType, Model, Table } from "sequelize-typescript";
 
-interface PostCreationAttr {
+interface GoodCreationAttr {
   title: string,
   content: string;
   userId: number;
   image: string;
 }
 
-@Table({tableName: 'posts'})
-export class Post extends Model<Post, PostCreationAttr> {
+@Table({tableName: 'goods'})
+export class Good extends Model<Good, GoodCreationAttr> {
   @Column({type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true})
   id: number;
 
