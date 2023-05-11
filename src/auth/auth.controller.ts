@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Req, Res, UsePipes } from "@nestjs/common";
+import { Body, Controller, Post, Req, Res, UsePipes } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CreateUserDto } from "../users/dto/create-user.dto";
 import { AuthService } from "./auth.service";
@@ -13,15 +13,15 @@ export class AuthController {
   }
 
   @ApiOperation({summary: 'Логин'})
-  @ApiResponse({status: 200, type: 'sddsf'})
+  @ApiResponse({status: 200})
   @UsePipes(ValidationPipe)
   @Post('/login')
   async login(@Body() userDto: EnterUserDto,
         @Res() response: Response) {
     const userData = await this.authService.login(userDto)
-    response.cookie('refreshToken',
+    response.cookie('access_token_user',
       userData,
-      {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+      {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure: Boolean(process.env.HTTPS_BOOLEAN)})
     return response.json(userData)
   }
 
@@ -30,10 +30,9 @@ export class AuthController {
   async registration(@Body() userDto: CreateUserDto,
                @Res() response: Response) {
     const userData = await this.authService.registration(userDto)
-    response.cookie('refreshToken',
+    response.cookie('access_token_user',
       userData,
-      {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
-    // TODO if will https - add secure: true
+      {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure: Boolean(process.env.HTTPS_BOOLEAN)})
     return response.json(userData)
   }
 
@@ -44,7 +43,7 @@ export class AuthController {
                      @Res() response: Response) {
     const {refreshToken} = request.cookies
     const token = await this.authService.logout(refreshToken)
-    response.clearCookie('refreshToken')
+    response.clearCookie('access_token_user')
     return response.json(token)
   }
 
@@ -54,17 +53,16 @@ export class AuthController {
     return await this.authService.checkEmail(userDto)
   }
 
-  @UsePipes(ValidationPipe)
-  @Get('/refresh/:id')
-  async refresh(@Req() request: Request,
-                @Res() response: Response,
-                @Param() param) {
-    const {refreshToken} = request.cookies
-    const userData = await this.authService.refresh(refreshToken)
-    response.cookie('refreshToken',
-      userData,
-      {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
-    // TODO if will https - add secure: true
-    return response.json(userData)
-  }
+  // @UsePipes(ValidationPipe)
+  // @Get('/refresh/:id')
+  // async refresh(@Req() request: Request,
+  //               @Res() response: Response,
+  //               @Param() param) {
+  //   const {refreshToken} = request.cookies
+  //   const userData = await this.authService.refresh(refreshToken)
+  //   response.cookie('refreshToken',
+  //     userData,
+  //     {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure: Boolean(process.env.HTTPS_BOOLEAN)})
+  //   return response.json(userData)
+  // }
 }

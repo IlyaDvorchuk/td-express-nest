@@ -27,7 +27,6 @@ export class AuthShelterController {
   constructor(private authService: AuthShelterService) {
   }
 
-  // @UsePipes(ValidationPipe)
   @Post('/registration')
   @UseInterceptors(
     FileFieldsInterceptor([
@@ -66,8 +65,8 @@ export class AuthShelterController {
     response.cookie('access_token_shelter', token, {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: 'strict',
+      secure: Boolean(process.env.HTTPS_BOOLEAN)
     })
-    // TODO if will https - add secure: true
     return shelter
   }
 
@@ -84,8 +83,8 @@ export class AuthShelterController {
     response.cookie('access_token_shelter', token, {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: 'strict',
+      secure: Boolean(process.env.HTTPS_BOOLEAN)
     })
-    // TODO if will https - add secure: true
     console.log('response', response);
     return shelter
   }
