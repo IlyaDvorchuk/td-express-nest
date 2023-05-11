@@ -75,10 +75,10 @@ class PointIssue {
   address: string;
 
   @Prop()
-  nameShop?: string;
+  nameShop: string;
 
   @Prop()
-  description?: string;
+  description: string;
 }
 
 export const PointIssueSchema = SchemaFactory.createForClass(PointIssue)
