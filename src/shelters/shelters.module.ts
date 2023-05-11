@@ -5,7 +5,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { Shelter, ShelterSchema } from "./shelters.schema";
 import { PassportModule } from "@nestjs/passport";
 import { JwtModule } from "@nestjs/jwt";
-import { JwtStrategy } from "./jwt.strategy";
+import { JwtStrategy } from "../utils/jwt.strategy";
 
 @Module({
   controllers: [SheltersController],

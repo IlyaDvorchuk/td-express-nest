@@ -1,6 +1,6 @@
 import { Controller, Get, Req, UseGuards } from "@nestjs/common";
 import { SheltersService } from "./shelters.service";
-import { JwtAuthGuard } from "./auth.middleware";
+import { JwtAuthGuard } from "../middlewares/auth.middleware";
 
 @Controller('shelters')
 export class SheltersController {
