@@ -95,8 +95,6 @@ export class Shop extends Document {
 
 export const ShopSchema = SchemaFactory.createForClass(Shop)
 
-
-
 export type ShelterDocument = HydratedDocument<Shelter>
 
 @Schema({timestamps: true})

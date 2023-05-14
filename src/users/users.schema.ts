@@ -16,6 +16,12 @@ export class User {
 
   @Prop({required: true})
   passwordHash: string
+
+  @Prop({ default: false })
+  isBaned: boolean;
+  
+  @Prop({ default: null })
+  banReason: string | null;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)
