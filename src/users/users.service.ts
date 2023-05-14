@@ -85,5 +85,17 @@ export class UsersService {
     };
   }
   
+  async unbanUser(userId: string): Promise<User> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND)
+    }
+    if (!user.isBaned) {
+      throw new HttpException('Пользователь не забанен', HttpStatus.NOT_FOUND)
+    }
+    user.isBaned = false;
+    user.banReason = undefined;
+    return await user.save();
+  }
   
 }
