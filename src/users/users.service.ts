@@ -37,13 +37,13 @@ export class UsersService {
     throw new HttpException('Пользователь или роль не найдена', HttpStatus.NOT_FOUND)
   }
 
-  async banUserById(id: string, reason: string) {
-    const user = await this.userRepository.findById(id);
+  async banUserById(dto: BanUserDto) {
+    const user = await this.userRepository.findById(dto.userId);
     if (!user) {
       throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND)
     }
     user.isBaned = true;
-    user.banReason = reason;
+    user.banReason = dto.banReason;
     return await user.save();
   }  
 
@@ -85,7 +85,7 @@ export class UsersService {
     };
   }
   
-  async unbanUser(userId: string): Promise<User> {
+  async unbanUser(userId: number): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND)
