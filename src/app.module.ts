@@ -12,6 +12,8 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { CategoriesModule } from './categories/categories.module';
 import { SheltersModule } from './shelters/shelters.module';
 import { MulterModule } from "@nestjs/platform-express";
+import { ProductCard } from "./productCard/productCard.schema";
+import { ProductCardsModule } from "./productCard/productCard.module";
 
 @Module({
   controllers: [],
@@ -35,6 +37,7 @@ import { MulterModule } from "@nestjs/platform-express";
     TokensModule,
     CategoriesModule,
     SheltersModule,
+    ProductCardsModule
   ]
 })
 export class AppModule{
