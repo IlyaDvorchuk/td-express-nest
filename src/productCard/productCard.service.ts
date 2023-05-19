@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ProductCard } from './productCard.schema';
 import { CreateProductCardDto } from './dto/create-product-card.dto';
-import { UploadedFile } from '@nestjs/common';
 import { join } from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
