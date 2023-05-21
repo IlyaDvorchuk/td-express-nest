@@ -1,5 +1,6 @@
-import { HydratedDocument, Document } from "mongoose";
+import mongoose, { HydratedDocument, Document } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { ProductCard } from "../productCard/productCard.schema";
 
 @Schema()
 export class PersonalData extends Document {
@@ -125,6 +126,9 @@ export class Shelter extends Document {
 
   @Prop({ required: true, type: [PointIssueSchema] })
   deliveryPoints: PointIssue[];
+
+  @Prop({required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: "ProductCard" }]})
+  productCards: ProductCard[]
 }
 
 export const ShelterSchema = SchemaFactory.createForClass(Shelter)

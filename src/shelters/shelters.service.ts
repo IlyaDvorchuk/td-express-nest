@@ -28,4 +28,18 @@ export class SheltersService {
   async findById(shelterId: string) {
     return this.shelterRepository.findById(shelterId).exec();
   }
+
+  async addProductCard(shelterId: string, productCard) {
+    try {
+      const shelter = await this.shelterRepository.findById(shelterId)
+      shelter.productCards.push(productCard);
+      await shelter.save();
+      return true
+    }
+    catch (e) {
+      console.error('\'Error adding product card:\',', e)
+      return false
+    }
+  }
+
 }

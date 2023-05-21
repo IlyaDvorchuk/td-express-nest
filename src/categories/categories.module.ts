@@ -15,6 +15,7 @@ import { Section, SectionSchema } from "./schemas/sections.schema";
       {name: Subcategory.name, schema: SubcategorySchema},
       {name: Section.name, schema: SectionSchema},
     ]),
-  ]
+  ],
+  exports: [CategoriesService]
 })
 export class CategoriesModule {}

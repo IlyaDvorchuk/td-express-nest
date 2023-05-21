@@ -1,4 +1,4 @@
-import { Document } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema()
@@ -78,7 +78,7 @@ export const DeliveryPointSchema = SchemaFactory.createForClass(DeliveryPoint);
 
 @Schema()
 export class ProductCard extends Document {
-  @Prop({ required: true })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Shelter' })
   shelterId: string;
 
   @Prop({ type: CategorySchema, required: true })

@@ -7,6 +7,7 @@ import { ProductCardController } from './productCard.controller';
 import { ProductCardService } from './productCard.service';
 import { JwtStrategy } from '../utils/jwt.strategy';
 import { SheltersModule } from 'src/shelters/shelters.module';
+import { CategoriesModule } from "../categories/categories.module";
 
 
 @Module({
@@ -16,6 +17,7 @@ import { SheltersModule } from 'src/shelters/shelters.module';
     ]),
     PassportModule,    
     SheltersModule,
+    CategoriesModule,
     JwtModule.register({
       secret: process.env.PRIVATE_KEY || 'SECRET',
       signOptions: {

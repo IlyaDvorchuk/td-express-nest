@@ -4,6 +4,7 @@ import { Model } from "mongoose";
 import { Category, CategoryDocument } from "./schemas/categories.schema";
 import { Subcategory, SubcategoryDocument } from "./schemas/subcategories.schema";
 import { Section, SectionDocument } from "./schemas/sections.schema";
+import { CategoriesDto } from "../productCard/dto/create-product-card.dto";
 
 @Injectable()
 export class CategoriesService {
@@ -57,5 +58,26 @@ export class CategoriesService {
       path: "children",
       populate: 'children'
     })
+  }
+
+  async addProductCard(idCategories: CategoriesDto, productCard) {
+    try {
+      const category = await this.categoryRepository.findById(idCategories.category)
+      category.productCards.push(productCard);
+      await category.save();
+
+      const subcategory = await this.subcategoryRepository.findById(idCategories.subcategory)
+      subcategory.productCards.push(productCard);
+      await subcategory.save();
+
+      const section = await this.sectionRepository.findById(idCategories.section)
+      section.productCards.push(productCard);
+      await section.save();
+
+      return true
+    } catch (e) {
+      console.error('Error adding product card:', e)
+      return false
+    }
   }
 }

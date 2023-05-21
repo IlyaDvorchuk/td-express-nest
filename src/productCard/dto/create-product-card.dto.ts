@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, Length, IsArray, ValidateNested, IsNumber } from 'class-validator';
+import { IsString, IsArray, ValidateNested, IsNumber } from 'class-validator';
 
-class Categories {
+export class CategoriesDto {
   @ApiProperty({ example: 'Category', description: 'Category name' })
   @IsString()
   readonly category: string;
@@ -78,17 +78,9 @@ class DeliveryPoints {
 }
 
 export class CreateProductCardDto {
-  @ApiProperty({ example: 'Product ID', description: 'Product ID' })
-  @IsString()
-  readonly id: string;
-
-  @ApiProperty({ example: 'Shelter ID', description: 'Shelter ID' })
-  @IsString()
-  readonly shelterId: string;
-
-  @ApiProperty({ type: Categories, description: 'Product categories' })
+  @ApiProperty({ type: CategoriesDto, description: 'Product categories' })
   @ValidateNested()
-  readonly categories: Categories;
+  readonly categories: CategoriesDto;
 
   @ApiProperty({ type: Information, description: 'Product information' })
   @ValidateNested()

@@ -1,7 +1,23 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Query, UploadedFiles } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  Query,
+  UploadedFiles,
+  UseInterceptors,
+  UseGuards, Req
+} from '@nestjs/common';
 import { ProductCardService } from './productCard.service';
 import { CreateProductCardDto } from './dto/create-product-card.dto';
 import { UploadedFile } from '@nestjs/common';
+import {FileFieldsInterceptor} from "@nestjs/platform-express";
+import {diskStorage} from "multer";
+import {editFileName, imageFileFilter} from "../utils/file-upload.utils";
+import {JwtAuthGuard} from "../middlewares/auth.middleware";
 
 @Controller('product-cards')
 export class ProductCardController {
@@ -13,15 +29,40 @@ export class ProductCardController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(
+      FileFieldsInterceptor([
+        { name: 'mainPhoto', maxCount: 1 },
+        { name: 'additionalPhotos', maxCount: 10 }, // Максимальное количество дополнительных фотографий
+      ], {
+        storage: diskStorage({
+          destination: (req, file, cb) => {
+            let destination = './static/mainPhotos'; // Путь для сохранения основной фотографии
+            if (file.fieldname === 'additionalPhotos') {
+              destination = './static/additionalPhotos'; // Путь для сохранения дополнительных фотографий
+            }
+            cb(null, destination);
+          },
+          filename: editFileName,
+        }),
+        fileFilter: imageFileFilter,
+      })
+  )
   async createProductCard(
-    @Body() createProductCardDto: CreateProductCardDto,
-    @UploadedFile() mainPhoto: Express.Multer.File,
-    @UploadedFiles() additionalPhotos: Express.Multer.File[]
+      @Req() req,
+      @Body() createProductCardDto: CreateProductCardDto,
+      @UploadedFile() mainPhoto: Express.Multer.File,
+      @UploadedFiles() additionalPhotos: Express.Multer.File[]
   ) {
-    return this.productCardService.createProductCard(
-      createProductCardDto,
-      mainPhoto,
-      additionalPhotos
+    const shelterId = req.user.id
+    const mainPhotoPath = mainPhoto ? `${process.env.SERVER_URL}/mainPhotos/${mainPhoto.filename}` : undefined;
+    const additionalPhotosPaths = additionalPhotos.map(file => `${process.env.SERVER_URL}/additionalPhotos/${file.filename}`);
+
+    return await this.productCardService.createProductCard(
+        createProductCardDto,
+        shelterId,
+        mainPhotoPath,
+        additionalPhotosPaths
     );
   }
 

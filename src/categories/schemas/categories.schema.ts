@@ -1,6 +1,7 @@
 import mongoose, { HydratedDocument } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Subcategory } from "./subcategories.schema";
+import { ProductCard } from "../../productCard/productCard.schema";
 
 export type CategoryDocument = HydratedDocument<Category>
 
@@ -14,6 +15,9 @@ export class Category {
 
   @Prop({unique: true})
   icon: string
+
+  @Prop({required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: "ProductCard" }]})
+  productCards: ProductCard[]
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category)
