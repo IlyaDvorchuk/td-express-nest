@@ -13,7 +13,6 @@ import {
 } from '@nestjs/common';
 import { ProductCardService } from './productCard.service';
 import { CreateProductCardDto } from './dto/create-product-card.dto';
-import { UploadedFile } from '@nestjs/common';
 import {FileFieldsInterceptor} from "@nestjs/platform-express";
 import {diskStorage} from "multer";
 import {editFileName, imageFileFilter} from "../utils/file-upload.utils";
@@ -37,9 +36,9 @@ export class ProductCardController {
       ], {
         storage: diskStorage({
           destination: (req, file, cb) => {
-            let destination = './static/mainPhotos'; // Путь для сохранения основной фотографии
+            let destination = './static/main-photos'; // Путь для сохранения основной фотографии
             if (file.fieldname === 'additionalPhotos') {
-              destination = './static/additionalPhotos'; // Путь для сохранения дополнительных фотографий
+              destination = './static/additional-photos'; // Путь для сохранения дополнительных фотографий
             }
             cb(null, destination);
           },
@@ -48,16 +47,16 @@ export class ProductCardController {
         fileFilter: imageFileFilter,
       })
   )
+
   async createProductCard(
       @Req() req,
       @Body() createProductCardDto: CreateProductCardDto,
-      @UploadedFile() mainPhoto: Express.Multer.File,
-      @UploadedFiles() additionalPhotos: Express.Multer.File[]
+      @UploadedFiles() files: { mainPhoto: Express.Multer.File, additionalPhotos: Express.Multer.File[] },
   ) {
+    const {mainPhoto, additionalPhotos} = files
     const shelterId = req.user.id
     const mainPhotoPath = mainPhoto ? `${process.env.SERVER_URL}/mainPhotos/${mainPhoto.filename}` : undefined;
     const additionalPhotosPaths = additionalPhotos.map(file => `${process.env.SERVER_URL}/additionalPhotos/${file.filename}`);
-
     return await this.productCardService.createProductCard(
         createProductCardDto,
         shelterId,

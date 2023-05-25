@@ -12,7 +12,7 @@ import { JwtStrategy } from "../utils/jwt.strategy";
   providers: [SheltersService, JwtStrategy],
   imports: [
     MongooseModule.forFeature([
-      {name: Shelter.name, schema: ShelterSchema}
+      {name: Shelter.name, schema: ShelterSchema},
     ]),
     PassportModule,
     JwtModule.register({

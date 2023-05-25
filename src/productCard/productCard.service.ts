@@ -38,7 +38,6 @@ export class ProductCardService {
       }
     }
 
-
     const product = await this.productCardRepository.create({
       ...dto,
       shelterId,

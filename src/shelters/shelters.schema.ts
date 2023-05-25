@@ -68,7 +68,7 @@ export class ShelterData extends Document {
 export const ShelterDataSchema = SchemaFactory.createForClass(ShelterData)
 
 @Schema()
-class PointIssue {
+export class PointIssue {
   @Prop({ required: true })
   city: string;
 

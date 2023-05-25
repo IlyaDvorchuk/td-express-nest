@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsArray, ValidateNested, IsNumber } from 'class-validator';
+import { MemoryStoredFile } from "nestjs-form-data/dist/classes/storage/MemoryStoredFile";
 
 export class CategoriesDto {
   @ApiProperty({ example: 'Category', description: 'Category name' })
@@ -88,12 +89,12 @@ export class CreateProductCardDto {
 
   @ApiProperty({ example: 'mainPhoto.jpg', description: 'Main product photo' })
   @IsString()
-  readonly mainPhoto: string;
+  readonly mainPhoto: MemoryStoredFile;
 
-  @ApiProperty({ type: [String], description: 'Additional product photos' })
+  @ApiProperty({ type: [MemoryStoredFile], description: 'Additional product photos' })
   @IsArray()
   @IsString({ each: true })
-  readonly additionalPhotos: string[];
+  readonly additionalPhotos: MemoryStoredFile[];
 
   @ApiProperty({ type: Dimensions, description: 'Product dimensions' })
   @ValidateNested()

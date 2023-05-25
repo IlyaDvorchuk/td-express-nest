@@ -12,7 +12,6 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { CategoriesModule } from './categories/categories.module';
 import { SheltersModule } from './shelters/shelters.module';
 import { MulterModule } from "@nestjs/platform-express";
-import { ProductCard } from "./productCard/productCard.schema";
 import { ProductCardsModule } from "./productCard/productCard.module";
 
 @Module({
@@ -27,7 +26,7 @@ import { ProductCardsModule } from "./productCard/productCard.module";
     }),
     MongooseModule.forRoot(process.env.DB_URL),
     MulterModule.register({
-      dest: './static'
+      dest: './static',
     }),
     UsersModule,
     AuthModule,

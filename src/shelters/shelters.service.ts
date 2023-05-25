@@ -21,7 +21,6 @@ export class SheltersService {
 
   async getDeliveryPoints(shelterId: string) {
     const shelter = await this.shelterRepository.findById(shelterId).populate('deliveryPoints').exec();
-    console.log('shelter', shelter);
     return shelter.deliveryPoints;
   }
 

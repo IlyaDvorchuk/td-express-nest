@@ -12,8 +12,6 @@ export class SheltersController {
   @Get('delivery-points')
   async getDeliveryPoints(@Req() req) {
     const shelterId = req.user.id
-    console.log('req.user', req.user);
-    console.log('shelterId', shelterId);
     return await this.shelterService.getDeliveryPoints(shelterId)
   }
 }
