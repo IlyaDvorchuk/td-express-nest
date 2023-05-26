@@ -110,4 +110,9 @@ export class ProductCardService {
       currentPage: page,
     };
   }
+
+  async getNewProductCard() {
+    const cards = this.productCardRepository.find()
+    return cards.sort({ createdAt: -1 });
+  }
 }

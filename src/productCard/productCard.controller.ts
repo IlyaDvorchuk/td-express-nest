@@ -17,10 +17,17 @@ import {FileFieldsInterceptor} from "@nestjs/platform-express";
 import {diskStorage} from "multer";
 import {editFileName, imageFileFilter} from "../utils/file-upload.utils";
 import {JwtAuthGuard} from "../middlewares/auth.middleware";
+import { ApiResponse } from "@nestjs/swagger";
 
 @Controller('product-cards')
 export class ProductCardController {
   constructor(private readonly productCardService: ProductCardService) {}
+
+  @ApiResponse({status: 200})
+  @Get('/new')
+  async getNewProductCard() {
+    return this.productCardService.getNewProductCard();
+  }
 
   @Get(':id')
   async getProductCardById(@Param('id') id: string) {
@@ -79,4 +86,6 @@ export class ProductCardController {
   async searchProductCards(@Query('query') query: string, @Query('page') page: number, @Query('limit') limit: number) {
     return this.productCardService.searchProductCards(query, page, limit);
   }
+
+
 }

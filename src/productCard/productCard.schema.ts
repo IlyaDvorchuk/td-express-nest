@@ -77,7 +77,7 @@ export class DeliveryPoint extends Document {
 
 export const DeliveryPointSchema = SchemaFactory.createForClass(DeliveryPoint);
 
-@Schema()
+@Schema({timestamps: true})
 export class ProductCard extends Document {
   @Prop({ type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Shelter' })
   shelterId: string;
