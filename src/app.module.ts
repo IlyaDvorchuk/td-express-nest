@@ -2,7 +2,6 @@ import { Module } from "@nestjs/common";
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from "@nestjs/config";
 import { AuthModule } from './auth/auth.module';
-import { GoodsModule } from './goods/goods.module';
 import { FilesModule } from './files/files.module';
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { MailModule } from './mail/mail.module';
@@ -30,7 +29,6 @@ import { ProductCardsModule } from "./productCard/productCard.module";
     }),
     UsersModule,
     AuthModule,
-    GoodsModule,
     FilesModule,
     MailModule,
     TokensModule,

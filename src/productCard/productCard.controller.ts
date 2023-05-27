@@ -60,10 +60,11 @@ export class ProductCardController {
       @Body() createProductCardDto: CreateProductCardDto,
       @UploadedFiles() files: { mainPhoto: Express.Multer.File, additionalPhotos: Express.Multer.File[] },
   ) {
+    console.log('files', files);
     const {mainPhoto, additionalPhotos} = files
     const shelterId = req.user.id
-    const mainPhotoPath = mainPhoto ? `${process.env.SERVER_URL}/mainPhotos/${mainPhoto.filename}` : undefined;
-    const additionalPhotosPaths = additionalPhotos.map(file => `${process.env.SERVER_URL}/additionalPhotos/${file.filename}`);
+    const mainPhotoPath = mainPhoto ? `${process.env.SERVER_URL}/main-photos/${mainPhoto[0].filename}` : undefined;
+    const additionalPhotosPaths = additionalPhotos.map(file => `${process.env.SERVER_URL}/additional-photos/${file.filename}`);
     return await this.productCardService.createProductCard(
         createProductCardDto,
         shelterId,
