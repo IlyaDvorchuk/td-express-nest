@@ -139,4 +139,25 @@ export class ProductCardService {
       currentPage: page,
     };
   }
+
+  async getHotOffers(page: number, limit: number) {
+    const skip = (page - 1) * limit;
+  
+    const totalCount = await this.productCardRepository.countDocuments();
+    const totalPages = Math.ceil(totalCount / limit);
+  
+    const hotOffers = await this.productCardRepository
+      .find()
+      .sort({ viewsCount: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+  
+    return {
+      hotOffers,
+      totalPages,
+      currentPage: page,
+    };
+  }
+  
 }

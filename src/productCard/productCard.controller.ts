@@ -88,5 +88,13 @@ export class ProductCardController {
     return this.productCardService.searchProductCards(query, page, limit);
   }
 
+  @Get('hot-offers/:page/:limit')
+async getHotOffers(
+  @Param('page') page: number,
+  @Param('limit') limit: number
+) {
+  const hotOffers = await this.productCardService.getHotOffers(+page, +limit);
+  return hotOffers;
+}
 
 }
