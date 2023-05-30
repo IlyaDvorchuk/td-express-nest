@@ -21,7 +21,7 @@ export class UsersService {
 
   async getAllBanedUsers() {
     return this.userRepository.find({ isBaned: true });
-  }  
+  }
 
   async getUserByEmail(email: string) {
     return this.userRepository.findOne({ email });
@@ -45,14 +45,14 @@ export class UsersService {
     user.isBaned = true;
     user.banReason = dto.banReason;
     return await user.save();
-  }  
+  }
 
   async searchUsers(query: any) {
     const { page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'desc', search = '', filter = {} } = query;
-  
+
     const sort = 'desc';
     const skip = (page - 1) * limit;
-  
+
     const filterConditions = {
       ...filter,
       $or: [
@@ -63,15 +63,15 @@ export class UsersService {
       ],
       isDeleted: false
     };
-  
+
     const users = await this.userRepository
       .find(filterConditions)
       .sort(sort)
       .skip(skip)
       .limit(limit);
-  
+
     const totalUsers = await this.userRepository.countDocuments(filterConditions);
-  
+
     return {
       users,
       totalUsers,
@@ -84,7 +84,7 @@ export class UsersService {
       filter
     };
   }
-  
+
   async unbanUser(userId: number): Promise<User> {
     const user = await this.userRepository.findById(userId);
     if (!user) {
@@ -97,5 +97,8 @@ export class UsersService {
     user.banReason = undefined;
     return await user.save();
   }
-  
+
+  async findById(userId: string) {
+    return this.userRepository.findById(userId).exec();
+  }
 }

@@ -5,19 +5,19 @@ import * as bcrypt from 'bcryptjs'
 import { EnterUserDto } from "../users/dto/enter-user.dto";
 import { TokensService } from "../tokens/tokens.service";
 import { SheltersService } from "../shelters/shelters.service";
+import {JwtService} from "@nestjs/jwt";
 
 @Injectable()
 export class AuthService {
   constructor(private userService: UsersService,
               private tokensService: TokensService,
-              private shelterService: SheltersService) {
+              private shelterService: SheltersService,
+              private jwtService: JwtService) {
   }
 
   async login(userDto: EnterUserDto) {
     const user = await this.validateUser(userDto)
-    const tokens = await this.tokensService.generateTokens({email: user.email, userId: user._id})
-    await this.tokensService.saveToken(user._id, tokens.refreshToken)
-    return {...tokens, user}
+    return user
   }
 
   async registration(userDto: CreateUserDto) {
@@ -78,4 +78,10 @@ export class AuthService {
     await this.tokensService.saveToken(user._id, tokens.refreshToken)
     return {...tokens, user}
   }
+
+  createAccessToken(shelter) {
+    const payload = { sub: shelter.id, email: shelter.email };
+    return this.jwtService.signAsync(payload);
+  }
 }
+
