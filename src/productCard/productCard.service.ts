@@ -10,8 +10,8 @@ import { CategoriesService } from "../categories/categories.service";
 export class ProductCardService {
   constructor(
     @InjectModel(ProductCard.name) private productCardRepository: Model<ProductCard>,
-      private shelterService: SheltersService,
-      private categoriesService: CategoriesService,
+    private shelterService: SheltersService,
+    private categoriesService: CategoriesService,
   ) {}
 
   async getProductCardById(id: string) {
@@ -24,17 +24,17 @@ export class ProductCardService {
     mainPhoto: string,
     additionalPhotos: string[]
   ) {
-
     for (let field of Object.keys(dto)) {
-      if (field === 'categories'
-          || field === 'information'
-          || field === 'dimensions'
-          || field === 'pricesAndQuantity'
-          || field === 'additionalInformation'
-          || field === 'deliveryPoints'
-      ) {
-        // @ts-ignore
-        dto[field] = JSON.parse(dto[field])
+      if (typeof dto[field] === 'string') {
+        try {
+          dto[field] = JSON.parse(dto[field]);
+        } catch (error) {
+          // Handle JSON parse error
+          throw new HttpException(
+            'Ошибка при разборе JSON',
+            HttpStatus.BAD_REQUEST
+          );
+        }
       }
     }
 
@@ -42,32 +42,22 @@ export class ProductCardService {
       ...dto,
       shelterId,
       mainPhoto,
-      additionalPhotos
-    })
+      additionalPhotos,
+      viewsCount: 0, // Initialize views count to 0
+    });
 
-    const isAddInShelter = await this.shelterService.addProductCard(shelterId, product._id)
-
-    const isAddInCategories = await this.categoriesService.addProductCard(dto.categories, product._id)
+    const isAddInShelter = await this.shelterService.addProductCard(shelterId, product._id);
+    const isAddInCategories = await this.categoriesService.addProductCard(dto.categories, product._id);
 
     if (isAddInShelter && isAddInCategories) {
-      return product
+      return product;
     } else {
       throw new HttpException(
         'Не сохранились данные',
         HttpStatus.INTERNAL_SERVER_ERROR
-      )
+      );
     }
   }
-
-  // private saveImage(file: Express.Multer.File): string {
-  //   const imageId = uuidv4();
-  //   const fileName = `${imageId}-${file.originalname}`;
-  //   const filePath = join(
-  //     './static/shelter-scans',
-  //     fileName
-  //   );
-  //   return filePath;
-  // }
 
   async updateProductCard(id: string, dto: CreateProductCardDto) {
     return this.productCardRepository.findByIdAndUpdate(id, dto, { new: true }).exec();
@@ -111,8 +101,42 @@ export class ProductCardService {
     };
   }
 
-  async getNewProductCard() {
-    const cards = this.productCardRepository.find()
-    return cards.sort({ createdAt: -1 });
+  async getNewProductCards() {
+    const productCards = await this.productCardRepository.find()
+      .sort({ createdAt: -1 })
+      .exec();
+
+    return productCards;
+  }
+
+  async getProductCardSummary(id: string) {
+    return this.productCardRepository.findById(id)
+      .select('information.name information.description pricesAndQuantity')
+      .exec();
+  }
+
+  async getProductCardDetails(id: string) {
+    return this.productCardRepository.findById(id).exec();
+  }
+
+  async addViewToProductCard(id: string) {
+    return this.productCardRepository.findByIdAndUpdate(id, { $inc: { viewsCount: 1 } }, { new: true }).exec();
+  }
+
+  async getAllProductCards(page: number, limit: number) {
+    const skip = (page - 1) * limit;
+    const totalCount = await this.productCardRepository.countDocuments();
+    const totalPages = Math.ceil(totalCount / limit);
+
+    const productCards = await this.productCardRepository.find()
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+    return {
+      productCards,
+      totalPages,
+      currentPage: page,
+    };
   }
 }

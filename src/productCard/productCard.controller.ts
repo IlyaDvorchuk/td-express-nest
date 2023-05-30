@@ -25,8 +25,8 @@ export class ProductCardController {
 
   @ApiResponse({status: 200})
   @Get('/new')
-  async getNewProductCard() {
-    return this.productCardService.getNewProductCard();
+  async getNewProductCards() {
+    return this.productCardService.getNewProductCards();
   }
 
   @Get(':id')
