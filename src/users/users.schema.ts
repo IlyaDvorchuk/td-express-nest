@@ -9,17 +9,17 @@ export class User {
   firstName: string
 
   @Prop({required: true})
-  secondNane: string
+  secondName: string
 
   @Prop({required: true, unique: true})
   email: string
 
   @Prop({required: true})
-  passwordHash: string
+  password: string
 
   @Prop({ default: false })
   isBaned: boolean;
-  
+
   @Prop({ default: null })
   banReason: string | null;
 }
