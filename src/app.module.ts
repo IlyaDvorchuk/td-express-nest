@@ -12,6 +12,8 @@ import { CategoriesModule } from './categories/categories.module';
 import { SheltersModule } from './shelters/shelters.module';
 import { MulterModule } from "@nestjs/platform-express";
 import { ProductCardsModule } from "./productCard/productCard.module";
+import { FavoriteModule } from "./favorite/favorite.module";
+import { CartModule } from "./cart/cart.module";
 
 @Module({
   controllers: [],
@@ -34,7 +36,9 @@ import { ProductCardsModule } from "./productCard/productCard.module";
     TokensModule,
     CategoriesModule,
     SheltersModule,
-    ProductCardsModule
+    ProductCardsModule,
+    FavoriteModule,
+    CartModule
   ]
 })
 export class AppModule{

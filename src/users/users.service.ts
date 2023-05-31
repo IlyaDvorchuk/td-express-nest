@@ -5,11 +5,10 @@ import { AddRoleDto } from './dto/add-role.dto';
 import { BanUserDto } from './dto/ban-user.dto';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Cart, CartItem } from 'src/cart/cart-item.schema';
-import { FavoriteItemDocument, Favorites } from 'src/favorite/favorite-item.schema';
+import { Cart } from 'src/cart/cart-item.schema';
+import { FavoriteItem, Favorites } from "src/favorite/favorite-item.schema";
 import { CreateFavoritesDto } from 'src/favorite/dto/create-favorites.dto';
 import { CreateCartDto } from 'src/cart/dto/create-cart.dto';
-import { CategoryDocument } from 'src/categories/schemas/categories.schema';
 
 @Injectable()
 export class UsersService {
@@ -154,7 +153,7 @@ export class UsersService {
       } else {
         favorites.items.push({
           productId: dto.productId,
-        });
+        } as FavoriteItem);
         await favorites.save();
       }
     } else {

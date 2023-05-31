@@ -3,7 +3,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema()
 export class FavoriteItem extends Document {
-  @Prop({ type: mongoose.Schema.Types.ObjectId, required: true, ref: 'ProductCard' })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'ProductCard' })
   productId: string;
 }
 
