@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import {Global, Module} from '@nestjs/common';
 import { SheltersController } from './shelters.controller';
 import { SheltersService } from './shelters.service';
 import { MongooseModule } from "@nestjs/mongoose";
@@ -7,6 +7,7 @@ import { PassportModule } from "@nestjs/passport";
 import { JwtModule } from "@nestjs/jwt";
 import { JwtStrategy } from "../utils/jwt.strategy";
 
+@Global()
 @Module({
   controllers: [SheltersController],
   providers: [SheltersService, JwtStrategy],

@@ -71,7 +71,7 @@ export class AuthShelterService {
   }
 
   createAccessToken(shelter) {
-    const payload = { sub: shelter.id, email: shelter.email };
+    const payload = { sub: shelter.id, email: shelter.email, userId: 'shelter' };
     return this.jwtService.signAsync(payload);
   }
 

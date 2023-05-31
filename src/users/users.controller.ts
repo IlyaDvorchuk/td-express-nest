@@ -58,6 +58,7 @@ export class UsersController {
   @Get('/addToCart')
   addItemToCart(@Req() req) {
     const userId = req.user.id
-    return userId
+    console.log('addItemToCart', userId)
+    return {userId: userId}
   }
 }

@@ -6,7 +6,6 @@ import { ProductCard, ProductCardSchema } from './productCard.schema';
 import { ProductCardController } from './productCard.controller';
 import { ProductCardService } from './productCard.service';
 import { JwtStrategy } from '../utils/jwt.strategy';
-import { SheltersModule } from 'src/shelters/shelters.module';
 import { CategoriesModule } from "../categories/categories.module";
 
 
@@ -15,8 +14,7 @@ import { CategoriesModule } from "../categories/categories.module";
     MongooseModule.forFeature([
       { name: ProductCard.name, schema: ProductCardSchema },
     ]),
-    PassportModule,    
-    SheltersModule,
+    PassportModule,
     CategoriesModule,
     JwtModule.register({
       secret: process.env.PRIVATE_KEY || 'SECRET',

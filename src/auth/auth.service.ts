@@ -16,8 +16,7 @@ export class AuthService {
   }
 
   async login(userDto: EnterUserDto) {
-    const user = await this.validateUser(userDto)
-    return user
+    return await this.validateUser(userDto)
   }
 
   async registration(userDto: CreateUserDto) {
@@ -79,8 +78,8 @@ export class AuthService {
     return {...tokens, user}
   }
 
-  createAccessToken(shelter) {
-    const payload = { sub: shelter.id, email: shelter.email };
+  createAccessToken(user) {
+    const payload = { sub: user.id, email: user.email, user: 'user' };
     return this.jwtService.signAsync(payload);
   }
 }

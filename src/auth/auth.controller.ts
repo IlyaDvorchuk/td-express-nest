@@ -31,8 +31,9 @@ export class AuthController {
   async registration(@Body() userDto: CreateUserDto,
                @Res() response: Response) {
     const userData = await this.authService.registration(userDto)
+    const token = await this.authService.createAccessToken(userData);
     response.cookie('access_token_user',
-      userData,
+        token,
       {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure: Boolean(process.env.HTTPS_BOOLEAN)})
     return response.json(userData)
   }
