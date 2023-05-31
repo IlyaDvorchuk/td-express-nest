@@ -25,8 +25,12 @@ export class ProductCardController {
 
   @ApiResponse({status: 200})
   @Get('/new')
-  async getNewProductCards() {
-    return this.productCardService.getNewProductCards();
+  async getNewProductCards(
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ) {
+    const result = await this.productCardService.getNewProductCards(page, limit);
+    return result;
   }
 
   @Get(':id')
