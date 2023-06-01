@@ -11,5 +11,6 @@ import { CartService } from "./cart.service";
       {name: Cart.name, schema: CartSchema}
     ]),
   ],
+  exports: [CartService]
 })
 export class CartModule {}

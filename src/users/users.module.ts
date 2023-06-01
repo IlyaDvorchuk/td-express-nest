@@ -4,6 +4,8 @@ import { UsersService } from './users.service';
 import { User, UserSchema } from "./users.schema";
 import {AuthModule} from "../auth/auth.module";
 import { MongooseModule } from "@nestjs/mongoose";
+import {FavoriteService} from "../favorite/favorite.service";
+import {CartService} from "../cart/cart.service";
 
 @Global()
 @Module({
@@ -14,9 +16,12 @@ import { MongooseModule } from "@nestjs/mongoose";
       {name: User.name, schema: UserSchema}
     ]),
     forwardRef(() => AuthModule),
+    FavoriteService,
+    CartService
   ],
   exports: [
-      UsersService,
+    UsersService,
+
   ]
 })
 export class UsersModule {}

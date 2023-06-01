@@ -18,7 +18,7 @@ export class CartItem {
 
 export const CartItemSchema = SchemaFactory.createForClass(CartItem);
 
-export type CartDocument = Cart & Document;
+export type CartDocument = HydratedDocument<Cart>;
 
 @Schema()
 export class Cart {

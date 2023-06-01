@@ -9,13 +9,17 @@ import { Cart } from 'src/cart/cart-item.schema';
 import { FavoriteItem, Favorites } from "src/favorite/favorite-item.schema";
 import { CreateFavoritesDto } from 'src/favorite/dto/create-favorites.dto';
 import { CreateCartDto } from 'src/cart/dto/create-cart.dto';
+import {SheltersService} from "../shelters/shelters.service";
+import cookieParser from "cookie-parser";
+import {CartService} from "../cart/cart.service";
+import {FavoriteService} from "../favorite/favorite.service";
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userRepository: Model<UserDocument>,
-    @InjectModel(Cart.name) private cartRepository: Model<Cart>,
-    @InjectModel(Favorites.name) private favoritesRepository: Model<Favorites>,
+    private cartService: CartService,
+    private favoriteService: FavoriteService,
   ) {}
 
   async createUser(dto: CreateUserDto) {
@@ -111,32 +115,7 @@ export class UsersService {
       throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
     }
 
-    const cart = await this.cartRepository.findOne({ userId });
-    if (cart) {
-      const existingItem = cart.items.find((item) => item.productId === dto.productId);
-      if (existingItem) {
-        throw new HttpException('Продукт уже находится в корзине', HttpStatus.BAD_REQUEST);
-      } else {
-        cart.items.push({
-          productId: dto.productId,
-          quantity: dto.quantity,
-          totalPrice: dto.totalPrice,
-        });
-        await cart.save();
-      }
-    } else {
-      const newCart = new this.cartRepository({
-        userId,
-        items: [
-          {
-            productId: dto.productId,
-            quantity: dto.quantity,
-            totalPrice: dto.totalPrice,
-          },
-        ],
-      });
-      await newCart.save();
-    }
+    await this.cartService.addToCart(userId, dto)
   }
 
   async addToFavorites(userId: string, dto: CreateFavoritesDto) {
@@ -145,28 +124,7 @@ export class UsersService {
       throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
     }
 
-    const favorites = await this.favoritesRepository.findOne({ userId });
-    if (favorites) {
-      const existingItem = favorites.items.find((item) => item.productId === dto.productId);
-      if (existingItem) {
-        throw new HttpException('Продукт уже находится в избранном', HttpStatus.BAD_REQUEST);
-      } else {
-        favorites.items.push({
-          productId: dto.productId,
-        } as FavoriteItem);
-        await favorites.save();
-      }
-    } else {
-      const newFavorites = new this.favoritesRepository({
-        userId,
-        items: [
-          {
-            productId: dto.productId,
-          },
-        ],
-      });
-      await newFavorites.save();
-    }
+    await this.favoriteService.addToFavorite(userId, dto)
   }
 
   async findById(userId: string) {

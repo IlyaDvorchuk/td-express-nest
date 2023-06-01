@@ -1,5 +1,7 @@
-import mongoose, { Document } from 'mongoose';
+import mongoose, {Document, HydratedDocument} from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import {Cart} from "../cart/cart-item.schema";
+import {FavoriteService} from "./favorite.service";
 
 @Schema()
 export class FavoriteItem extends Document {
@@ -8,6 +10,8 @@ export class FavoriteItem extends Document {
 }
 
 export const FavoriteItemSchema = SchemaFactory.createForClass(FavoriteItem);
+
+export type FavoritesDocument = HydratedDocument<Favorites>;
 
 @Schema()
 export class Favorites extends Document {
