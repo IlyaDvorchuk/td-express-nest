@@ -4,8 +4,8 @@ import { UsersService } from './users.service';
 import { User, UserSchema } from "./users.schema";
 import {AuthModule} from "../auth/auth.module";
 import { MongooseModule } from "@nestjs/mongoose";
-import {FavoriteService} from "../favorite/favorite.service";
-import {CartService} from "../cart/cart.service";
+import {FavoriteModule} from "../favorite/favorite.module";
+import {CartModule} from "../cart/cart.module";
 
 @Global()
 @Module({
@@ -16,8 +16,8 @@ import {CartService} from "../cart/cart.service";
       {name: User.name, schema: UserSchema}
     ]),
     forwardRef(() => AuthModule),
-    FavoriteService,
-    CartService
+    FavoriteModule,
+    CartModule
   ],
   exports: [
     UsersService,

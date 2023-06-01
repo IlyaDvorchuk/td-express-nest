@@ -5,12 +5,8 @@ import { AddRoleDto } from './dto/add-role.dto';
 import { BanUserDto } from './dto/ban-user.dto';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Cart } from 'src/cart/cart-item.schema';
-import { FavoriteItem, Favorites } from "src/favorite/favorite-item.schema";
 import { CreateFavoritesDto } from 'src/favorite/dto/create-favorites.dto';
 import { CreateCartDto } from 'src/cart/dto/create-cart.dto';
-import {SheltersService} from "../shelters/shelters.service";
-import cookieParser from "cookie-parser";
 import {CartService} from "../cart/cart.service";
 import {FavoriteService} from "../favorite/favorite.service";
 
