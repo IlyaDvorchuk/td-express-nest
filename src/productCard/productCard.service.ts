@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ProductCard } from './productCard.schema';
+import { PricesAndQuantity, ProductCard } from './productCard.schema';
 import { CreateProductCardDto } from './dto/create-product-card.dto';
 import { SheltersService } from "../shelters/shelters.service";
 import { CategoriesService } from "../categories/categories.service";
@@ -43,8 +43,9 @@ export class ProductCardService {
             shelterId,
             mainPhoto,
             additionalPhotos,
-            viewsCount: 0, // Initialize views count to 0
-        });
+            viewsCount: 0,
+            pricesAndQuantity: new PricesAndQuantity(), // Инициализируем поле pricesAndQuantity новым экземпляром класса PricesAndQuantity
+          });
 
         const isAddInShelter = await this.shelterService.addProductCard(shelterId, product._id);
         const isAddInCategories = await this.categoriesService.addProductCard(dto.categories, product._id);
@@ -174,4 +175,36 @@ export class ProductCardService {
         };
     }
 
+    
+  async applyDiscountToProductCard(id: string, discount: number) {
+    const product = await this.productCardRepository.findById(id).exec();
+
+    if (!product) {
+      throw new HttpException('Карточка продукта не найдена', HttpStatus.NOT_FOUND);
+    }
+
+    product.pricesAndQuantity.priceBeforeDiscount = product.pricesAndQuantity.price; // Сохраняем текущую цену в поле priceBeforeDiscount
+    product.pricesAndQuantity.price = product.pricesAndQuantity.price * (1 - discount / 100); // Применяем скидку
+
+    return product.save();
+  }
+
+  async getDiscountedProductCards(page: number, limit: number) {
+    const skip = (page - 1) * limit;
+
+    const totalCount = await this.productCardRepository.countDocuments({ 'pricesAndQuantity.price': { $lt: 'pricesAndQuantity.priceBeforeDiscount' } });
+    const totalPages = Math.ceil(totalCount / limit);
+
+    const discountedProductCards = await this.productCardRepository
+      .find({ 'pricesAndQuantity.price': { $lt: 'pricesAndQuantity.priceBeforeDiscount' } })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+    return {
+      discountedProductCards,
+      totalPages,
+      currentPage: page,
+    };
+  }
 }
