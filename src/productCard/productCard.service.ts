@@ -169,13 +169,13 @@ export class ProductCardService {
             .exec();
 
         return {
-            hotOffers,
+            productCards: hotOffers,
             totalPages,
             currentPage: page,
         };
     }
 
-    
+
   async applyDiscountToProductCard(id: string, discount: number) {
     const product = await this.productCardRepository.findById(id).exec();
 

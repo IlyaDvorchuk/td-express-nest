@@ -33,6 +33,15 @@ export class ProductCardController {
     return result;
   }
 
+  @Get('hot-offers')
+  async getHotOffers(
+      @Query('page') page: number,
+      @Query('limit') limit: number
+  ) {
+    const hotOffers = await this.productCardService.getHotOffers(page, limit);
+    return hotOffers;
+  }
+
   @Get(':id')
   async getProductCardById(@Param('id') id: string) {
     return this.productCardService.getProductCardById(id);
@@ -91,14 +100,4 @@ export class ProductCardController {
   async searchProductCards(@Query('query') query: string, @Query('page') page: number, @Query('limit') limit: number) {
     return this.productCardService.searchProductCards(query, page, limit);
   }
-
-  @Get('hot-offers/:page/:limit')
-async getHotOffers(
-  @Param('page') page: number,
-  @Param('limit') limit: number
-) {
-  const hotOffers = await this.productCardService.getHotOffers(+page, +limit);
-  return hotOffers;
-}
-
 }
