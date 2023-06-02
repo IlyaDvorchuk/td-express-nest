@@ -16,8 +16,7 @@ export class Section {
   @Prop({required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: "ProductCard" }]})
   productCards: ProductCard[]
 
-  @Prop({required: true})
-  parentName: string
+
 }
 
 export const SectionSchema = SchemaFactory.createForClass(Section)

@@ -11,7 +11,7 @@ export class Subcategory {
   @Prop({type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true})
   parent: Category
 
-  @Prop({type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Section" }]})
+  @Prop({type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Section" }], default: []})
   children: Section[]
 
   @Prop({required: true})
