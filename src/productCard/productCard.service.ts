@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { PricesAndQuantity, ProductCard } from './productCard.schema';
+import { PricesAndQuantity, ProductCard, Comment } from './productCard.schema';
 import { CreateProductCardDto } from './dto/create-product-card.dto';
 import { SheltersService } from "../shelters/shelters.service";
 import { CategoriesService } from "../categories/categories.service";
@@ -10,6 +10,7 @@ import { CategoriesService } from "../categories/categories.service";
 export class ProductCardService {
     constructor(
         @InjectModel(ProductCard.name) private productCardRepository: Model<ProductCard>,
+        @InjectModel(Comment.name) private commentRepository: Model<Comment>,
         private shelterService: SheltersService,
         private categoriesService: CategoriesService,
     ) { }
@@ -207,4 +208,76 @@ export class ProductCardService {
       currentPage: page,
     };
   }
+
+  async addCommentToProduct(productId: string, userId: string, content: string): Promise<Comment> {
+    const product = await this.productCardRepository.findById(productId);
+    
+    if (!product) {
+      throw new Error('Product not found');
+    }
+    
+    const comment = new this.commentRepository({ productId, userId, content });
+    await comment.save();  
+    
+
+    product.comments.push(comment._id);
+    await product.save();
+    
+    return comment;
+  }
+  
+  async deleteComment(productId: string, commentId: string): Promise<void> {
+    const product = await this.productCardRepository.findById(productId);
+    if (!product) {
+      throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+    }
+
+    const comment = await this.commentRepository.findById(commentId);
+    if (!comment) {
+      throw new HttpException('Comment not found', HttpStatus.NOT_FOUND);
+    }
+
+    // Удаление комментария из списка комментариев товара
+    const commentIndex = product.comments.findIndex((id) => id.toString() === commentId);
+    if (commentIndex === -1) {
+      throw new HttpException('Comment not found in product', HttpStatus.NOT_FOUND);
+    }
+    product.comments.splice(commentIndex, 1);
+
+    await Promise.all([product.save(), comment.deleteOne()]);
+  }
+
+  async updateComment(
+    productId: string,
+    commentId: string,
+    content: string
+  ): Promise<Comment> {
+    const product = await this.productCardRepository.findById(productId);
+    if (!product) {
+      throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+    }
+
+    const comment = await this.commentRepository.findById(commentId);
+    if (!comment) {
+      throw new HttpException('Comment not found', HttpStatus.NOT_FOUND);
+    }
+
+    comment.content = content;
+    await comment.save();
+
+    return comment;
+  }
+
+  async getCommentsByProduct(productId: string): Promise<Comment[]> {
+    const product = await this.productCardRepository
+      .findById(productId)
+      .populate('comments')
+      .exec();
+    if (!product) {
+      throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+    }
+
+    return product.comments;
+  }
+
 }

@@ -78,6 +78,20 @@ export class DeliveryPoint extends Document {
 export const DeliveryPointSchema = SchemaFactory.createForClass(DeliveryPoint);
 
 @Schema({ timestamps: true })
+export class Comment extends Document {
+  @Prop({ required: true })
+  productId: mongoose.Schema.Types.ObjectId;
+
+  @Prop({ required: true })
+  userId: mongoose.Schema.Types.ObjectId;
+
+  @Prop({ required: true })
+  content: string;
+}
+
+export const CommentSchema = SchemaFactory.createForClass(Comment);
+
+@Schema({ timestamps: true })
 export class ProductCard extends Document {
   @Prop({ type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Shelter' })
   shelterId: string;
@@ -108,6 +122,9 @@ export class ProductCard extends Document {
 
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'PointIssue' }] })
   deliveryPoints: PointIssue[];
+
+   @Prop({ type: [CommentSchema], default: [] })
+  comments: Comment[];
 }
 
 export const ProductCardSchema = SchemaFactory.createForClass(ProductCard);
