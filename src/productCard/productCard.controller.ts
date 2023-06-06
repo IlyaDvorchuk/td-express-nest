@@ -18,6 +18,7 @@ import {diskStorage} from "multer";
 import {editFileName, imageFileFilter} from "../utils/file-upload.utils";
 import {JwtAuthGuard} from "../middlewares/auth.middleware";
 import { ApiResponse } from "@nestjs/swagger";
+import { CreateCommentDto } from './dto/create-comment.dto';
 
 @Controller('product-cards')
 export class ProductCardController {
@@ -99,5 +100,30 @@ export class ProductCardController {
   @Get()
   async searchProductCards(@Query('query') query: string, @Query('page') page: number, @Query('limit') limit: number) {
     return this.productCardService.searchProductCards(query, page, limit);
+  }
+
+  @Post(':id/comments')
+  async createComment(
+    @Param('id') id: string,
+    @Body() createCommentDto: CreateCommentDto,
+  ) {
+    return this.productCardService.addCommentToProduct(id, createCommentDto.userId, createCommentDto.content);
+  }
+
+  @Put(':id/comments/:commentId')
+  async updateComment(
+    @Param('id') id: string,
+    @Param('commentId') commentId: string,
+    @Body() updateCommentDto: CreateCommentDto,
+  ) {
+    return this.productCardService.updateComment(id, commentId, updateCommentDto);
+  }
+
+  @Delete(':id/comments/:commentId')
+  async deleteComment(
+    @Param('id') id: string,
+    @Param('commentId') commentId: string,
+  ) {
+    return this.productCardService.deleteComment(id, commentId);
   }
 }
