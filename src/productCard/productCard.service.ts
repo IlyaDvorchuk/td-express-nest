@@ -280,4 +280,35 @@ export class ProductCardService {
     return product.comments;
   }
 
+  async searchProductCardsByCategory(category: string, page: number, limit: number) {
+    const regexCategory = new RegExp(category, 'i');
+    const skip = (page - 1) * limit;
+  
+    const totalCount = await this.productCardRepository.countDocuments({
+      $or: [
+        { 'categories.category': regexCategory },
+        { 'categories.subcategory': regexCategory },
+        { 'categories.section': regexCategory },
+      ],
+    });
+    const totalPages = Math.ceil(totalCount / limit);
+  
+    const productCards = await this.productCardRepository.find({
+      $or: [
+        { 'categories.category': regexCategory },
+        { 'categories.subcategory': regexCategory },
+        { 'categories.section': regexCategory },
+      ],
+    })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+  
+    return {
+      productCards,
+      totalPages,
+      currentPage: page,
+    };
+  }
+  
 }

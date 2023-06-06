@@ -116,7 +116,7 @@ export class ProductCardController {
     @Param('commentId') commentId: string,
     @Body() updateCommentDto: CreateCommentDto,
   ) {
-    return this.productCardService.updateComment(id, commentId, updateCommentDto);
+    return this.productCardService.updateComment(id, commentId, updateCommentDto.content);
   }
 
   @Delete(':id/comments/:commentId')
@@ -126,4 +126,14 @@ export class ProductCardController {
   ) {
     return this.productCardService.deleteComment(id, commentId);
   }
+
+  @Get('category/:category')
+async searchProductCardsByCategory(
+  @Param('category') category: string,
+  @Query('page') page: number,
+  @Query('limit') limit: number,
+) {
+  return this.productCardService.searchProductCardsByCategory(category, page, limit);
+}
+
 }
