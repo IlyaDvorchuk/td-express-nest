@@ -1,4 +1,4 @@
-import { Controller, Get, Req, UseGuards } from "@nestjs/common";
+import {Controller, Get, Req, UseGuards} from "@nestjs/common";
 import { SheltersService } from "./shelters.service";
 import { JwtAuthGuard } from "../middlewares/auth.middleware";
 
@@ -13,5 +13,12 @@ export class SheltersController {
   async getDeliveryPoints(@Req() req) {
     const shelterId = req.user.id
     return await this.shelterService.getDeliveryPoints(shelterId)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  async getShelter(@Req() req) {
+    const shelterId = req.user.id
+    return this.shelterService.findById(shelterId)
   }
 }

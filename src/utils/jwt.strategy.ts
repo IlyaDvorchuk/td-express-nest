@@ -16,11 +16,17 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload) {
+
     let user
+    console.log('hey bro', payload)
+
     if (payload.user === 'user') {
       user = await this.userService.findById(payload.sub);
+
     } else if (payload.user === 'shelter') {
       user =  await this.shelterService.findById(payload.sub);
+
+
     }
     if (!user) {
       throw new UnauthorizedException('Не существует такого продавца');

@@ -118,6 +118,9 @@ export class Shelter extends Document {
   @Prop({required: true})
   imageShop: string
 
+  @Prop({required: true, default: false})
+  isVerified: boolean
+
   @Prop({type: ShelterDataSchema, required: true})
   shelterData: ShelterData
 
