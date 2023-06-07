@@ -7,12 +7,14 @@ import { ProductCardController } from './productCard.controller';
 import { ProductCardService } from './productCard.service';
 import { JwtStrategy } from '../utils/jwt.strategy';
 import { CategoriesModule } from "../categories/categories.module";
+import { Comment, CommentSchema } from './productCard.schema';
 
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: ProductCard.name, schema: ProductCardSchema },
+      { name: Comment.name, schema: CommentSchema },
     ]),
     PassportModule,
     CategoriesModule,
