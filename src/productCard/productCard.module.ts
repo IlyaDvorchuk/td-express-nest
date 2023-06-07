@@ -7,7 +7,6 @@ import { ProductCardController } from './productCard.controller';
 import { ProductCardService } from './productCard.service';
 import { JwtStrategy } from '../utils/jwt.strategy';
 import { CategoriesModule } from "../categories/categories.module";
-import { Comment, CommentSchema } from './productCard.schema';
 
 
 @Module({
