@@ -19,7 +19,6 @@ import {editFileName, imageFileFilter} from "../utils/file-upload.utils";
 import {JwtAuthGuard} from "../middlewares/auth.middleware";
 import { ApiResponse } from "@nestjs/swagger";
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { ProductCard } from './productCard.schema';
 import { Roles } from 'src/auth/roles-auth.decorator';
 
 @Controller('product-cards')

@@ -1,6 +1,7 @@
 import mongoose, { Document } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { PointIssue } from "../shelters/shelters.schema";
+import { NotificationDocument, NotificationSchema } from 'src/notification/notification.schema';
 
 @Schema()
 export class Category extends Document {
@@ -125,8 +126,11 @@ export class ProductCard extends Document {
 
    @Prop({ type: [CommentSchema], default: [] })
   comments: Comment[];
-  
+
   @Prop({ type: Boolean, default: false })
   published: boolean;
+
+  @Prop({ type: [NotificationSchema], default: [] })
+  notifications: NotificationDocument[];
 }
 export const ProductCardSchema = SchemaFactory.createForClass(ProductCard);

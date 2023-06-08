@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Post, Req, UseGuards, UsePipes} from "@nestjs/common";
+import {Body, Controller, Get, HttpException, HttpStatus, Param, Patch, Post, Req, UseGuards, UsePipes} from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
@@ -7,6 +7,8 @@ import {AddRoleDto} from "./dto/add-role.dto";
 import {BanUserDto} from "./dto/ban-user.dto";
 import { ValidationPipe } from "../pipes/validation.pipe";
 import {JwtAuthGuard} from "../middlewares/auth.middleware";
+import { CreateNotificationDto } from "src/notification/dto/notification.dto";
+import { NotificationDocument } from "src/notification/notification.schema";
 
 @ApiTags('Пользователи')
 @Controller('users')
@@ -60,5 +62,32 @@ export class UsersController {
     const userId = req.user.id
     console.log('addItemToCart', userId)
     return {userId: userId}
+  }
+
+  @Post('notifications')
+  async createNotification(@Body() dto: CreateNotificationDto): Promise<NotificationDocument> {
+    try {
+      return await this.usersService.createNotification(dto);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Patch('notifications/:id/mark-as-read')
+  async markNotificationAsRead(@Param('id') notificationId: string): Promise<NotificationDocument> {
+    try {
+      return await this.usersService.markNotificationAsRead(notificationId);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Get(':userId/notifications')
+  async getUserNotifications(@Param('userId') userId: string): Promise<NotificationDocument[]> {
+    try {
+      return await this.usersService.getUserNotifications(userId);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }
