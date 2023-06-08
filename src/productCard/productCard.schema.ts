@@ -125,6 +125,8 @@ export class ProductCard extends Document {
 
    @Prop({ type: [CommentSchema], default: [] })
   comments: Comment[];
+  
+  @Prop({ type: Boolean, default: false })
+  published: boolean;
 }
-
 export const ProductCardSchema = SchemaFactory.createForClass(ProductCard);

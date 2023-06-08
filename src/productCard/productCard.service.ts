@@ -15,9 +15,10 @@ export class ProductCardService {
         private categoriesService: CategoriesService,
     ) { }
 
-    async getProductCardById(id: string) {
-        return this.productCardRepository.findById(id).exec();
-    }
+    async getProductCardById(id: string): Promise<ProductCard> {
+        const query = this.productCardRepository.findOne({ _id: id, published: true });
+        return query.exec();
+      }
 
     async createProductCard(
         dto: CreateProductCardDto,
@@ -61,13 +62,19 @@ export class ProductCardService {
         }
     }
 
-    async updateProductCard(id: string, dto: CreateProductCardDto) {
-        return this.productCardRepository.findByIdAndUpdate(id, dto, { new: true }).exec();
-    }
+    async updateProductCard(id: string, dto: CreateProductCardDto): Promise<ProductCard> {
+        const query = this.productCardRepository.findOneAndUpdate(
+          { _id: id, published: true },
+          dto,
+          { new: true }
+        );
+        return query.exec();
+      }
 
-    async deleteProductCard(id: string) {
-        return this.productCardRepository.findByIdAndDelete(id).exec();
-    }
+      async deleteProductCard(id: string): Promise<ProductCard> {
+        const query = this.productCardRepository.findOneAndDelete({ _id: id, published: true });
+        return query.exec();
+      }
 
     async searchProductCards(query: string, page: number, limit: number) {
         const regexQuery = new RegExp(query, 'i');
@@ -84,14 +91,17 @@ export class ProductCardService {
         const totalPages = Math.ceil(totalCount / limit);
 
         const productCards = await this.productCardRepository.find({
-            $or: [
+            $and: [
+              { $or: [
                 { 'categories.category': regexQuery },
                 { 'categories.subcategory': regexQuery },
                 { 'categories.section': regexQuery },
                 { 'information.name': regexQuery },
                 { 'information.description': regexQuery },
+              ] },
+              { published: true }, 
             ],
-        })
+          })
             .skip(skip)
             .limit(limit)
             .exec();
@@ -112,11 +122,11 @@ export class ProductCardService {
 
 
         const productCards = await this.productCardRepository
-            .find()
-            .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(limit)
-            .exec();
+      .find({ published: true }) 
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
 
         return {
             productCards,
@@ -126,29 +136,34 @@ export class ProductCardService {
     }
 
     async getProductCardSummary(id: string) {
-        return this.productCardRepository.findById(id)
-            .select('information.name information.description pricesAndQuantity')
-            .exec();
-    }
-
-    async getProductCardDetails(id: string) {
-        return this.productCardRepository.findById(id).exec();
-    }
-
-    async addViewToProductCard(id: string) {
-        return this.productCardRepository.findByIdAndUpdate(id, { $inc: { viewsCount: 1 } }, { new: true }).exec();
-    }
+        const query = this.productCardRepository.findOne({ _id: id, published: true })
+          .select('information.name information.description pricesAndQuantity');
+        return query.exec();
+      }
+    
+      async getProductCardDetails(id: string) {
+        const query = this.productCardRepository.findOne({ _id: id, published: true });
+        return query.exec();
+      }
+    
+      async addViewToProductCard(id: string) {
+        const query = this.productCardRepository.findOneAndUpdate(
+          { _id: id, published: true },
+          { $inc: { viewsCount: 1 } },
+          { new: true }
+        );
+        return query.exec();
+      }
 
     async getAllProductCards(page: number, limit: number) {
         const skip = (page - 1) * limit;
         const totalCount = await this.productCardRepository.countDocuments();
         const totalPages = Math.ceil(totalCount / limit);
 
-        const productCards = await this.productCardRepository.find()
-            .skip(skip)
-            .limit(limit)
-            .exec();
-
+       const productCards = await this.productCardRepository.find({ published: true })
+      .skip(skip)
+      .limit(limit)
+      .exec();
         return {
             productCards,
             totalPages,
@@ -163,11 +178,11 @@ export class ProductCardService {
         const totalPages = Math.ceil(totalCount / limit);
 
         const hotOffers = await this.productCardRepository
-            .find()
-            .sort({ viewsCount: -1 })
-            .skip(skip)
-            .limit(limit)
-            .exec();
+        .find({ published: true })
+        .sort({ viewsCount: -1 })
+        .skip(skip)
+        .limit(limit)
+        .exec();
 
         return {
             productCards: hotOffers,
@@ -311,4 +326,23 @@ export class ProductCardService {
     };
   }
   
+  async getUnpublishedProductCards(page: number, limit: number) {
+    const skip = (page - 1) * limit;
+
+    const totalCount = await this.productCardRepository.countDocuments({ published: false });
+    const totalPages = Math.ceil(totalCount / limit);
+
+    const unpublishedProductCards = await this.productCardRepository
+      .find({ published: false })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+    return {
+      productCards: unpublishedProductCards,
+      totalPages,
+      currentPage: page,
+    };
+  }
+
 }

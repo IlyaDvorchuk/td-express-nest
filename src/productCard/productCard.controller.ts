@@ -19,6 +19,8 @@ import {editFileName, imageFileFilter} from "../utils/file-upload.utils";
 import {JwtAuthGuard} from "../middlewares/auth.middleware";
 import { ApiResponse } from "@nestjs/swagger";
 import { CreateCommentDto } from './dto/create-comment.dto';
+import { ProductCard } from './productCard.schema';
+import { Roles } from 'src/auth/roles-auth.decorator';
 
 @Controller('product-cards')
 export class ProductCardController {
@@ -136,4 +138,13 @@ async searchProductCardsByCategory(
   return this.productCardService.searchProductCardsByCategory(category, page, limit);
 }
 
+@ApiResponse({ status: 200 })
+@Roles('ADMIN')
+@Get('/unpublished')
+async getUnpublishedProductCards(
+  @Query('page') page: number,
+  @Query('limit') limit: number,
+) {
+  return this.productCardService.getUnpublishedProductCards(page, limit);
+}
 }
