@@ -8,7 +8,7 @@ import {BanUserDto} from "./dto/ban-user.dto";
 import { ValidationPipe } from "../pipes/validation.pipe";
 import {JwtAuthGuard} from "../middlewares/auth.middleware";
 import { CreateNotificationDto } from "src/notification/dto/notification.dto";
-import { NotificationDocument } from "src/notification/notification.schema";
+// import { NotificationDocument } from "src/notification/notification.schema";
 
 @ApiTags('Пользователи')
 @Controller('users')
@@ -65,7 +65,7 @@ export class UsersController {
   }
 
   @Post('notifications')
-  async createNotification(@Body() dto: CreateNotificationDto): Promise<NotificationDocument> {
+  async createNotification(@Body() dto: CreateNotificationDto)/*: Promise<NotificationDocument>*/ {
     try {
       return await this.usersService.createNotification(dto);
     } catch (error) {
@@ -74,7 +74,7 @@ export class UsersController {
   }
 
   @Patch('notifications/:id/mark-as-read')
-  async markNotificationAsRead(@Param('id') notificationId: string): Promise<NotificationDocument> {
+  async markNotificationAsRead(@Param('id') notificationId: string)/*: Promise<NotificationDocument>*/ {
     try {
       return await this.usersService.markNotificationAsRead(notificationId);
     } catch (error) {
@@ -82,12 +82,12 @@ export class UsersController {
     }
   }
 
-  @Get(':userId/notifications')
-  async getUserNotifications(@Param('userId') userId: string): Promise<NotificationDocument[]> {
-    try {
-      return await this.usersService.getUserNotifications(userId);
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
+  // @Get(':userId/notifications')
+  // async getUserNotifications(@Param('userId') userId: string): Promise<NotificationDocument[]> {
+  //   try {
+  //     return await this.usersService.getUserNotifications(userId);
+  //   } catch (error) {
+  //     throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+  //   }
+  // }
 }
