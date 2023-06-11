@@ -33,7 +33,6 @@ export class CategoriesController {
 
   @Get()
   async getAllCategories() {
-    console.log('hey hey !!!');
     return await this.categoriesService.getAll()
   }
 }

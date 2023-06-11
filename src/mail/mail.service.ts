@@ -18,6 +18,7 @@ export class MailService {
       )
     }
     const randomCode = Math.random().toString().slice(-6)
+    console.log('ActivateMailDto', dto);
     await this.mailerService.sendMail({
       from: process.env.SMTP_USER,
       to: dto.email,
