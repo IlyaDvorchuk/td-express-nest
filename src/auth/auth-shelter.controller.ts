@@ -53,8 +53,8 @@ export class AuthShelterController {
   ) {
     // console.log('shelterDto', shelterDto);
     const {fileScan, imageShop} = images
-    const photoPath = `${process.env.SERVER_URL}/shelter-scans/${fileScan[0].filename}`
-    const photoShopPath = `${process.env.SERVER_URL}/shelter-shops/${imageShop[0].filename}`
+    const photoPath = `/shelter-scans/${fileScan[0].filename}`;
+    const photoShopPath = `/shelter-shops/${imageShop[0].filename}`;    
     const shelter = await this.authService.registration(
       shelterDto,
       photoPath,
