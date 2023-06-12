@@ -7,21 +7,21 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateFavoritesDto } from 'src/favorite/dto/create-favorites.dto';
 import { CreateCartDto } from 'src/cart/dto/create-cart.dto';
-import {CartService} from "../cart/cart.service";
-import {FavoriteService} from "../favorite/favorite.service";
-// import { NotificationDocument } from 'src/notification/notification.schema';
+import { CartService } from "../cart/cart.service";
+import { FavoriteService } from "../favorite/favorite.service";
 import { CreateNotificationDto } from 'src/notification/dto/notification.dto';
 import { ProductCard } from 'src/productCard/productCard.schema';
+import { Notification, NotificationDocument } from 'src/notification/notification.schema';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userRepository: Model<UserDocument>,
-    // @InjectModel(Notification.name) private notificationRepository: Model<NotificationDocument>,
-    // @InjectModel(ProductCard.name) private productCardRepository: Model<ProductCard>,
+    //@InjectModel(Notification.name) private notificationRepository: Model<Notification>,
+    //@InjectModel(ProductCard.name) private productCardRepository: Model<ProductCard>,
     private cartService: CartService,
-    private favoriteService: FavoriteService,    
-  ) {}
+    private favoriteService: FavoriteService,
+  ) { }
 
   async createUser(dto: CreateUserDto) {
     return await this.userRepository.create(dto);
@@ -133,42 +133,42 @@ export class UsersService {
   }
 
   async denyProductPublishingRequest(productId: string, userId: string, message: string): Promise<void> {
-    // const productCard = await this.productCardRepository.findById(productId);
-    // if (!productCard) {
-    //   throw new Error('Товар не найден');
-    // }
-    //
-    // productCard.published = false;
+    //   const productCard = await this.productCardRepository.findById(productId);
+    //   if (!productCard) {
+    //     throw new Error('Товар не найден');
+    //   }
 
-    // const notification = new this.notificationRepository({
-    //   userId,
-    //   message,
-    // });
+    //   productCard.published = false;
 
-    // productCard.notifications.push(notification);
+    //   const notification = new this.notificationRepository({
+    //     userId,
+    //     message,
+    //   });
 
-    // await Promise.all([productCard.save(), notification.save()]);
+    //   productCard.notifications.push(notification);
+
+    //   await Promise.all([productCard.save(), notification.save()]);
   }
 
-  async createNotification(dto: CreateNotificationDto)/*: Promise<NotificationDocument>*/ {
-    // const notification = new this.notificationRepository(dto);
-    // return await notification.save();
+  async createNotification(dto: CreateNotificationDto)/* : Promise<NotificationDocument>*/ {
+    //const notification = new this.notificationRepository(dto);
+    //return await notification.save();
     return ''
   }
 
-  async markNotificationAsRead(notificationId: string)/*: Promise<NotificationDocument>*/ {
-    // const notification = await this.notificationRepository.findById(notificationId);
-    // if (!notification) {
+  async markNotificationAsRead(notificationId: string)/* : Promise<NotificationDocument>*/ {
+    //const notification = await this.notificationRepository.findById(notificationId);
+    //if (!notification) {
     //   throw new Error('Уведомление не найдено');
     // }
-    //
+
     // notification.isRead = true;
     // return await notification.save();
     return ''
   }
 
-  async getUserNotifications(userId: string)/*: Promise<NotificationDocument[]> */{
-    // return await this.notificationRepository.find({ userId });
+  async getUserNotifications(userId: string)/*: Promise<NotificationDocument[]>*/ {
+    //return await this.notificationRepository.find({ userId });
     return ''
   }
 }

@@ -8,6 +8,7 @@ import {BanUserDto} from "./dto/ban-user.dto";
 import { ValidationPipe } from "../pipes/validation.pipe";
 import {JwtAuthGuard} from "../middlewares/auth.middleware";
 import { CreateNotificationDto } from "src/notification/dto/notification.dto";
+import { NotificationDocument } from "src/notification/notification.schema";
 // import { NotificationDocument } from "src/notification/notification.schema";
 
 @ApiTags('Пользователи')
@@ -48,7 +49,7 @@ export class UsersController {
     return this.usersService.banUserById(dto)
   }
 
-  @ApiOperation({summary: 'Забанить пользователя'})
+  @ApiOperation({summary: 'Разбанить пользователя'})
   @ApiResponse({status: 200})
   @Roles('ADMIN')
   @Post('/unbanUser')
@@ -64,6 +65,7 @@ export class UsersController {
     return {userId: userId}
   }
 
+  //создание уведоиления для пользователя
   @Post('notifications')
   async createNotification(@Body() dto: CreateNotificationDto)/*: Promise<NotificationDocument>*/ {
     try {
@@ -82,12 +84,12 @@ export class UsersController {
     }
   }
 
-  // @Get(':userId/notifications')
-  // async getUserNotifications(@Param('userId') userId: string): Promise<NotificationDocument[]> {
-  //   try {
-  //     return await this.usersService.getUserNotifications(userId);
-  //   } catch (error) {
-  //     throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
-  //   }
-  // }
+  @Get(':userId/notifications')
+  async getUserNotifications(@Param('userId') userId: string) /*: Promise<NotificationDocument[]>*/ {
+    try {
+      //return await this.usersService.getUserNotifications(userId);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }

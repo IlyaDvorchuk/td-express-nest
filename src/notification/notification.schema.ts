@@ -4,7 +4,7 @@ import mongoose, { Document } from 'mongoose';
 export type NotificationDocument = Notification & Document;
 
 @Schema({ timestamps: true })
-export class Notification {
+export class Notification extends Document  {
   @Prop({ required: true })
   userId: mongoose.Schema.Types.ObjectId;
 
