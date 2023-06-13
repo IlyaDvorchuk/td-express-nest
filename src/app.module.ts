@@ -14,6 +14,9 @@ import { MulterModule } from "@nestjs/platform-express";
 import { ProductCardsModule } from "./productCard/productCard.module";
 import { FavoriteModule } from "./favorite/favorite.module";
 import { CartModule } from "./cart/cart.module";
+import { ProductStatusModel } from "./status/status.schema";
+import { ProductStatusesModule } from "./status/status.module";
+import { NotificationsModule } from "./notification/notification.module";
 
 @Module({
   controllers: [],
@@ -38,12 +41,30 @@ import { CartModule } from "./cart/cart.module";
     SheltersModule,
     ProductCardsModule,
     FavoriteModule,
-    CartModule
+    CartModule,
+    ProductStatusesModule,
+    NotificationsModule
   ]
 })
-export class AppModule{
-    // consumer.apply(cors({
-    //   origin: process.env.CLIENT_URL,
-    //   credentials: true
-    // })).forRoutes('*')
+
+export class AppModule {
+  constructor() {
+    initializeProductStatuses(); // Вызов функции initializeProductStatuses() в конструкторе модуля
+  }
+}
+
+async function initializeProductStatuses() {
+  const statuses = [
+    { name: 'Ожидает подтверждения' },
+    { name: 'Ожидает отправки' },
+    { name: 'В процессе доставки' },
+    { name: 'Заказ завершен' },
+  ];
+
+  try {
+    await ProductStatusModel.create(statuses);
+    console.log('Статусы товаров успешно проинициализированы.');
+  } catch (error) {
+    console.error('Ошибка при инициализации статусов товаров:', error);
+  }
 }

@@ -92,6 +92,15 @@ export class Comment extends Document {
 
 export const CommentSchema = SchemaFactory.createForClass(Comment);
 
+@Schema()
+export class ProductStatus extends Document {
+  @Prop({ required: true })
+  name: string;
+}
+
+export const ProductStatusSchema = SchemaFactory.createForClass(ProductStatus);
+
+
 @Schema({ timestamps: true })
 export class ProductCard extends Document {
   @Prop({ type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Shelter' })
@@ -132,5 +141,8 @@ export class ProductCard extends Document {
 
   @Prop({ type: [NotificationSchema], default: [] })
   notifications: NotificationDocument[];
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, required: true, ref: 'ProductStatus' })
+  status: ProductStatus;
 }
 export const ProductCardSchema = SchemaFactory.createForClass(ProductCard);
