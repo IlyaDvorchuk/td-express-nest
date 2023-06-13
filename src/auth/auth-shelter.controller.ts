@@ -60,14 +60,13 @@ export class AuthShelterController {
       photoPath,
       photoShopPath
     )
-    console.log('shelterData', shelter);
     const token = await this.authService.createAccessToken(shelter);
     response.cookie('access_token_shelter', token, {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: Boolean(process.env.HTTPS_BOOLEAN) ? 'none' : 'strict',
       secure: Boolean(process.env.HTTPS_BOOLEAN)
     })
-    return shelter
+    return { shelter, token }
   }
 
   @HttpCode(HttpStatus.OK)
@@ -79,14 +78,12 @@ export class AuthShelterController {
               @Res({passthrough: true}) response: Response) {
     const shelter = await this.authService.login(userDto)
     const token = await this.authService.createAccessToken(shelter);
-    console.log('token 82', token);
     response.cookie('access_token_shelter', token, {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       sameSite: Boolean(process.env.HTTPS_BOOLEAN) ? 'none' : 'strict',
       secure: Boolean(process.env.HTTPS_BOOLEAN)
     })
-    console.log('response', response);
-    return shelter
+    return { shelter, token }
   }
 
   @UsePipes(ValidationPipe)
