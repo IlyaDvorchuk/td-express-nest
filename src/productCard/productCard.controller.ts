@@ -32,8 +32,7 @@ export class ProductCardController {
     @Query('page') page: number,
     @Query('limit') limit: number,
   ) {
-    const result = await this.productCardService.getNewProductCards(page, limit);
-    return result;
+    return await this.productCardService.getNewProductCards(page, limit);
   }
 
   //получение горячих товаров (выборка по просмотрам товара)
@@ -42,8 +41,7 @@ export class ProductCardController {
     @Query('page') page: number,
     @Query('limit') limit: number
   ) {
-    const hotOffers = await this.productCardService.getHotOffers(page, limit);
-    return hotOffers;
+    return await this.productCardService.getHotOffers(page, limit);
   }
 
   //получение товара по id
@@ -52,7 +50,7 @@ export class ProductCardController {
     return this.productCardService.getProductCardById(id);
   }
 
-  //хэзэ че это Илья хэлп
+  //создание карточки товара
   @Post()
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(

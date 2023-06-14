@@ -1,8 +1,8 @@
 import {
   Body,
-  Controller,
+  Controller, Get,
   HttpCode,
-  HttpStatus,
+  HttpStatus, Param,
   Post,
   Res,
   UploadedFiles,
@@ -12,7 +12,6 @@ import {
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ValidationPipe } from "../pipes/validation.pipe";
 import { AuthShelterService } from "./auth-shelter.service";
-import { CheckShelterDto } from "./dto/check-shelter.dto";
 import { Response } from "express";
 import { CreateShelterDto } from "../shelters/dto/create-shelter.dto";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
@@ -54,7 +53,7 @@ export class AuthShelterController {
     // console.log('shelterDto', shelterDto);
     const {fileScan, imageShop} = images
     const photoPath = `/shelter-scans/${fileScan[0].filename}`;
-    const photoShopPath = `/shelter-shops/${imageShop[0].filename}`;    
+    const photoShopPath = `/shelter-shops/${imageShop[0].filename}`;
     const shelter = await this.authService.registration(
       shelterDto,
       photoPath,
@@ -86,10 +85,12 @@ export class AuthShelterController {
     return { shelter, token }
   }
 
-  @UsePipes(ValidationPipe)
-  @Post('/check')
-  async checkEmail(@Body() userDto: CheckShelterDto) {
-    return await this.authService.checkEmail(userDto)
+  @Get('/check/:email/:phone')
+  async checkShelter(
+      @Param('email') email: string,
+      @Param('phone') phone: string,
+  ) {
+    return await this.authService.checkShelter(email, phone)
   }
 
   @Post('/create-password')

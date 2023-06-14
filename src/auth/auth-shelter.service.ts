@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Injectable, UnauthorizedException } from "@nestjs/common";
-import { CheckShelterDto } from "./dto/check-shelter.dto";
 import { CreateShelterDto } from "../shelters/dto/create-shelter.dto";
 import { SheltersService } from "../shelters/shelters.service";
 import * as bcrypt from "bcryptjs";
@@ -15,8 +14,8 @@ export class AuthShelterService {
   }
 
 
-  async checkEmail(userDto: CheckShelterDto) {
-    return Promise.resolve(userDto);
+  async checkShelter(email: string) {
+    return await this.shelterService.getUserByEmail(email)
   }
 
   async createNewPassword(passwordDto: NewPasswordDto) {
