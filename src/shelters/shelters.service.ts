@@ -3,6 +3,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Shelter, ShelterDocument } from "./shelters.schema";
 import { CreateShelterDto } from "./dto/create-shelter.dto";
+import { ProductCard } from 'src/productCard/productCard.schema';
 
 @Injectable()
 export class SheltersService {
@@ -35,9 +36,12 @@ export class SheltersService {
     return this.shelterRepository.findById(shelterId).exec();
   }
 
-  async addProductCard(shelterId: string, productCard) {
+  async addProductCard(shelterId: string, productCard: ProductCard) {
     try {
       const shelter = await this.shelterRepository.findById(shelterId)
+      if(!shelter.isVerified){
+        productCard.published = false;
+      }     
       shelter.productCards.push(productCard);
       await shelter.save();
       return true

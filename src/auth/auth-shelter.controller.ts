@@ -90,7 +90,7 @@ export class AuthShelterController {
       @Param('email') email: string,
       @Param('phone') phone: string,
   ) {
-    return await this.authService.checkShelter(email, phone)
+    return await this.authService.checkShelter(email /*,phone*/)
   }
 
   @Post('/create-password')
