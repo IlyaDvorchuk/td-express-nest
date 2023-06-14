@@ -10,15 +10,14 @@ import { CreateCartDto } from 'src/cart/dto/create-cart.dto';
 import { CartService } from "../cart/cart.service";
 import { FavoriteService } from "../favorite/favorite.service";
 import { CreateNotificationDto } from 'src/notification/dto/notification.dto';
-import { ProductCard } from 'src/productCard/productCard.schema';
-import { Notification, NotificationDocument } from 'src/notification/notification.schema';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(User.name) private userRepository: Model<UserDocument>,
-    //@InjectModel(Notification.name) private notificationRepository: Model<Notification>,
+    @InjectModel(User.name) private userRepository: Model<UserDocument>,    
     //@InjectModel(ProductCard.name) private productCardRepository: Model<ProductCard>,
+    private notificationService: NotificationService,
     private cartService: CartService,
     private favoriteService: FavoriteService,
   ) { }
@@ -150,25 +149,15 @@ export class UsersService {
     //   await Promise.all([productCard.save(), notification.save()]);
   }
 
-  async createNotification(dto: CreateNotificationDto)/* : Promise<NotificationDocument>*/ {
-    //const notification = new this.notificationRepository(dto);
-    //return await notification.save();
-    return ''
+  async createNotification(dto: CreateNotificationDto) /*: Promise<NotificationDocument>*/ {
+    return this.notificationService.createNotification(dto.userId, dto.message);
   }
 
   async markNotificationAsRead(notificationId: string)/* : Promise<NotificationDocument>*/ {
-    //const notification = await this.notificationRepository.findById(notificationId);
-    //if (!notification) {
-    //   throw new Error('Уведомление не найдено');
-    // }
-
-    // notification.isRead = true;
-    // return await notification.save();
-    return ''
+    return this.notificationService.markNotificationAsRead(notificationId);
   }
 
   async getUserNotifications(userId: string)/*: Promise<NotificationDocument[]>*/ {
-    //return await this.notificationRepository.find({ userId });
-    return ''
+    return this.notificationService.getUserNotifications(userId);
   }
 }

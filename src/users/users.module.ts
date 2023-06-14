@@ -6,6 +6,7 @@ import {AuthModule} from "../auth/auth.module";
 import { MongooseModule } from "@nestjs/mongoose";
 import {FavoriteModule} from "../favorite/favorite.module";
 import {CartModule} from "../cart/cart.module";
+import { NotificationsModule } from 'src/notification/notification.module';
 
 @Global()
 @Module({
@@ -13,15 +14,15 @@ import {CartModule} from "../cart/cart.module";
   providers: [UsersService],
   imports: [
     MongooseModule.forFeature([
-      {name: User.name, schema: UserSchema}
+      {name: User.name, schema: UserSchema},
     ]),
     forwardRef(() => AuthModule),
     FavoriteModule,
-    CartModule
+    CartModule,
+    NotificationsModule
   ],
   exports: [
     UsersService,
-
-  ]
+    ]
 })
 export class UsersModule {}
