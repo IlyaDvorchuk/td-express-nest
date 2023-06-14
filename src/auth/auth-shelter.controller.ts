@@ -85,9 +85,12 @@ export class AuthShelterController {
     return { shelter, token }
   }
 
-  @Get('/check/:email')
-  async checkEmail(@Param('email') email: string) {
-    return await this.authService.checkEmail(email)
+  @Get('/check/:email/:phone')
+  async checkShelter(
+      @Param('email') email: string,
+      @Param('phone') phone: string,
+  ) {
+    return await this.authService.checkShelter(email, phone)
   }
 
   @Post('/create-password')

@@ -13,6 +13,15 @@ export class SheltersService {
     return await this.shelterRepository.findOne({ email }).exec();
   }
 
+  async checkShelter(email: string, phone: string) {
+    const shelterEmail = await this.shelterRepository.findOne({ email }).exec();
+    const shelterPhone = await this.shelterRepository.findOne({ phone }).exec();
+    return {
+      email: Boolean(shelterEmail),
+      phone: Boolean(shelterPhone),
+    };
+  }
+
   async createShelter(dto: CreateShelterDto, filename: string, fileNameShop: string) {
     return await this.shelterRepository.create({...dto, fileScan: filename, imageShop: fileNameShop})
   }

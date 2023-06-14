@@ -14,9 +14,8 @@ export class AuthShelterService {
   }
 
 
-  async checkEmail(email: string) {
-    const checkEmailShelter = await this.shelterService.getUserByEmail(email)
-    return Boolean(checkEmailShelter)
+  async checkShelter(email: string) {
+    return await this.shelterService.getUserByEmail(email)
   }
 
   async createNewPassword(passwordDto: NewPasswordDto) {
