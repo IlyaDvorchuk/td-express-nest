@@ -24,6 +24,9 @@ export class SheltersService {
   }
 
   async createShelter(dto: CreateShelterDto, filename: string, fileNameShop: string) {
+    console.log('CreateShelterDto 27', dto)
+    console.log('filename 27', filename)
+    console.log('fileNameShop 27', fileNameShop)
     return await this.shelterRepository.create({...dto, fileScan: filename, imageShop: fileNameShop})
   }
 
@@ -46,7 +49,7 @@ export class SheltersService {
       const shelter = await this.shelterRepository.findById(shelterId)
       if(!shelter.isVerified){
         productCard.published = false;
-      }     
+      }
       shelter.productCards.push(productCard);
       await shelter.save();
       return true
