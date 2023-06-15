@@ -7,7 +7,7 @@ export type CategoryDocument = HydratedDocument<Category>
 
 @Schema({timestamps: true})
 export class Category {
-  @Prop({type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Subcategory" }]})
+  @Prop({type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Subcategory" }], default: []})
   children: Subcategory[]
 
   @Prop({required: true, unique: true})
@@ -16,11 +16,10 @@ export class Category {
   @Prop({unique: true})
   icon: string
 
-  @Prop({required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: "ProductCard" }]})
+  @Prop({required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: "ProductCard" }], default: []})
   productCards: ProductCard[]
 
-  @Prop({required: true})
-  alternateName: string
+
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category)
