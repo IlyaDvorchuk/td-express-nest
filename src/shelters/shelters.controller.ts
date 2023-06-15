@@ -16,6 +16,13 @@ export class SheltersController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('cards')
+  async getCardsShelter(@Req() req) {
+    const shelterId = req.user.id
+    return this.shelterService.getCards(shelterId)
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getShelter(@Req() req) {
     const shelterId = req.user.id

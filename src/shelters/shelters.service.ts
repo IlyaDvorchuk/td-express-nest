@@ -36,6 +36,11 @@ export class SheltersService {
     return this.shelterRepository.findById(shelterId).exec();
   }
 
+  async getCards(shelterId: string) {
+    const shelter = await this.shelterRepository.findById(shelterId).populate('productCards').exec();
+    return shelter.productCards;
+  }
+
   async addProductCard(shelterId: string, productCard: ProductCard) {
     try {
       const shelter = await this.shelterRepository.findById(shelterId)
