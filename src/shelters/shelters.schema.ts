@@ -19,7 +19,7 @@ export class PersonalData extends Document {
 
 export const PersonalDataSchema = SchemaFactory.createForClass(PersonalData)
 
-@Schema()
+@Schema({_id: false})
 export class ClosePerson extends Document {
   @Prop({required: true})
   name: string
@@ -30,8 +30,8 @@ export class ClosePerson extends Document {
   @Prop({required: true})
   patronymic: string
 
-  @Prop({required: true, unique: true})
-  phone: string
+  @Prop({required: true})
+  phoneClose: string
 }
 
 export const ClosePersonSchema = SchemaFactory.createForClass(ClosePerson)

@@ -59,6 +59,7 @@ export class AuthShelterController {
       photoPath,
       photoShopPath
     )
+    console.log('shelter', shelter)
     const token = await this.authService.createAccessToken(shelter);
     response.cookie('access_token_shelter', token, {
       maxAge: 30 * 24 * 60 * 60 * 1000,

@@ -49,6 +49,7 @@ export class AuthShelterService {
         shelterDto[field] = JSON.parse(shelterDto[field])
       }
     }
+    // console.log('shelterDto 52', shelterDto)
     return await this.shelterService.createShelter({...shelterDto, password: hashPassword}, photoPath, photoShopPath)
   }
 

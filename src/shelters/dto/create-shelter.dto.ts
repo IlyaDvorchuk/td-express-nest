@@ -21,7 +21,7 @@ export class ClosePerson {
   @ApiProperty({example: '77546548', description: 'Номер близкого человека'})
   @IsString({message: 'Должно быть строкой'})
   @Length(7, 16, {message: 'Не меньше 7 и не больше 16'})
-  readonly phone: string
+  readonly phoneClose: string
 }
 
 export class PersonalData {

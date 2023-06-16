@@ -40,15 +40,20 @@ export class ProductCardService {
             }
         }
 
+        console.log('dto', dto)
+        console.log('shelterId', shelterId)
+        console.log('mainPhoto', mainPhoto)
+        console.log('additionalPhotos', additionalPhotos)
+        // console.log('new PricesAndQuantity()', new PricesAndQuantity())
         const product = await this.productCardRepository.create({
             ...dto,
             shelterId,
             mainPhoto,
             additionalPhotos,
             viewsCount: 0,
-            pricesAndQuantity: new PricesAndQuantity(), // Инициализируем поле pricesAndQuantity новым экземпляром класса PricesAndQuantity
+            // pricesAndQuantity: new PricesAndQuantity(), // Инициализируем поле pricesAndQuantity новым экземпляром класса PricesAndQuantity
           });
-
+        console.log('product', product)
         const isAddInShelter = await this.shelterService.addProductCard(shelterId, product._id);
         const isAddInCategories = await this.categoriesService.addProductCard(dto.categories, product._id);
 
@@ -99,7 +104,7 @@ export class ProductCardService {
                 { 'information.name': regexQuery },
                 { 'information.description': regexQuery },
               ] },
-              { published: true }, 
+              { published: true },
             ],
           })
             .skip(skip)
@@ -122,7 +127,7 @@ export class ProductCardService {
 
 
         const productCards = await this.productCardRepository
-      .find({ published: true }) 
+      .find({ published: true })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -140,12 +145,12 @@ export class ProductCardService {
           .select('information.name information.description pricesAndQuantity');
         return query.exec();
       }
-    
+
       async getProductCardDetails(id: string) {
         const query = this.productCardRepository.findOne({ _id: id, published: true });
         return query.exec();
       }
-    
+
       async addViewToProductCard(id: string) {
         const query = this.productCardRepository.findOneAndUpdate(
           { _id: id, published: true },
@@ -226,21 +231,21 @@ export class ProductCardService {
 
   async addCommentToProduct(productId: string, userId: string, content: string): Promise<Comment> {
     const product = await this.productCardRepository.findById(productId);
-    
+
     if (!product) {
       throw new Error('Product not found');
     }
-    
+
     const comment = new this.commentRepository({ productId, userId, content });
-    await comment.save();  
-    
+    await comment.save();
+
 
     product.comments.push(comment._id);
     await product.save();
-    
+
     return comment;
   }
-  
+
   async deleteComment(productId: string, commentId: string): Promise<void> {
     const product = await this.productCardRepository.findById(productId);
     if (!product) {
@@ -298,7 +303,7 @@ export class ProductCardService {
   async searchProductCardsByCategory(category: string, page: number, limit: number) {
     const regexCategory = new RegExp(category, 'i');
     const skip = (page - 1) * limit;
-  
+
     const totalCount = await this.productCardRepository.countDocuments({
       $or: [
         { 'categories.category': regexCategory },
@@ -307,7 +312,7 @@ export class ProductCardService {
       ],
     });
     const totalPages = Math.ceil(totalCount / limit);
-  
+
     const productCards = await this.productCardRepository.find({
       $or: [
         { 'categories.category': regexCategory },
@@ -318,14 +323,14 @@ export class ProductCardService {
       .skip(skip)
       .limit(limit)
       .exec();
-  
+
     return {
       productCards,
       totalPages,
       currentPage: page,
     };
   }
-  
+
   async getUnpublishedProductCards(page: number, limit: number) {
     const skip = (page - 1) * limit;
 
