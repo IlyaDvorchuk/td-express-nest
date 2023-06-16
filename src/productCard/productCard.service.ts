@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { PricesAndQuantity, ProductCard, Comment } from './productCard.schema';
+import { ProductCard, Comment } from './productCard.schema';
 import { CreateProductCardDto } from './dto/create-product-card.dto';
 import { SheltersService } from "../shelters/shelters.service";
 import { CategoriesService } from "../categories/categories.service";
@@ -40,11 +40,6 @@ export class ProductCardService {
             }
         }
 
-        console.log('dto', dto)
-        console.log('shelterId', shelterId)
-        console.log('mainPhoto', mainPhoto)
-        console.log('additionalPhotos', additionalPhotos)
-        // console.log('new PricesAndQuantity()', new PricesAndQuantity())
         const product = await this.productCardRepository.create({
             ...dto,
             shelterId,
@@ -53,7 +48,6 @@ export class ProductCardService {
             viewsCount: 0,
             // pricesAndQuantity: new PricesAndQuantity(), // Инициализируем поле pricesAndQuantity новым экземпляром класса PricesAndQuantity
           });
-        console.log('product', product)
         const isAddInShelter = await this.shelterService.addProductCard(shelterId, product._id);
         const isAddInCategories = await this.categoriesService.addProductCard(dto.categories, product._id);
 
