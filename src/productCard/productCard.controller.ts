@@ -36,7 +36,7 @@ export class ProductCardController {
   }
 
   //получение горячих товаров (выборка по просмотрам товара)
-  @Get('hot-offers')
+  @Get('/hot-offers')
   async getHotOffers(
     @Query('page') page: number,
     @Query('limit') limit: number
