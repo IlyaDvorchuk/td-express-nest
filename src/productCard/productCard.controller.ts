@@ -78,6 +78,7 @@ export class ProductCardController {
     @Body() createProductCardDto: CreateProductCardDto,
     @UploadedFiles() files: { mainPhoto: Express.Multer.File, additionalPhotos: Express.Multer.File[] },
   ) {
+    console.log('createProductCard req');
     const { mainPhoto, additionalPhotos } = files
     const shelterId = req.user.id
     const mainPhotoPath = mainPhoto ? '/main-photos/' + mainPhoto[0].filename : undefined;
