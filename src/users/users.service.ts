@@ -5,7 +5,6 @@ import { AddRoleDto } from './dto/add-role.dto';
 import { BanUserDto } from './dto/ban-user.dto';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { CreateFavoritesDto } from 'src/favorite/dto/create-favorites.dto';
 import { CreateCartDto } from 'src/cart/dto/create-cart.dto';
 import { CartService } from "../cart/cart.service";
 import { FavoriteService } from "../favorite/favorite.service";
@@ -118,20 +117,21 @@ export class UsersService {
     await this.cartService.addToCart(userId, dto)
   }
 
-  async addToFavorites(userId: string, dto: CreateFavoritesDto) {
+  async addToFavorites(userId: string, goodId) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
     }
 
-    await this.favoriteService.addToFavorite(userId, dto)
+    await this.favoriteService.addToFavorite(userId, goodId)
+    return true
   }
 
   async findById(userId: string) {
     return this.userRepository.findById(userId).exec();
   }
 
-  async denyProductPublishingRequest(productId: string, userId: string, message: string): Promise<void> {
+  // async denyProductPublishingRequest(productId: string, userId: string, message: string): Promise<void> {
     //   const productCard = await this.productCardRepository.findById(productId);
     //   if (!productCard) {
     //     throw new Error('Товар не найден');
@@ -147,7 +147,7 @@ export class UsersService {
     //   productCard.notifications.push(notification);
 
     //   await Promise.all([productCard.save(), notification.save()]);
-  }
+  // }
 
   async createNotification(dto: CreateNotificationDto) /*: Promise<NotificationDocument>*/ {
     return this.notificationService.createNotification(dto.userId, dto.message);

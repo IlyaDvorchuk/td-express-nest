@@ -1,10 +1,7 @@
 import {HttpException, HttpStatus, Injectable} from "@nestjs/common";
 import {InjectModel} from "@nestjs/mongoose";
-import {Cart, CartDocument} from "../cart/cart-item.schema";
 import {Model} from "mongoose";
-import {CreateCartDto} from "../cart/dto/create-cart.dto";
 import {FavoriteItem, Favorites, FavoritesDocument} from "./favorite-item.schema";
-import {CreateFavoritesDto} from "./dto/create-favorites.dto";
 
 @Injectable()
 export class FavoriteService {
@@ -15,15 +12,15 @@ export class FavoriteService {
         return this.favoritesRepository.findOne({userId});
     }
 
-    async addToFavorite(userId: string, dto: CreateFavoritesDto) {
+    async addToFavorite(userId: string, goodId: string) {
         const favorites = await this.findFavoriteById(userId );
         if (favorites) {
-            const existingItem = favorites.items.find((item) => item.productId === dto.productId);
+            const existingItem = favorites.items.find((item) => item.productId === goodId);
             if (existingItem) {
                 throw new HttpException('Продукт уже находится в избранном', HttpStatus.BAD_REQUEST);
             } else {
                 favorites.items.push({
-                    productId: dto.productId,
+                    productId: goodId,
                 } as FavoriteItem);
                 await favorites.save();
             }
@@ -32,11 +29,13 @@ export class FavoriteService {
                 userId,
                 items: [
                     {
-                        productId: dto.productId,
+                        productId: goodId,
                     },
                 ],
             });
             await newFavorites.save();
         }
+
+        return true
     }
 }

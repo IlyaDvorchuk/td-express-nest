@@ -7,11 +7,12 @@ import { MongooseModule } from "@nestjs/mongoose";
 import {FavoriteModule} from "../favorite/favorite.module";
 import {CartModule} from "../cart/cart.module";
 import { NotificationsModule } from 'src/notification/notification.module';
+import { JwtStrategy } from "../utils/jwt.strategy";
 
 @Global()
 @Module({
   controllers: [UsersController],
-  providers: [UsersService],
+  providers: [UsersService, JwtStrategy],
   imports: [
     MongooseModule.forFeature([
       {name: User.name, schema: UserSchema},

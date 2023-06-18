@@ -8,7 +8,6 @@ import {BanUserDto} from "./dto/ban-user.dto";
 import { ValidationPipe } from "../pipes/validation.pipe";
 import {JwtAuthGuard} from "../middlewares/auth.middleware";
 import { CreateNotificationDto } from "src/notification/dto/notification.dto";
-import { NotificationDocument } from "src/notification/notification.schema";
 // import { NotificationDocument } from "src/notification/notification.schema";
 
 @ApiTags('Пользователи')
@@ -17,40 +16,40 @@ export class UsersController {
   constructor(private usersService: UsersService) {
   }
 
-  @ApiOperation({summary: 'Создание пользователя'})
-  @ApiResponse({status: 200, type: 'sddsf'})
+  @ApiOperation({ summary: 'Создание пользователя' })
+  @ApiResponse({ status: 200, type: 'sddsf' })
   @UsePipes(ValidationPipe)
   @Post()
   create(@Body() userDto: CreateUserDto) {
     return this.usersService.createUser(userDto)
   }
 
-  @ApiOperation({summary: 'Получение всех пользователей'})
-  @ApiResponse({status: 200})
+  @ApiOperation({ summary: 'Получение всех пользователей' })
+  @ApiResponse({ status: 200 })
   @Roles('ADMIN')
   @Get()
   getAll() {
     return this.usersService.getAllUsers()
   }
 
-  @ApiOperation({summary: 'Выдать роль'})
-  @ApiResponse({status: 200})
+  @ApiOperation({ summary: 'Выдать роль' })
+  @ApiResponse({ status: 200 })
   @Roles('ADMIN')
   @Post('/role')
   addRole(@Body() dto: AddRoleDto) {
     return this.usersService.addRole(dto)
   }
 
-  @ApiOperation({summary: 'Забанить пользователя'})
-  @ApiResponse({status: 200})
+  @ApiOperation({ summary: 'Забанить пользователя' })
+  @ApiResponse({ status: 200 })
   @Roles('ADMIN')
   @Post('/ban')
   ban(@Body() dto: BanUserDto) {
     return this.usersService.banUserById(dto)
   }
 
-  @ApiOperation({summary: 'Разбанить пользователя'})
-  @ApiResponse({status: 200})
+  @ApiOperation({ summary: 'Разбанить пользователя' })
+  @ApiResponse({ status: 200 })
   @Roles('ADMIN')
   @Post('/unbanUser')
   unbanUser(@Body() dto: BanUserDto) {
@@ -62,7 +61,7 @@ export class UsersController {
   addItemToCart(@Req() req) {
     const userId = req.user.id
     console.log('addItemToCart', userId)
-    return {userId: userId}
+    return { userId: userId }
   }
 
   //создание уведоиления для пользователя
@@ -88,6 +87,19 @@ export class UsersController {
   async getUserNotifications(@Param('userId') userId: string) /*: Promise<NotificationDocument[]>*/ {
     try {
       //return await this.usersService.getUserNotifications(userId);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/favorites/:goodId')
+  async addToFavorites(
+    @Param('goodId') goodId: string, @Req() req
+  ) /*: Promise<NotificationDocument[]>*/ {
+    const userId = req.user.id
+    try {
+      return await this.usersService.addToFavorites(userId, goodId)
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
