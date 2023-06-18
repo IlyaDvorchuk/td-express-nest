@@ -13,12 +13,13 @@ export class CategoriesService {
               @InjectModel(Section.name) private sectionRepository: Model<SectionDocument>) {
   }
 
-  async saveSubcats(subcats: any) {
-    const {parent, subs} = subcats
-    const parentCat =  await this.categoryRepository.findOne({name: parent})
-    for (let i = 0; i < subs.length; i++) {
-      await this.subcategoryRepository.create({name: subs[i], parent: parentCat._id})
-    }
+  async saveSubcats(subcat: any) {
+    // const {parent, subs} = subcats
+    // const parentCat =  await this.categoryRepository.findOne({name: parent})
+    // for (let i = 0; i < subs.length; i++) {
+    //   await this.subcategoryRepository.create({name: subs[i], parent: parentCat._id})
+    // }
+    return await this.subcategoryRepository.create(subcat)
   }
 
   async saveCategory(category) {
@@ -69,10 +70,11 @@ export class CategoriesService {
       const subcategory = await this.subcategoryRepository.findById(idCategories.subcategory)
       subcategory.productCards.push(productCard);
       await subcategory.save();
-
-      const section = await this.sectionRepository.findById(idCategories.section)
-      section.productCards.push(productCard);
-      await section.save();
+      if (idCategories.section !== 'missing') {
+        const section = await this.sectionRepository.findById(idCategories.section)
+        section.productCards.push(productCard);
+        await section.save();
+      }
 
       return true
     } catch (e) {

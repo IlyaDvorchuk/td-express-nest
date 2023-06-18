@@ -1,4 +1,6 @@
-import { Controller, Get } from "@nestjs/common";
+
+import { Body, Controller, Get, Post } from "@nestjs/common";
+
 import { CategoriesService } from "./categories.service";
 
 @Controller('categories')
@@ -6,10 +8,12 @@ export class CategoriesController {
   constructor(private categoriesService: CategoriesService) {
   }
 
-  // @Post('/category')
-  // async saveCategory(@Body() dtoCat) {
-  //   return this.categoriesService.saveCategory(dtoCat)
-  // }
+  @Post('/category')
+
+
+  async saveCategory(@Body() dtoCat) {
+    return this.categoriesService.saveCategory(dtoCat)
+  }
   //
   // @Post('/subcategories')
   // async saveSubcategories(@Body() dtoCat) {

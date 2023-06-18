@@ -11,7 +11,7 @@ export class Category extends Document {
   @Prop({ required: true })
   subcategory: string;
 
-  @Prop({ required: true })
+  @Prop()
   section: string;
 }
 
