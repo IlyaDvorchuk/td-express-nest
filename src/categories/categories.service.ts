@@ -26,12 +26,13 @@ export class CategoriesService {
     return await this.categoryRepository.create(category)
   }
 
-  async saveSections(sections: any) {
-    const {parent, subs} = sections
-    const parentCat = await this.subcategoryRepository.findOne({name: parent})
-    for (let i = 0; i < subs.length; i++) {
-      await this.sectionRepository.create({name: subs[i], parent: parentCat._id})
-    }
+  async saveSections(section: any) {
+    // const {parent, subs} = sections
+    // const parentCat = await this.subcategoryRepository.findOne({name: parent})
+    // for (let i = 0; i < subs.length; i++) {
+    //   await this.sectionRepository.create({name: subs[i], parent: parentCat._id})
+    // }
+    return await this.sectionRepository.create(section)
   }
 
   async cattoSub(dtoCat: any) {
@@ -70,7 +71,7 @@ export class CategoriesService {
       const subcategory = await this.subcategoryRepository.findById(idCategories.subcategory)
       subcategory.productCards.push(productCard);
       await subcategory.save();
-      if (idCategories.section !== 'missing') {
+        if (idCategories.section !== 'missing') {
         const section = await this.sectionRepository.findById(idCategories.section)
         section.productCards.push(productCard);
         await section.save();
