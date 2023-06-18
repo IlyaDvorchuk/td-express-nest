@@ -156,4 +156,11 @@ export class ProductCardController {
   ) {
     return this.productCardService.getUnpublishedProductCards(page, limit);
   }
+
+  //получение всех покупок за все время и за последний месяц
+  @Get('/total-purchases')
+async getTotalPurchases() {
+  return this.productCardService.getTotalPurchases();
+}
+
 }

@@ -142,6 +142,10 @@ export class ProductCard extends Document {
   @Prop({ type: [NotificationSchema], default: [] })
   notifications: NotificationDocument[];
 
+  @Prop({ type: Number, default: 0 }) //куоличество покупок
+purchaseCount: number;
+
+
   // @Prop({ type: mongoose.Schema.Types.ObjectId, required: true, ref: 'ProductStatus' })
   // status: ProductStatus;
 }

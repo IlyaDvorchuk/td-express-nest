@@ -5,6 +5,7 @@ import { ProductCard, Comment } from './productCard.schema';
 import { CreateProductCardDto } from './dto/create-product-card.dto';
 import { SheltersService } from "../shelters/shelters.service";
 import { CategoriesService } from "../categories/categories.service";
+import moment from "moment";
 
 @Injectable()
 export class ProductCardService {
@@ -343,5 +344,48 @@ export class ProductCardService {
       currentPage: page,
     };
   }
+
+  async getTotalPurchases(): Promise<{ total: number; totalLastMonth: number; totalAmount: number; totalAmountLastMonth: number }> {
+    const total = await this.productCardRepository.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalPurchaseCount: { $sum: "$purchaseCount" },
+          totalAmount: { $sum: "$pricesAndQuantity.price" }
+        }
+      }
+    ]);
+    
+    const totalLastMonth = await this.productCardRepository.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: moment().subtract(1, 'months').toDate() }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalPurchaseCount: { $sum: "$purchaseCount" },
+          totalAmount: { $sum: "$pricesAndQuantity.price" }
+        }
+      }
+    ]);
+    
+    const totalAmount = await this.productCardRepository.aggregate([
+      { $group: { _id: null, totalAmount: { $sum: '$pricesAndQuantity.price' } } },
+    ]);
+    const totalAmountLastMonth = await this.productCardRepository.aggregate([
+      { $match: { createdAt: { $gte: moment().subtract(1, 'months').toDate() } } },
+      { $group: { _id: null, totalAmount: { $sum: '$pricesAndQuantity.price' } } },
+    ]);
+  
+    return {
+      total: total[0].totalPurchaseCount,
+      totalLastMonth: totalLastMonth[0].totalPurchaseCount,
+      totalAmount: totalAmount[0] ? totalAmount[0].totalAmount : 0,
+      totalAmountLastMonth: totalAmountLastMonth[0] ? totalAmountLastMonth[0].totalAmount : 0,
+    };
+  }
+  
 
 }
