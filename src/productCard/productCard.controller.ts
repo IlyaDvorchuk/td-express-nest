@@ -159,6 +159,7 @@ export class ProductCardController {
 
   //получение всех покупок за все время и за последний месяц
   @Get('/total-purchases')
+  @Roles('ADMIN')
 async getTotalPurchases() {
   return this.productCardService.getTotalPurchases();
 }
