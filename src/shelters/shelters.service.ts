@@ -39,8 +39,17 @@ export class SheltersService {
     return this.shelterRepository.findById(shelterId).exec();
   }
 
-  async getCards(shelterId: string) {
-    const shelter = await this.shelterRepository.findById(shelterId).populate('productCards').exec();
+  async getCards(shelterId: string, page: number, limit: number) {
+    const shelter = await this.shelterRepository
+      .findById(shelterId)
+      .populate({
+        path: 'productCards',
+        options: {
+          skip: (page - 1) * limit, // Пропустить элементы предыдущих страниц
+          limit: limit // Ограничить количество элементов на странице
+        }
+      })
+      .exec();
     return shelter.productCards;
   }
 
