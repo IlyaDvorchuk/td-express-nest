@@ -104,4 +104,15 @@ export class UsersController {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/favorites-get/')
+  async getFavorites(@Req() req) {
+    const userId = req.user.id
+    try {
+      return await this.usersService.getFavorites(userId)
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }

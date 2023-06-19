@@ -8,6 +8,7 @@ import {FavoriteModule} from "../favorite/favorite.module";
 import {CartModule} from "../cart/cart.module";
 import { NotificationsModule } from 'src/notification/notification.module';
 import { JwtStrategy } from "../utils/jwt.strategy";
+import {ProductCardsModule} from "../productCard/productCard.module";
 
 @Global()
 @Module({
@@ -20,7 +21,8 @@ import { JwtStrategy } from "../utils/jwt.strategy";
     forwardRef(() => AuthModule),
     FavoriteModule,
     CartModule,
-    NotificationsModule
+    NotificationsModule,
+    ProductCardsModule
   ],
   exports: [
     UsersService,

@@ -10,15 +10,17 @@ import { CartService } from "../cart/cart.service";
 import { FavoriteService } from "../favorite/favorite.service";
 import { CreateNotificationDto } from 'src/notification/dto/notification.dto';
 import { NotificationService } from 'src/notification/notification.service';
+import {ProductCardService} from "../productCard/productCard.service";
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(User.name) private userRepository: Model<UserDocument>,    
+    @InjectModel(User.name) private userRepository: Model<UserDocument>,
     //@InjectModel(ProductCard.name) private productCardRepository: Model<ProductCard>,
     private notificationService: NotificationService,
     private cartService: CartService,
     private favoriteService: FavoriteService,
+    private productCardService: ProductCardService,
   ) { }
 
   async createUser(dto: CreateUserDto) {
@@ -117,14 +119,28 @@ export class UsersService {
     await this.cartService.addToCart(userId, dto)
   }
 
-  async addToFavorites(userId: string, goodId) {
+  async addToFavorites(userId: string, goodId: string) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
     }
 
-    await this.favoriteService.addToFavorite(userId, goodId)
+    const product = await this.productCardService.getProductCardById(goodId)
+    if (!product) {
+      throw new HttpException('Товар не найден', HttpStatus.NOT_FOUND);
+    }
+
+    await this.favoriteService.addToFavorite(userId, product)
     return true
+  }
+
+  async getFavorites(userId: string) {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
+    }
+
+    return await this.favoriteService.getFavoritesById(userId)
   }
 
   async findById(userId: string) {
