@@ -6,14 +6,15 @@ import { CreateProductCardDto } from './dto/create-product-card.dto';
 import { SheltersService } from "../shelters/shelters.service";
 import { CategoriesService } from "../categories/categories.service";
 import moment from "moment";
-import { Question, QuestionDocument } from "src/questionary/questionary.schema";
+import { Question } from "src/questionary/questionary.schema";
+import { QuestionaryService } from "../questionary/questionary.service";
 
 @Injectable()
 export class ProductCardService {
     constructor(
         @InjectModel(ProductCard.name) private productCardRepository: Model<ProductCard>,
         @InjectModel(Comment.name) private commentRepository: Model<Comment>,
-        @InjectModel(Question.name) private questionModel: Model<QuestionDocument>,
+        private questionService: QuestionaryService,
         private shelterService: SheltersService,
         private categoriesService: CategoriesService,
     ) { }
@@ -392,12 +393,7 @@ export class ProductCardService {
 
   async createQuestion(productId: string, customerId: number, questionText: string): Promise<Question> {
     const product = await this.getProductCardById(productId);
-    const question = new this.questionModel({
-      product,
-      customerId,
-      questionText,
-    });
-    return question.save();
+    return this.questionService.createQuestion(product, customerId, questionText);
   }
 
 }
