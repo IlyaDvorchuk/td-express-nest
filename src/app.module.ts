@@ -17,6 +17,7 @@ import { CartModule } from "./cart/cart.module";
 // import { ProductStatusModel } from "./status/status.schema";
 // import { ProductStatusesModule } from "./status/status.module";
 import { NotificationsModule } from "./notification/notification.module";
+import { QuestionModule } from "./questionary/questionary.module";
 
 @Module({
   controllers: [],
@@ -43,7 +44,8 @@ import { NotificationsModule } from "./notification/notification.module";
     FavoriteModule,
     CartModule,
     //ProductStatusesModule,
-    NotificationsModule
+    NotificationsModule,
+    QuestionModule
   ]
 })
 
