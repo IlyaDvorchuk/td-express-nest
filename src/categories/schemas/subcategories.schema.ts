@@ -22,6 +22,9 @@ export class Subcategory {
 
   @Prop({required: true})
   parentName: string
+
+  @Prop({required: true})
+  type: 'subcategory'
 }
 
 export const SubcategorySchema = SchemaFactory.createForClass(Subcategory)

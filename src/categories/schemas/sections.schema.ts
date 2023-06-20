@@ -21,10 +21,13 @@ export class Section {
   parentName: string
 
   @Prop({required: true})
-  categoriesName: string
+  categoryName: string
 
   @Prop({type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true})
-  categoriesParent: Category
+  categoryParent: Category
+
+  @Prop({required: true})
+  type: 'section'
 }
 
 export const SectionSchema = SchemaFactory.createForClass(Section)
