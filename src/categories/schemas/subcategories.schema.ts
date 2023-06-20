@@ -23,7 +23,7 @@ export class Subcategory {
   @Prop({required: true})
   parentName: string
 
-  @Prop({required: true})
+  @Prop({required: true, default: 'subcategory'})
   type: 'subcategory'
 }
 

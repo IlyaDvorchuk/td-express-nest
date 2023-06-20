@@ -26,7 +26,7 @@ export class Section {
   @Prop({type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true})
   categoryParent: Category
 
-  @Prop({required: true})
+  @Prop({required: true, default: 'section'})
   type: 'section'
 }
 

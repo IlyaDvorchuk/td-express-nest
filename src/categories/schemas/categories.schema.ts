@@ -19,7 +19,7 @@ export class Category {
   @Prop({required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: "ProductCard" }]})
   productCards: ProductCard[]
 
-  @Prop({required: true})
+  @Prop({required: true, default: 'category'})
   type: 'category'
 }
 
