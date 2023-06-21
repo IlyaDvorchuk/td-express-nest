@@ -1,8 +1,8 @@
-import {HttpException, HttpStatus, Injectable} from "@nestjs/common";
-import {InjectModel} from "@nestjs/mongoose";
-import {Model} from "mongoose";
-import {Cart, CartDocument} from "./cart-item.schema";
-import {CreateCartDto} from "./dto/create-cart.dto";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { Model } from "mongoose";
+import { Cart, CartDocument } from "./cart-item.schema";
+import { CreateCartDto } from "./dto/create-cart.dto";
 
 @Injectable()
 export class CartService {
@@ -11,7 +11,7 @@ export class CartService {
 
     //поиск корзины определенного юзера по id
     private async findCartById(userId: string) {
-        return this.cartRepository.findOne({userId});
+        return this.cartRepository.findOne({ userId });
     }
 
     //добавить в корзину юзера товар
@@ -26,6 +26,8 @@ export class CartService {
                     productId: dto.productId,
                     quantity: dto.quantity,
                     totalPrice: dto.totalPrice,
+                    isCart: true,
+                    isFavorite: dto.isFavorite,
                 });
                 await cart.save();
             }
@@ -37,6 +39,8 @@ export class CartService {
                         productId: dto.productId,
                         quantity: dto.quantity,
                         totalPrice: dto.totalPrice,
+                        isCart: true,
+                        isFavorite: dto.isFavorite,
                     },
                 ],
             });
@@ -45,26 +49,29 @@ export class CartService {
     }
 
     // Удалить товар из корзины юзера
-  async removeFromCart(userId: string, productId: string) {
-    const cart = await this.findCartById(userId);
-    if (!cart) {
-      throw new HttpException(
-        "Корзина пользователя не найдена",
-        HttpStatus.NOT_FOUND
-      );
-    }
+    async removeFromCart(userId: string, productId: string) {
+        const cart = await this.findCartById(userId);
+        if (!cart) {
+            throw new HttpException(
+                "Корзина пользователя не найдена",
+                HttpStatus.NOT_FOUND
+            );
+        }
 
-    const itemIndex = cart.items.findIndex(
-      (item) => item.productId === productId
-    );
-    if (itemIndex === -1) {
-      throw new HttpException(
-        "Товар не найден в корзине",
-        HttpStatus.NOT_FOUND
-      );
-    }
+        const itemIndex = cart.items.findIndex(
+            (item) => {
+                item.productId === productId
+                item.isCart === false
+            }
+        );
+        if (itemIndex === -1) {
+            throw new HttpException(
+                "Товар не найден в корзине",
+                HttpStatus.NOT_FOUND
+            );
+        }
 
-    cart.items.splice(itemIndex, 1);
-    await cart.save();
-  }
+        cart.items.splice(itemIndex, 1);
+        await cart.save();
+    }
 }

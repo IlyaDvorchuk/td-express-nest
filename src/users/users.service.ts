@@ -118,8 +118,8 @@ export class UsersService {
       throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
     }   
     await this.cartService.addToCart(userId, dto) 
-    product.isCart = true;
-    await this.productCardService.updateProductCard(dto.productId, product);    
+    //product.isCart = true;
+    //await this.productCardService.updateProductCard(dto.productId, product);    
   }
 
   async removeFromCart(userId: string, productCardId: string, product: CreateProductCardDto) {
@@ -129,8 +129,8 @@ export class UsersService {
     }
 
     await this.cartService.removeFromCart(userId, productCardId)
-    product.isCart = false;
-    await this.productCardService.updateProductCard(productCardId, product); 
+    //product.isCart = false;
+    //await this.productCardService.updateProductCard(productCardId, product); 
   }
 
   async addToFavorites(userId: string, dto: CreateFavoritesDto, product: CreateProductCardDto) {
@@ -141,8 +141,8 @@ export class UsersService {
 
     await this.favoriteService.addToFavorite(userId, dto)
 
-    product.isCart = true;
-    await this.productCardService.updateProductCard(dto.productId, product); 
+    //product.isCart = true;
+    //await this.productCardService.updateProductCard(dto.productId, product); 
   }
 
   async removeFromFavorite(userId: string, productCardId: string, product: CreateProductCardDto) {
@@ -153,8 +153,8 @@ export class UsersService {
 
     await this.favoriteService.removeFromFavorite(userId, productCardId)
 
-    product.isCart = false;
-    await this.productCardService.updateProductCard(productCardId, product); 
+    //product.isCart = false;
+    //await this.productCardService.updateProductCard(productCardId, product); 
   }
 
   async findById(userId: string) {

@@ -128,12 +128,4 @@ export class CreateProductCardDto {
   @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
   @IsNumber()
   purchaseCount: number;
-
-  @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
-  @IsBoolean()
-  isFavorite: boolean;
-
-  @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
-  @IsBoolean()
-  isCart: boolean;
 }

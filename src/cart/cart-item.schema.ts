@@ -16,6 +16,12 @@ export class CartItem {
 
   @Prop({ required: true })
   totalPrice: number;
+  
+  @Prop({ type: Boolean, default: false }) //в избранном
+  isFavorite: boolean;
+
+  @Prop({ type: Boolean, default: false }) //в корзине
+  isCart: boolean;
 }
 
 export const CartItemSchema = SchemaFactory.createForClass(CartItem);
