@@ -10,6 +10,7 @@ import {JwtAuthGuard} from "../middlewares/auth.middleware";
 import { CreateNotificationDto } from "src/notification/dto/notification.dto";
 import { NotificationDocument } from "src/notification/notification.schema";
 import { CreateCartDto } from "src/cart/dto/create-cart.dto";
+import { CreateProductCardDto } from "src/productCard/dto/create-product-card.dto";
 // import { NotificationDocument } from "src/notification/notification.schema";
 
 @ApiTags('Пользователи')
@@ -58,14 +59,16 @@ export class UsersController {
     return this.usersService.unbanUser(dto.userId)
   }
 
+  //добавть в корзину
   @UseGuards(JwtAuthGuard)
   @Get('/addToCart')
-  addItemToCart(@Req() req, @Body() dto: CreateCartDto) {
+  addItemToCart(@Req() req, @Body() dto: CreateCartDto, product: CreateProductCardDto) {
     const userId = req.user.id
     console.log('addItemToCart', userId)
-    return this.usersService.addToCart(userId, dto)
+    return this.usersService.addToCart(userId, dto, product)
   }
 
+  //удалить из корзины
   @UseGuards(JwtAuthGuard)
   @Get('/removeFromCart')
   removeFromCart(@Req() req, @Body() productCardId: string) {
@@ -74,6 +77,7 @@ export class UsersController {
     return this.usersService.removeFromCart(userId, productCardId)
   }
 
+  //добавить в избранное
   @UseGuards(JwtAuthGuard)
   @Get('/addToFavorite')
   addToFavorite(@Req() req, @Body() dto: CreateCartDto) {
@@ -82,6 +86,7 @@ export class UsersController {
     return this.usersService.addToFavorites(userId, dto)
   }
 
+  //удалить из избранного
   @UseGuards(JwtAuthGuard)
   @Get('/removeFromFavorite')
   removeFromFavorite(@Req() req, @Body() productCardId: string) {

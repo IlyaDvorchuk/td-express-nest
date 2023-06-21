@@ -11,6 +11,8 @@ import { CartService } from "../cart/cart.service";
 import { FavoriteService } from "../favorite/favorite.service";
 import { CreateNotificationDto } from 'src/notification/dto/notification.dto';
 import { NotificationService } from 'src/notification/notification.service';
+import { ProductCardService } from 'src/productCard/productCard.service';
+import { CreateProductCardDto } from 'src/productCard/dto/create-product-card.dto';
 
 @Injectable()
 export class UsersService {
@@ -18,6 +20,7 @@ export class UsersService {
     @InjectModel(User.name) private userRepository: Model<UserDocument>,    
     //@InjectModel(ProductCard.name) private productCardRepository: Model<ProductCard>,
     private notificationService: NotificationService,
+    private productCardService: ProductCardService,
     private cartService: CartService,
     private favoriteService: FavoriteService,
   ) { }
@@ -109,13 +112,14 @@ export class UsersService {
     return await user.save();
   }
 
-  async addToCart(userId: string, dto: CreateCartDto) {
+  async addToCart(userId: string, dto: CreateCartDto, product: CreateProductCardDto) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
-    }
-
-    await this.cartService.addToCart(userId, dto)
+    }   
+    await this.cartService.addToCart(userId, dto) 
+    product.isCart = true;
+    await this.productCardService.updateProductCard(dto.productId, product);    
   }
 
   async removeFromCart(userId: string, productCardId: string) {

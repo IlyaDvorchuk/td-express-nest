@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsArray, ValidateNested, IsNumber } from 'class-validator';
+import { IsString, IsArray, ValidateNested, IsNumber, IsBoolean } from 'class-validator';
 import { MemoryStoredFile } from "nestjs-form-data/dist/classes/storage/MemoryStoredFile";
+import { NotificationDocument } from 'src/notification/notification.schema';
 
 export class CategoriesDto {
   @ApiProperty({ example: 'Category', description: 'Category name' })
@@ -99,16 +100,40 @@ export class CreateProductCardDto {
   @ApiProperty({ type: Dimensions, description: 'Product dimensions' })
   @ValidateNested()
   readonly dimensions: Dimensions;
-  
+
   @ApiProperty({ type: PricesAndQuantity, description: 'Product prices and quantity' })
   @ValidateNested()
   readonly pricesAndQuantity: PricesAndQuantity;
-  
+
   @ApiProperty({ type: AdditionalInformation, description: 'Additional product information' })
   @ValidateNested()
   readonly additionalInformation: AdditionalInformation;
-  
+
   @ApiProperty({ type: [DeliveryPoints], description: 'Delivery points' })
   @ValidateNested({ each: true })
   readonly deliveryPoints: DeliveryPoints[];
-  }
+
+  @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
+  @IsString()
+  comments: Comment[];
+
+  @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
+  @IsBoolean()
+  published: boolean;
+
+  @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
+  @ValidateNested()
+  notifications: NotificationDocument[];
+
+  @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
+  @IsNumber()
+  purchaseCount: number;
+
+  @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
+  @IsBoolean()
+  isFavorite: boolean;
+
+  @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
+  @IsBoolean()
+  isCart: boolean;
+}

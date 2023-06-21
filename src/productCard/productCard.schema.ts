@@ -133,7 +133,7 @@ export class ProductCard extends Document {
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'PointIssue' }] })
   deliveryPoints: PointIssue[];
 
-   @Prop({ type: [CommentSchema], default: [] })
+  @Prop({ type: [CommentSchema], default: [] })
   comments: Comment[];
 
   @Prop({ type: Boolean, default: false })
@@ -143,9 +143,13 @@ export class ProductCard extends Document {
   notifications: NotificationDocument[];
 
   @Prop({ type: Number, default: 0 }) //куоличество покупок
-purchaseCount: number;
+  purchaseCount: number;
 
+  @Prop({ type: Boolean, default: false }) //в избранном
+  isFavorite: boolean;
 
+  @Prop({ type: Boolean, default: false }) //в корзине
+  isCart: boolean;
   // @Prop({ type: mongoose.Schema.Types.ObjectId, required: true, ref: 'ProductStatus' })
   // status: ProductStatus;
 }
