@@ -9,6 +9,7 @@ import { ValidationPipe } from "../pipes/validation.pipe";
 import {JwtAuthGuard} from "../middlewares/auth.middleware";
 import { CreateNotificationDto } from "src/notification/dto/notification.dto";
 import { NotificationDocument } from "src/notification/notification.schema";
+import { CreateCartDto } from "src/cart/dto/create-cart.dto";
 // import { NotificationDocument } from "src/notification/notification.schema";
 
 @ApiTags('Пользователи')
@@ -59,10 +60,34 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Get('/addToCart')
-  addItemToCart(@Req() req) {
+  addItemToCart(@Req() req, @Body() dto: CreateCartDto) {
     const userId = req.user.id
     console.log('addItemToCart', userId)
-    return {userId: userId}
+    return this.usersService.addToCart(userId, dto)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/removeFromCart')
+  removeFromCart(@Req() req, @Body() productCardId: string) {
+    const userId = req.user.id
+    console.log('removeFromCart', userId)
+    return this.usersService.removeFromCart(userId, productCardId)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/addToFavorite')
+  addToFavorite(@Req() req, @Body() dto: CreateCartDto) {
+    const userId = req.user.id
+    console.log('addToFavorite', userId)
+    return this.usersService.addToFavorites(userId, dto)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/removeFromFavorite')
+  removeFromFavorite(@Req() req, @Body() productCardId: string) {
+    const userId = req.user.id
+    console.log('removeFromFavorite', userId)
+    return this.usersService.removeFromFavorite(userId, productCardId)
   }
 
   //создание уведоиления для пользователя

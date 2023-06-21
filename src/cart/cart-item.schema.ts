@@ -2,6 +2,8 @@ import mongoose, { HydratedDocument, Document } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { ProductCard } from "../productCard/productCard.schema";
 
+//корзина
+
 export type CartItemDocument = CartItem & Document;
 
 @Schema()

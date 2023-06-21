@@ -118,6 +118,15 @@ export class UsersService {
     await this.cartService.addToCart(userId, dto)
   }
 
+  async removeFromCart(userId: string, productCardId: string) {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
+    }
+
+    await this.cartService.removeFromCart(userId, productCardId)
+  }
+
   async addToFavorites(userId: string, dto: CreateFavoritesDto) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
@@ -125,6 +134,15 @@ export class UsersService {
     }
 
     await this.favoriteService.addToFavorite(userId, dto)
+  }
+
+  async removeFromFavorite(userId: string, productCardId: string) {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
+    }
+
+    await this.favoriteService.removeFromFavorite(userId, productCardId)
   }
 
   async findById(userId: string) {

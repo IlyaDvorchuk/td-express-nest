@@ -3,6 +3,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { Cart, CartSchema } from "./cart-item.schema";
 import { CartService } from "./cart.service";
 
+//корзина
 @Module({
   controllers: [],
   providers: [CartService],

@@ -1,8 +1,6 @@
 import {HttpException, HttpStatus, Injectable} from "@nestjs/common";
 import {InjectModel} from "@nestjs/mongoose";
-import {Cart, CartDocument} from "../cart/cart-item.schema";
 import {Model} from "mongoose";
-import {CreateCartDto} from "../cart/dto/create-cart.dto";
 import {FavoriteItem, Favorites, FavoritesDocument} from "./favorite-item.schema";
 import {CreateFavoritesDto} from "./dto/create-favorites.dto";
 
@@ -37,6 +35,21 @@ export class FavoriteService {
                 ],
             });
             await newFavorites.save();
+        }
+    }
+
+    async removeFromFavorite(userId: string, productId: string) {
+        const favorites = await this.findFavoriteById(userId);
+        if (favorites) {
+            const itemIndex = favorites.items.findIndex((item) => item.productId === productId);
+            if (itemIndex !== -1) {
+                favorites.items.splice(itemIndex, 1);
+                await favorites.save();
+            } else {
+                throw new HttpException('Продукт не найден в избранном', HttpStatus.NOT_FOUND);
+            }
+        } else {
+            throw new HttpException('Избранное не найдено', HttpStatus.NOT_FOUND);
         }
     }
 }
