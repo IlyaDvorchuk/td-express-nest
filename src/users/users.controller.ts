@@ -71,28 +71,28 @@ export class UsersController {
   //удалить из корзины
   @UseGuards(JwtAuthGuard)
   @Get('/removeFromCart')
-  removeFromCart(@Req() req, @Body() productCardId: string) {
+  removeFromCart(@Req() req, @Body() productCardId: string, product: CreateProductCardDto) {
     const userId = req.user.id
     console.log('removeFromCart', userId)
-    return this.usersService.removeFromCart(userId, productCardId)
+    return this.usersService.removeFromCart(userId, productCardId, product)
   }
 
   //добавить в избранное
   @UseGuards(JwtAuthGuard)
   @Get('/addToFavorite')
-  addToFavorite(@Req() req, @Body() dto: CreateCartDto) {
+  addToFavorite(@Req() req, @Body() dto: CreateCartDto, product: CreateProductCardDto) {
     const userId = req.user.id
     console.log('addToFavorite', userId)
-    return this.usersService.addToFavorites(userId, dto)
+    return this.usersService.addToFavorites(userId, dto, product)
   }
 
   //удалить из избранного
   @UseGuards(JwtAuthGuard)
   @Get('/removeFromFavorite')
-  removeFromFavorite(@Req() req, @Body() productCardId: string) {
+  removeFromFavorite(@Req() req, @Body() productCardId: string, product: CreateProductCardDto) {
     const userId = req.user.id
     console.log('removeFromFavorite', userId)
-    return this.usersService.removeFromFavorite(userId, productCardId)
+    return this.usersService.removeFromFavorite(userId, productCardId, product)
   }
 
   //создание уведоиления для пользователя
