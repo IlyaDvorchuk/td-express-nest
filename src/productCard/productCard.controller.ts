@@ -32,11 +32,8 @@ export class ProductCardController {
     @Query('page') page: number,
     @Query('limit') limit: number,
   ) {
-    // console.log('category', category);
-    console.log('page', page);
-    console.log('limit', limit);
+
     return this.productCardService.searchProductCardsByCategory(category, page, limit);
-    // return 'dfdsdsfd';
   }
 
   //получение новых товаров
