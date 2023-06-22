@@ -25,9 +25,7 @@ export class CartService {
                 cart.items.push({
                     productId: dto.productId,
                     quantity: dto.quantity,
-                    totalPrice: dto.totalPrice,
-                    isCart: true,
-                    isFavorite: dto.isFavorite,
+                    totalPrice: dto.totalPrice
                 });
                 await cart.save();
             }
@@ -61,7 +59,6 @@ export class CartService {
         const itemIndex = cart.items.findIndex(
             (item) => {
                 item.productId === productId
-                item.isCart === false
             }
         );
         if (itemIndex === -1) {
@@ -74,4 +71,14 @@ export class CartService {
         cart.items.splice(itemIndex, 1);
         await cart.save();
     }
+
+    async getCartProducts(userId: string) {
+        const favorites = await this.findCartById(userId);
+        
+        if (!favorites) {
+          return []; // Return an empty array if no favorites found
+        }
+        
+        return favorites.items;
+      }
 }

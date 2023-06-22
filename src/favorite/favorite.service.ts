@@ -52,4 +52,14 @@ export class FavoriteService {
             throw new HttpException('Избранное не найдено', HttpStatus.NOT_FOUND);
         }
     }
+
+    async getFavoriteProducts(userId: string): Promise<FavoriteItem[]> {
+        const favorites = await this.findFavoriteById(userId);
+        
+        if (!favorites) {
+          return []; // Return an empty array if no favorites found
+        }
+        
+        return favorites.items;
+      }
 }

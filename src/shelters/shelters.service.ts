@@ -68,5 +68,18 @@ export class SheltersService {
       return false
     }
   }
+  
+  async getAllShelters(status: string, fromDate: Date, toDate: Date) {
+    const filter: any = {};
 
+    if (status) {
+      filter.status = status;
+    }
+
+    if (fromDate && toDate) {
+      filter.createdAt = { $gte: fromDate, $lte: toDate };
+    }
+
+    return this.shelterRepository.find(filter).exec();
+  }
 }

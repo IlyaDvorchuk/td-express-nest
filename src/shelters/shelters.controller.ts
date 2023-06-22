@@ -33,4 +33,16 @@ export class SheltersController {
     const shelterId = req.user.id
     return this.shelterService.findById(shelterId)
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('all')
+  async getAllShelters(
+    @Query('status') status: string,
+    @Query('fromDate') fromDate: string,
+    @Query('toDate') toDate: string
+  ) {
+    const parsedFromDate = fromDate ? new Date(fromDate) : null;
+    const parsedToDate = toDate ? new Date(toDate) : null;
+    return await this.shelterService.getAllShelters(status, parsedFromDate, parsedToDate);
+  }
 }

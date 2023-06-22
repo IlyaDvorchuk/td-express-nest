@@ -165,13 +165,4 @@ async getTotalPurchases() {
   return this.productCardService.getTotalPurchases();
 }
 
-// @Post(':id/questions')
-//   async createQuestion(
-//     @Param('id') id: string,
-//     @Body('customerId') customerId: number,
-//     @Body('questionText') questionText: string,
-//   ) {
-//     return this.productCardService.createQuestion(id, customerId, questionText);
-//   }
-// }
 }

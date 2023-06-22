@@ -24,6 +24,13 @@ export class ProductCardService {
         return query.exec();
       }
 
+      async getProductCardByUserId(id: string): Promise<ProductCard> {
+        const query = this.productCardRepository.findOne({ _id: id, published: true });
+        //поиск по избранному и корзине для объединения в общий список
+        
+        return query.exec();
+      }
+
     async createProductCard(
         dto: CreateProductCardDto,
         shelterId: string,

@@ -122,4 +122,13 @@ export class UsersController {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  @Get('/user/:userId')
+async getProductCards(
+  @Param('userId') userId: string,
+  @Body('page') page: number,
+  @Body('limit') limit: number,
+) {
+  return this.usersService.getProductCards(userId, page, limit);
+}
 }

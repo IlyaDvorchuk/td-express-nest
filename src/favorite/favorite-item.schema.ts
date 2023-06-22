@@ -7,6 +7,12 @@ import {FavoriteService} from "./favorite.service";
 export class FavoriteItem extends Document {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'ProductCard' })
   productId: string;
+  
+  @Prop({ type: Boolean, default: false }) //в избранном
+  isFavorite: boolean;
+
+  @Prop({ type: Boolean, default: false }) //в корзине
+  isCart: boolean;
 }
 
 export const FavoriteItemSchema = SchemaFactory.createForClass(FavoriteItem);

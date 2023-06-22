@@ -190,4 +190,22 @@ export class UsersService {
   async getUserNotifications(userId: string)/*: Promise<NotificationDocument[]>*/ {
     return this.notificationService.getUserNotifications(userId);
   }
+
+  async getProductCards(userId: string, page: number, limit: number) {
+    const productCards = await this.productCardService.getAllProductCards(page, limit); // Retrieve all product cards from the database
+  
+      const favoriteProducts = await this.favoriteService.getFavoriteProducts(userId);
+      const cartProducts = await this.cartService.getCartProducts(userId);
+  
+      for (const productCard of productCards.productCards) {
+        productCard.isFavorite = favoriteProducts.some((favoriteProduct) => favoriteProduct.productId === productCard.id);
+      }
+
+      for (const productCard of productCards.productCards) {
+        productCard.isCart = cartProducts.some((cartProducts) => cartProducts.productId === productCard.id);
+      }
+  
+    return productCards;
+  }
+  
 }
