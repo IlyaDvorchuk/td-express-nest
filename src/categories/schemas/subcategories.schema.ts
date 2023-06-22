@@ -25,6 +25,9 @@ export class Subcategory {
 
   @Prop({required: true, default: 'subcategory'})
   type: 'subcategory'
+
+  @Prop({required: true, default: ''})
+  alternateName: string
 }
 
 export const SubcategorySchema = SchemaFactory.createForClass(Subcategory)
