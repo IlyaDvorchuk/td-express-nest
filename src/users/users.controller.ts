@@ -115,4 +115,11 @@ export class UsersController {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/get-user')
+  async getUser(@Req() req) {
+    const shelterId = req.user.id
+    return this.usersService.findById(shelterId)
+  }
 }
