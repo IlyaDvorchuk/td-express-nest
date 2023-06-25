@@ -1,6 +1,8 @@
 import mongoose, { Document } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { PointIssue } from "../shelters/shelters.schema";
+import {
+  PointIssue
+} from "../shelters/shelters.schema";
 import { NotificationDocument, NotificationSchema } from 'src/notification/notification.schema';
 
 @Schema()
@@ -100,6 +102,16 @@ export const CommentSchema = SchemaFactory.createForClass(Comment);
 
 // export const ProductStatusSchema = SchemaFactory.createForClass(ProductStatus);
 
+@Schema()
+export class SizeQuantity extends Document {
+  @Prop({required: true})
+  size: string
+
+  @Prop({required: true})
+  quantity: string
+}
+
+export const SizeQuantitySchema = SchemaFactory.createForClass(SizeQuantity)
 
 @Schema({ timestamps: true })
 export class ProductCard extends Document {
@@ -152,5 +164,8 @@ export class ProductCard extends Document {
   isCart: boolean;
   // @Prop({ type: mongoose.Schema.Types.ObjectId, required: true, ref: 'ProductStatus' })
   // status: ProductStatus;
+
+  @Prop({required: false, type: [SizeQuantitySchema]})
+  sizeQuantity: SizeQuantity[]
 }
 export const ProductCardSchema = SchemaFactory.createForClass(ProductCard);

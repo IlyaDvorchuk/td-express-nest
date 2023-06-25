@@ -79,6 +79,16 @@ class DeliveryPoints {
   readonly address: string;
 }
 
+class SizeQuantity {
+  @ApiProperty({ example: 'XXL', description: 'Размер' })
+  @IsString()
+  readonly size: string;
+
+  @ApiProperty({ example: '45', description: 'Количество' })
+  @IsString()
+  readonly quantity: string
+}
+
 export class CreateProductCardDto {
   @ApiProperty({ type: CategoriesDto, description: 'Product categories' })
   @ValidateNested()
@@ -114,18 +124,20 @@ export class CreateProductCardDto {
   readonly deliveryPoints: DeliveryPoints[];
 
   @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
-  @IsString()
-  comments: Comment[];
+  readonly comments: Comment[];
 
   @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
   @IsBoolean()
-  published: boolean;
+  readonly published: boolean;
 
   @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
   @ValidateNested()
-  notifications: NotificationDocument[];
+  readonly notifications: NotificationDocument[];
 
   @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
   @IsNumber()
-  purchaseCount: number;
+  readonly purchaseCount: number;
+
+  @ValidateNested()
+  readonly sizeQuantity?: SizeQuantity[]
 }
