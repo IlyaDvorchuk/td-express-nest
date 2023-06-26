@@ -29,7 +29,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     }
     if (!user) {
-      throw new UnauthorizedException('Не существует такого продавца');
+      throw new UnauthorizedException('Не существует такого пользователя');
     }
 
     return user;

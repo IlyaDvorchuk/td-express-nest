@@ -19,6 +19,15 @@ export class Subcategory {
 
   @Prop({required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: "ProductCard" }]})
   productCards: ProductCard[]
+
+  @Prop({required: true})
+  parentName: string
+
+  @Prop({required: true, default: 'subcategory'})
+  type: 'subcategory'
+
+  @Prop({required: true, default: ''})
+  alternateName: string
 }
 
 export const SubcategorySchema = SchemaFactory.createForClass(Subcategory)

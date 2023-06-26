@@ -25,6 +25,17 @@ import { Roles } from 'src/auth/roles-auth.decorator';
 export class ProductCardController {
   constructor(private readonly productCardService: ProductCardService) { }
 
+  //поиск товаров по категории
+  @Get('/category/:category')
+  async searchProductCardsByCategory(
+    @Param('category') category: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ) {
+
+    return this.productCardService.searchProductCardsByCategory(category, page, limit);
+  }
+
   //получение новых товаров
   @ApiResponse({ status: 200 })
   @Get('/new')
@@ -137,15 +148,7 @@ export class ProductCardController {
     return this.productCardService.deleteComment(id, commentId);
   }
 
-  //поиск товаров по категории
-  @Get('category/:category')
-  async searchProductCardsByCategory(
-    @Param('category') category: string,
-    @Query('page') page: number,
-    @Query('limit') limit: number,
-  ) {
-    return this.productCardService.searchProductCardsByCategory(category, page, limit);
-  }
+
 
   //получение неопубликованных товаров
   @ApiResponse({ status: 200 })
