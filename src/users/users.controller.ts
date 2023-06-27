@@ -8,10 +8,8 @@ import {BanUserDto} from "./dto/ban-user.dto";
 import { ValidationPipe } from "../pipes/validation.pipe";
 import {JwtAuthGuard} from "../middlewares/auth.middleware";
 import { CreateNotificationDto } from "src/notification/dto/notification.dto";
-import { NotificationDocument } from "src/notification/notification.schema";
 import { CreateCartDto } from "src/cart/dto/create-cart.dto";
 import { CreateProductCardDto } from "src/productCard/dto/create-product-card.dto";
-// import { NotificationDocument } from "src/notification/notification.schema";
 
 @ApiTags('Пользователи')
 @Controller('users')
@@ -61,7 +59,7 @@ export class UsersController {
 
   //добавть в корзину
   @UseGuards(JwtAuthGuard)
-  @Get('/addToCart')
+  @Post('/addToCart')
   addItemToCart(@Req() req, @Body() dto: CreateCartDto, product: CreateProductCardDto) {
     const userId = req.user.id
     console.log('addItemToCart', userId)
@@ -70,7 +68,7 @@ export class UsersController {
 
   //удалить из корзины
   @UseGuards(JwtAuthGuard)
-  @Get('/removeFromCart')
+  @Post('/removeFromCart')
   removeFromCart(@Req() req, @Body() productCardId: string, product: CreateProductCardDto) {
     const userId = req.user.id
     console.log('removeFromCart', userId)
@@ -95,7 +93,7 @@ export class UsersController {
     return this.usersService.removeFromFavorite(userId, productCardId, product)
   }
 
-  //создание уведоиления для пользователя
+  //создание уведомления для пользователя
   @Post('notifications')
   async createNotification(@Body() dto: CreateNotificationDto)/*: Promise<NotificationDocument>*/ {
     try {
