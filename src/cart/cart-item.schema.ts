@@ -15,7 +15,10 @@ export class CartItem {
   quantity: number;
 
   @Prop({ required: true })
-  totalPrice: number;  
+  totalPrice: number;
+
+  @Prop()
+  size: string
 }
 
 export const CartItemSchema = SchemaFactory.createForClass(CartItem);

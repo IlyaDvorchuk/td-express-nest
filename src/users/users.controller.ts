@@ -17,6 +17,16 @@ export class UsersController {
   constructor(private usersService: UsersService) {
   }
 
+  //добавить в корзину
+  @UseGuards(JwtAuthGuard)
+  @Post('/addToCart')
+  addItemToCart(@Req() req, @Body() dto: CreateCartDto) {
+    const userId = req.user.id
+    console.log('addItemToCart', userId, dto)
+    return this.usersService.addToCart(userId, dto)
+  }
+
+
   @ApiOperation({summary: 'Создание пользователя'})
   @ApiResponse({status: 200, type: 'sddsf'})
   @UsePipes(ValidationPipe)
@@ -57,14 +67,6 @@ export class UsersController {
     return this.usersService.unbanUser(dto.userId)
   }
 
-  //добавть в корзину
-  @UseGuards(JwtAuthGuard)
-  @Post('/addToCart')
-  addItemToCart(@Req() req, @Body() dto: CreateCartDto, product: CreateProductCardDto) {
-    const userId = req.user.id
-    console.log('addItemToCart', userId)
-    return this.usersService.addToCart(userId, dto, product)
-  }
 
   //удалить из корзины
   @UseGuards(JwtAuthGuard)
@@ -129,4 +131,11 @@ async getProductCards(
 ) {
   return this.usersService.getProductCards(userId, page, limit);
 }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/get-user')
+  async getUser(@Req() req) {
+    const shelterId = req.user.id
+    return this.usersService.findById(shelterId)
+  }
 }
