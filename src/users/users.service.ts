@@ -17,7 +17,7 @@ import { CreateProductCardDto } from 'src/productCard/dto/create-product-card.dt
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(User.name) private userRepository: Model<UserDocument>,    
+    @InjectModel(User.name) private userRepository: Model<UserDocument>,
     //@InjectModel(ProductCard.name) private productCardRepository: Model<ProductCard>,
     private notificationService: NotificationService,
     private productCardService: ProductCardService,
@@ -112,14 +112,14 @@ export class UsersService {
     return await user.save();
   }
 
-  async addToCart(userId: string, dto: CreateCartDto, product: CreateProductCardDto) {
+  async addToCart(userId: string, dto: CreateCartDto) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
-    }   
-    await this.cartService.addToCart(userId, dto) 
+    }
+    await this.cartService.addToCart(userId, dto)
     //product.isCart = true;
-    //await this.productCardService.updateProductCard(dto.productId, product);    
+    //await this.productCardService.updateProductCard(dto.productId, product);
   }
 
   async removeFromCart(userId: string, productCardId: string, product: CreateProductCardDto) {
@@ -130,7 +130,7 @@ export class UsersService {
 
     await this.cartService.removeFromCart(userId, productCardId)
     //product.isCart = false;
-    //await this.productCardService.updateProductCard(productCardId, product); 
+    //await this.productCardService.updateProductCard(productCardId, product);
   }
 
   async addToFavorites(userId: string, dto: CreateFavoritesDto, product: CreateProductCardDto) {
@@ -142,7 +142,7 @@ export class UsersService {
     await this.favoriteService.addToFavorite(userId, dto)
 
     //product.isCart = true;
-    //await this.productCardService.updateProductCard(dto.productId, product); 
+    //await this.productCardService.updateProductCard(dto.productId, product);
   }
 
   async removeFromFavorite(userId: string, productCardId: string, product: CreateProductCardDto) {
@@ -154,7 +154,7 @@ export class UsersService {
     await this.favoriteService.removeFromFavorite(userId, productCardId)
 
     //product.isCart = false;
-    //await this.productCardService.updateProductCard(productCardId, product); 
+    //await this.productCardService.updateProductCard(productCardId, product);
   }
 
   async findById(userId: string) {
@@ -193,10 +193,10 @@ export class UsersService {
 
   async getProductCards(userId: string, page: number, limit: number) {
     const productCards = await this.productCardService.getAllProductCards(page, limit); // Retrieve all product cards from the database
-  
+
       const favoriteProducts = await this.favoriteService.getFavoriteProducts(userId);
       const cartProducts = await this.cartService.getCartProducts(userId);
-  
+
       for (const productCard of productCards.productCards) {
         productCard.isFavorite = favoriteProducts.some((favoriteProduct) => favoriteProduct.productId === productCard.id);
       }
@@ -204,8 +204,8 @@ export class UsersService {
       for (const productCard of productCards.productCards) {
         productCard.isCart = cartProducts.some((cartProducts) => cartProducts.productId === productCard.id);
       }
-  
+
     return productCards;
   }
-  
+
 }
