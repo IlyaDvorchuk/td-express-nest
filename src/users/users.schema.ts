@@ -1,5 +1,7 @@
-import { HydratedDocument } from "mongoose";
+import mongoose, { HydratedDocument } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Order, OrderSchema } from "src/order/order.schema";
+
 
 export type UserDocument = HydratedDocument<User>
 
@@ -22,6 +24,9 @@ export class User {
 
   @Prop({ default: null })
   banReason: string | null;
+
+  @Prop({ type: [OrderSchema], default: [] })
+  orders: Order[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)
