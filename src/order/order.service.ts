@@ -26,8 +26,25 @@ export class OrderService {
     return order;
   }
 
-  async getOrderById(orderId: string): Promise<Order> {
-    return this.orderModel.findById(orderId).exec();
+  async getUserOrders(userId: string): Promise<Order[]> {
+    const user = await this.userModel.findById(userId).populate({
+      path: 'orders',
+      match: { status: { $ne: 'cancelled' } },
+    }).exec();
+    return user.orders;
   }
 
+  async updateOrderStatus(orderId: string, newStatus: string): Promise<Order> {
+    const order = await this.orderModel.findById(orderId).exec();
+    order.status = newStatus;
+    await order.save();
+    return order;
+  }
+
+  async cancelOrder(orderId: string): Promise<Order> {
+    const order = await this.orderModel.findById(orderId).exec();
+    order.status = 'cancelled';
+    await order.save();
+    return order;
+  }
 }
