@@ -166,6 +166,6 @@ export class ProductCard extends Document {
   // status: ProductStatus;
 
   @Prop({required: false, type: [SizeQuantitySchema]})
-  sizeQuantity: SizeQuantity[]
+  typeQuantity: SizeQuantity[]
 }
 export const ProductCardSchema = SchemaFactory.createForClass(ProductCard);
