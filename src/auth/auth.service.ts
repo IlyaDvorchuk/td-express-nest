@@ -53,7 +53,8 @@ export class AuthService {
   }
 
   async checkEmail(userDto: { email: string }) {
-    return Boolean(this.userService.getUserByEmail(userDto.email))
+    const check = await this.userService.getUserByEmail(userDto.email)
+    return Boolean(check)
   }
 
   async refresh(refreshToken: string, param?: unknown) {
