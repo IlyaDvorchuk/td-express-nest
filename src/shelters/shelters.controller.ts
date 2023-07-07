@@ -45,4 +45,11 @@ export class SheltersController {
     const parsedToDate = toDate ? new Date(toDate) : null;
     return await this.shelterService.getAllShelters(status, parsedFromDate, parsedToDate);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('orders')
+  async getOrdersByShelter(@Req() req) {
+    const shelterId = req.user.id;
+    return await this.shelterService.getOrdersByShelter(shelterId);
+  }
 }

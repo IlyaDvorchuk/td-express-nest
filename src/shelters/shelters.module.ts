@@ -1,4 +1,4 @@
-import {Global, Module} from '@nestjs/common';
+import {Global, Module, forwardRef} from '@nestjs/common';
 import { SheltersController } from './shelters.controller';
 import { SheltersService } from './shelters.service';
 import { MongooseModule } from "@nestjs/mongoose";
@@ -6,6 +6,13 @@ import { Shelter, ShelterSchema } from "./shelters.schema";
 import { PassportModule } from "@nestjs/passport";
 import { JwtModule } from "@nestjs/jwt";
 import { JwtStrategy } from "../utils/jwt.strategy";
+import { ProductCardsModule } from 'src/productCard/productCard.module';
+import { OrderModule } from 'src/order/order.module';
+import { UsersModule } from 'src/users/users.module';
+import { AuthModule } from 'src/auth/auth.module';
+import { ProductCard, ProductCardSchema } from 'src/productCard/productCard.schema';
+import { Order, OrderSchema } from 'src/order/order.schema';
+import { User, UserSchema } from 'src/users/users.schema';
 
 @Global()
 @Module({
@@ -14,15 +21,17 @@ import { JwtStrategy } from "../utils/jwt.strategy";
   imports: [
     MongooseModule.forFeature([
       {name: Shelter.name, schema: ShelterSchema},
-    ]),
-    PassportModule,
+      { name: ProductCard.name, schema: ProductCardSchema },
+      { name: Order.name, schema: OrderSchema },
+      { name: User.name, schema: UserSchema },
+    ]),    
     JwtModule.register({
       secret: process.env.PRIVATE_KEY || 'SECRET',
       signOptions: {
         expiresIn: '24d'
       }
-    }),
-  ],
+    })
+  ], 
   exports: [SheltersService]
 })
 export class SheltersModule {}

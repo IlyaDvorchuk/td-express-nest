@@ -3,11 +3,17 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Shelter, ShelterDocument } from "./shelters.schema";
 import { CreateShelterDto } from "./dto/create-shelter.dto";
-import { ProductCard } from 'src/productCard/productCard.schema';
+import { ProductCard, ProductCardDocument } from 'src/productCard/productCard.schema';
+import { Order, OrderDocument } from 'src/order/order.schema';
+import { User, UserDocument } from 'src/users/users.schema';
 
 @Injectable()
 export class SheltersService {
-  constructor(@InjectModel(Shelter.name) private shelterRepository: Model<ShelterDocument>) {
+  constructor(@InjectModel(Shelter.name) private shelterRepository: Model<ShelterDocument>,
+    @InjectModel(ProductCard.name) private readonly productCardModel: Model<ProductCardDocument>,
+    @InjectModel(Order.name) private readonly orderModel: Model<OrderDocument>,
+    @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+  ) {
   }
 
   async getUserByEmail(email: string) {
@@ -81,5 +87,27 @@ export class SheltersService {
     }
 
     return this.shelterRepository.find(filter).exec();
+  }
+  
+  async getOrdersByShelter(shelterId: string): Promise<any[]> {
+    const productCards = await this.productCardModel.find({ shelterId }).exec();
+    const productCardIds = productCards.map((card) => card._id);
+
+    const orders = await this.orderModel.find({ productId: { $in: productCardIds } }).exec();
+
+    const results = await Promise.all(
+      orders.map(async (order) => {
+        const user = await this.userModel.findById(order.userId).exec();
+        const product = await this.productCardModel.findById(order.productId).exec();
+
+        return {
+          user,
+          product,
+          status: order.status,
+        };
+      })
+    );
+
+    return results;
   }
 }

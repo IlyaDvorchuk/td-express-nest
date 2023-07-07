@@ -8,6 +8,9 @@ export class Order {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'ProductCard', required: true })
   productId: string;
 
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
+  userId: string; 
+
   @Prop({ required: true })
   status: string;
 }

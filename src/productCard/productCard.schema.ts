@@ -1,4 +1,4 @@
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document, HydratedDocument } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import {
   PointIssue
@@ -112,6 +112,8 @@ export class SizeQuantity extends Document {
 }
 
 export const SizeQuantitySchema = SchemaFactory.createForClass(SizeQuantity)
+
+export type ProductCardDocument = HydratedDocument<ProductCard>
 
 @Schema({ timestamps: true })
 export class ProductCard extends Document {
