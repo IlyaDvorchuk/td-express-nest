@@ -1,4 +1,4 @@
-import {Controller, Get, Query, Req, UseGuards} from "@nestjs/common";
+import {Controller, Get, Put, Query, Req, UseGuards} from "@nestjs/common";
 import { SheltersService } from "./shelters.service";
 import { JwtAuthGuard } from "../middlewares/auth.middleware";
 
@@ -51,5 +51,14 @@ export class SheltersController {
   async getOrdersByShelter(@Req() req) {
     const shelterId = req.user.id;
     return await this.shelterService.getOrdersByShelter(shelterId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('orders/:orderId')
+  async updateOrderStatus(
+    @Query('orderId') orderId: string,
+    @Query('status') newStatus: string
+  ) {
+    return await this.shelterService.updateOrderStatus(orderId, newStatus);
   }
 }

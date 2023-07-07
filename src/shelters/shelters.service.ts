@@ -104,10 +104,23 @@ export class SheltersService {
           user,
           product,
           status: order.status,
+          order: order
         };
       })
     );
 
     return results;
+  }
+  
+  async updateOrderStatus(orderId: string, newStatus: string): Promise<Order | null> {
+    const order = await this.orderModel.findById(orderId).exec();
+    if (!order) {
+      return null;
+    }
+
+    order.status = newStatus;
+    await order.save();
+
+    return order;
   }
 }
