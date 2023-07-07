@@ -108,7 +108,7 @@ export class SheltersService {
         };
       })
     );
-
+        
     return results;
   }
   
