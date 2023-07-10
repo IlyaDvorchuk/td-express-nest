@@ -3,18 +3,30 @@ import { IsString, IsArray, ValidateNested, IsNumber, IsBoolean } from 'class-va
 import { MemoryStoredFile } from "nestjs-form-data/dist/classes/storage/MemoryStoredFile";
 import { NotificationDocument } from 'src/notification/notification.schema';
 
-export class CategoriesDto {
+export class Category {
+  @ApiProperty({ example: 'Category', description: 'Category id' })
+  @IsString()
+  readonly id: string;
+
   @ApiProperty({ example: 'Category', description: 'Category name' })
   @IsString()
-  readonly category: string;
+  readonly name: string;
+}
 
-  @ApiProperty({ example: 'Subcategory', description: 'Subcategory name' })
-  @IsString()
-  readonly subcategory: string;
+export class CategoriesDto {
+  @ApiProperty({ type: Category, example: 'Category', description: 'Category name' })
+  @ValidateNested()
+  readonly category: Category;
 
-  @ApiProperty({ example: 'Section', description: 'Section name' })
+  @ApiProperty({ type: Category, example: 'Subcategory', description: 'Subcategory name' })
+  @ValidateNested()
   @IsString()
-  readonly section: string;
+  readonly subcategory: Category;
+
+  @ApiProperty({ type: Category, example: 'Section', description: 'Section name' })
+  @ValidateNested()
+  @IsString()
+  readonly section: Category;
 }
 
 class Information {

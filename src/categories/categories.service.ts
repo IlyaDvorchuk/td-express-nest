@@ -64,15 +64,15 @@ export class CategoriesService {
 
   async addProductCard(idCategories: CategoriesDto, productCard) {
     try {
-      const category = await this.categoryRepository.findById(idCategories.category)
+      const category = await this.categoryRepository.findById(idCategories.category.id)
       category.productCards.push(productCard);
       await category.save();
 
-      const subcategory = await this.subcategoryRepository.findById(idCategories.subcategory)
+      const subcategory = await this.subcategoryRepository.findById(idCategories.subcategory.id)
       subcategory.productCards.push(productCard);
       await subcategory.save();
-        if (idCategories.section !== 'missing') {
-        const section = await this.sectionRepository.findById(idCategories.section)
+        if (idCategories.section.id !== 'missing') {
+        const section = await this.sectionRepository.findById(idCategories.section.id)
         section.productCards.push(productCard);
         await section.save();
       }
@@ -83,4 +83,37 @@ export class CategoriesService {
       return false
     }
   }
+
+  async removeProductCardFromCategories(productCardId: string): Promise<boolean> {
+    try {
+      const categoryUpdateResult = await this.categoryRepository.updateMany(
+          { productCards: productCardId },
+          { $pull: { productCards: productCardId } },
+      );
+
+      const subcategoryUpdateResult = await this.subcategoryRepository.updateMany(
+          { productCards: productCardId },
+          { $pull: { productCards: productCardId } },
+      );
+
+      // Удаляем карточку продукта из секций (если необязательно)
+      this.sectionRepository.updateMany(
+          { productCards: productCardId },
+          { $pull: { productCards: productCardId } },
+      ).catch(error => {
+        console.error('Не удалось удалить карточку продукта из секций:', error);
+      });
+
+      // Проверяем результаты операций обновления в категориях и подкатегориях
+      const isCategoryUpdateSuccessful = categoryUpdateResult.modifiedCount > 0;
+      const isSubcategoryUpdateSuccessful = subcategoryUpdateResult.modifiedCount > 0;
+
+      // Возвращаем true, если хотя бы одно обновление успешно
+      return isCategoryUpdateSuccessful || isSubcategoryUpdateSuccessful;
+    } catch (error) {
+      // Обработка ошибок
+      throw new Error('Не удалось удалить карточку товара из категорий');
+    }
+  }
+
 }

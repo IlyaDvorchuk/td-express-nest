@@ -26,7 +26,7 @@ export class Subcategory {
   @Prop({required: true, default: 'subcategory'})
   type: 'subcategory'
 
-  @Prop({required: true, default: ''})
+  @Prop({default: ''})
   alternateName: string
 }
 

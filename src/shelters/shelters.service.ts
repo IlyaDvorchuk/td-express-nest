@@ -39,6 +39,7 @@ export class SheltersService {
     return this.shelterRepository.findById(shelterId).exec();
   }
 
+
   async getCards(shelterId: string, page: number, limit: number) {
     const shelter = await this.shelterRepository
       .findById(shelterId)
@@ -82,4 +83,13 @@ export class SheltersService {
 
     return this.shelterRepository.find(filter).exec();
   }
+
+  async removeProductCardFromShelter(shelterId: string, productCardId: string): Promise<boolean> {
+    const result = await this.shelterRepository.updateOne(
+        { _id: shelterId },
+        { $pull: { productCards: productCardId } },
+    );
+    return result.modifiedCount > 0;
+  }
+
 }

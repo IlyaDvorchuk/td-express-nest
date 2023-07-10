@@ -108,9 +108,13 @@ export class ProductCardController {
   }
 
   //удаление карточки
-  @Delete(':id')
-  async deleteProductCard(@Param('id') id: string) {
-    return this.productCardService.deleteProductCard(id);
+  @UseGuards(JwtAuthGuard)
+  @Delete(':idCard')
+  async deleteProductCard(
+      @Req() req,
+      @Param('idCard',) idCard: string) {
+    const shelterId = req.user.id
+    return this.productCardService.deleteProductCard(idCard, shelterId);
   }
 
   //поиск товара

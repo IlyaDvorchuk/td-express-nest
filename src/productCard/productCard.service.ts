@@ -8,6 +8,8 @@ import { CategoriesService } from "../categories/categories.service";
 import moment from "moment";
 import { Question } from "src/questionary/questionary.schema";
 import { QuestionaryService } from "../questionary/questionary.service";
+import * as fs from 'fs';
+
 
 @Injectable()
 export class ProductCardService {
@@ -51,7 +53,6 @@ export class ProductCardService {
             }
         }
 
-      console.log('CreateProductCardDto', dto);
         const product = await this.productCardRepository.create({
             ...dto,
             shelterId,
@@ -60,6 +61,7 @@ export class ProductCardService {
             viewsCount: 0,
             // pricesAndQuantity: new PricesAndQuantity(), // Инициализируем поле pricesAndQuantity новым экземпляром класса PricesAndQuantity
           });
+        console.log('CreateProductCardDto', product);
         const isAddInShelter = await this.shelterService.addProductCard(shelterId, product._id);
         const isAddInCategories = await this.categoriesService.addProductCard(dto.categories, product._id);
 
@@ -82,10 +84,46 @@ export class ProductCardService {
         return query.exec();
       }
 
-      async deleteProductCard(id: string): Promise<ProductCard> {
-        const query = this.productCardRepository.findOneAndDelete({ _id: id, published: true });
-        return query.exec();
-      }
+    async deleteProductCard(productId: string, shelterId: string): Promise<ProductCard> {
+        const productCard = await this.productCardRepository.findOneAndDelete({ _id: productId });
+        console.log('deleteProductCard productCard', productCard)
+        // Удаление файла mainPhoto
+        const mainPhoto = productCard.mainPhoto;
+        // const mainPhotoFilename = mainPhoto.substring(mainPhoto.lastIndexOf('/') + 1);
+        const mainPhotoFilePath = `./static${mainPhoto}`;
+        // console.log('fs', mainPhotoFilename)
+        console.log('mainPhotoFilePath', mainPhotoFilePath)
+        fs.unlink(mainPhotoFilePath, (error) => {
+            if (error) {
+                console.error('Ошибка при удалении файла mainPhoto:', error);
+            }
+        });
+
+        // Удаление файлов из additionalPhotos
+        const additionalPhotos = productCard.additionalPhotos;
+        additionalPhotos.forEach((photo) => {
+            const filePath = `./static/${photo}`;
+            fs.unlink(filePath, (error) => {
+                if (error) {
+                    console.error('Ошибка при удалении файла additionalPhoto:', error);
+                }
+            });
+        });
+
+        const isCategoryRemovalSuccessful = await this.categoriesService.removeProductCardFromCategories(productId);
+
+        const isShelterRemovalSuccessful = await this.shelterService.removeProductCardFromShelter(shelterId, productId);
+
+        // Проверяем, было ли успешно удаление карточки товара из категорий и приюта
+        const isDeletionSuccessful = isCategoryRemovalSuccessful && isShelterRemovalSuccessful;
+
+        if (isDeletionSuccessful) {
+            return productCard;
+        } else {
+            // Обработка случая, когда удаление не было успешным
+            // Можно выбросить исключение или вернуть null/undefined в зависимости от требований
+        }
+    }
 
     async searchProductCards(query: string, page: number, limit: number) {
         const regexQuery = new RegExp(query, 'i');

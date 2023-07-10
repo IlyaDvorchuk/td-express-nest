@@ -18,7 +18,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload) {
 
     let user
-    console.log('hey bro', payload)
 
     if (payload.user === 'user') {
       user = await this.userService.findById(payload.sub);
@@ -31,7 +30,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (!user) {
       throw new UnauthorizedException('Не существует такого пользователя');
     }
-
     return user;
   }
 }
