@@ -1,4 +1,4 @@
-import {Controller, Get, Query, Req, UseGuards, Delete, Put} from "@nestjs/common";
+import {Controller, Get, Query, Req, UseGuards, Put} from "@nestjs/common";
 import { SheltersService } from "./shelters.service";
 import { JwtAuthGuard } from "../middlewares/auth.middleware";
 
@@ -31,13 +31,6 @@ export class SheltersController {
   async getShelter(@Req() req) {
     const shelterId = req.user.id
     return this.shelterService.findById(shelterId)
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Delete(':id')
-  async deleteShelterCard(@Req() req, @Param('id') id: string) {
-    const shelterId = req.user.id
-    return this.shelterService.deleteCard(shelterId, id)
   }
 
   @UseGuards(JwtAuthGuard)
