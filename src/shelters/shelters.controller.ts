@@ -1,4 +1,4 @@
-import {Controller, Get, Put, Query, Req, UseGuards} from "@nestjs/common";
+import {Controller, Get, Query, Req, UseGuards, Delete, Put} from "@nestjs/common";
 import { SheltersService } from "./shelters.service";
 import { JwtAuthGuard } from "../middlewares/auth.middleware";
 
@@ -23,8 +23,7 @@ export class SheltersController {
     @Query('limit') limit: number = 10 // Количество элементов на странице по умолчанию: 10
   ) {
     const shelterId = req.user.id;
-    const cards = await this.shelterService.getCards(shelterId, page, limit);
-    return cards;
+    return  await this.shelterService.getCards(shelterId, page, limit);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -32,6 +31,13 @@ export class SheltersController {
   async getShelter(@Req() req) {
     const shelterId = req.user.id
     return this.shelterService.findById(shelterId)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  async deleteShelterCard(@Req() req, @Param('id') id: string) {
+    const shelterId = req.user.id
+    return this.shelterService.deleteCard(shelterId, id)
   }
 
   @UseGuards(JwtAuthGuard)

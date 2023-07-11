@@ -11,7 +11,7 @@ export class Section {
   @Prop({type: mongoose.Schema.Types.ObjectId, ref: "Subcategory", required: true})
   parent: Subcategory
 
-  @Prop({required: true})
+  @Prop()
   name: string
 
   @Prop({required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: "ProductCard" }]})
@@ -20,7 +20,7 @@ export class Section {
   @Prop({required: true})
   parentName: string
 
-  @Prop({required: true})
+  @Prop()
   categoryName: string
 
   @Prop({type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true})

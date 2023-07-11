@@ -6,15 +6,26 @@ import {
 import { NotificationDocument, NotificationSchema } from 'src/notification/notification.schema';
 
 @Schema()
+export class ParentCategory extends Document {
+  @Prop({ required: true })
+  id: string;
+
+  @Prop({ })
+  name: string;
+}
+
+export const ParentCategorySchema = SchemaFactory.createForClass(ParentCategory);
+
+@Schema()
 export class Category extends Document {
-  @Prop({ required: true })
-  category: string;
+  @Prop({ type: ParentCategorySchema , required: true })
+  category: ParentCategory;
 
-  @Prop({ required: true })
-  subcategory: string;
+  @Prop({ type: ParentCategorySchema , required: true })
+  subcategory: ParentCategory;
 
-  @Prop()
-  section: string;
+  @Prop({ type: ParentCategorySchema , required: false, default: null })
+  section: ParentCategory;
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);
@@ -168,6 +179,19 @@ export class ProductCard extends Document {
   // status: ProductStatus;
 
   @Prop({required: false, type: [SizeQuantitySchema]})
-  sizeQuantity: SizeQuantity[]
+  typeQuantity: SizeQuantity[]
 }
 export const ProductCardSchema = SchemaFactory.createForClass(ProductCard);
+
+// ProductCardSchema.pre('remove', async function (next) {
+//   const deletedProductCard = this as unknown as ProductCard;
+//
+//   // Обновление или удаление ссылок на удаленный документ в других коллекциях
+//   // Например:
+//   await SomeOtherModel.updateMany(
+//       {productCard: deletedProductCard._id}, // условие поиска ссылок
+//       {$unset: {productCard: 1}} // удаление ссылок
+//   );
+//
+//   next()
+// })

@@ -74,7 +74,7 @@ export class SheltersService {
       return false
     }
   }
-  
+
   async getAllShelters(status: string, fromDate: Date, toDate: Date) {
     const filter: any = {};
 
@@ -88,7 +88,7 @@ export class SheltersService {
 
     return this.shelterRepository.find(filter).exec();
   }
-  
+
   async getOrdersByShelter(shelterId: string): Promise<any[]> {
     const productCards = await this.productCardModel.find({ shelterId }).exec();
     const productCardIds = productCards.map((card) => card._id);
@@ -108,10 +108,10 @@ export class SheltersService {
         };
       })
     );
-        
+
     return results;
   }
-  
+
   async updateOrderStatus(orderId: string, newStatus: string): Promise<Order | null> {
     const order = await this.orderModel.findById(orderId).exec();
     if (!order) {
@@ -122,5 +122,13 @@ export class SheltersService {
     await order.save();
 
     return order;
+  }
+
+  async removeProductCardFromShelter(shelterId: string, productCardId: string): Promise<boolean> {
+    const result = await this.shelterRepository.updateOne(
+        { _id: shelterId },
+        { $pull: { productCards: productCardId } },
+    );
+    return result.modifiedCount > 0;
   }
 }
