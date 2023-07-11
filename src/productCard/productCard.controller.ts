@@ -25,35 +25,56 @@ import { Roles } from 'src/auth/roles-auth.decorator';
 export class ProductCardController {
   constructor(private readonly productCardService: ProductCardService) { }
 
-  //поиск товаров по категории
   @Get('/category/:category')
   async searchProductCardsByCategory(
     @Param('category') category: string,
     @Query('page') page: number,
     @Query('limit') limit: number,
+    @Query('minPrice') minPrice: number, // Добавьте параметр для минимальной цены
+    @Query('maxPrice') maxPrice: number, // Добавьте параметр для максимальной цены
+    @Query('color') color: string, // Добавьте параметр для цвета
+    @Query('size') size: string, // Добавьте параметр для размера
   ) {
-
-    return this.productCardService.searchProductCardsByCategory(category, page, limit);
+    return this.productCardService.searchProductCardsByCategory(
+      category,
+      page,
+      limit,
+      minPrice,
+      maxPrice,
+      color,
+      size,
+    );
   }
 
-  //получение новых товаров
-  @ApiResponse({ status: 200 })
-  @Get('/new')
-  async getNewProductCards(
+  @Get('/search')
+  async searchProductCards(
+    @Query('query') query: string,
     @Query('page') page: number,
     @Query('limit') limit: number,
+    @Query('minPrice') minPrice: number, // Добавьте параметр для минимальной цены
+    @Query('maxPrice') maxPrice: number, // Добавьте параметр для максимальной цены
+    @Query('color') color: string, // Добавьте параметр для цвета
+    @Query('size') size: string, // Добавьте параметр для размера
   ) {
-    return await this.productCardService.getNewProductCards(page, limit);
+    return this.productCardService.searchProductCards(
+      query,
+      page,
+      limit,
+      minPrice,
+      maxPrice,
+      color,
+      size,
+    );
   }
 
-  //получение горячих товаров (выборка по просмотрам товара)
   @Get('/hot-offers')
   async getHotOffers(
     @Query('page') page: number,
-    @Query('limit') limit: number
+    @Query('limit') limit: number,
   ) {
     return await this.productCardService.getHotOffers(page, limit);
   }
+
 
   //получение товара по id
   @Get(':id')
@@ -111,17 +132,12 @@ export class ProductCardController {
   @UseGuards(JwtAuthGuard)
   @Delete(':idCard')
   async deleteProductCard(
-      @Req() req,
-      @Param('idCard',) idCard: string) {
+    @Req() req,
+    @Param('idCard',) idCard: string) {
     const shelterId = req.user.id
     return this.productCardService.deleteProductCard(idCard, shelterId);
   }
 
-  //поиск товара
-  @Get()
-  async searchProductCards(@Query('query') query: string, @Query('page') page: number, @Query('limit') limit: number) {
-    return this.productCardService.searchProductCards(query, page, limit);
-  }
 
   //добавление коммента к товару
   @Post(':id/comments')
@@ -152,23 +168,5 @@ export class ProductCardController {
   }
 
 
-
-  //получение неопубликованных товаров
-  @ApiResponse({ status: 200 })
-  @Roles('ADMIN')
-  @Get('/unpublished')
-  async getUnpublishedProductCards(
-    @Query('page') page: number,
-    @Query('limit') limit: number,
-  ) {
-    return this.productCardService.getUnpublishedProductCards(page, limit);
-  }
-
-  //получение всех покупок за все время и за последний месяц
-  @Get('/total-purchases')
-  @Roles('ADMIN')
-async getTotalPurchases() {
-  return this.productCardService.getTotalPurchases();
-}
 
 }

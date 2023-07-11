@@ -26,47 +26,13 @@ export class UsersController {
     return this.usersService.addToCart(userId, dto)
   }
 
-
   @ApiOperation({summary: 'Создание пользователя'})
   @ApiResponse({status: 200, type: 'sddsf'})
   @UsePipes(ValidationPipe)
   @Post()
   create(@Body() userDto: CreateUserDto) {
     return this.usersService.createUser(userDto)
-  }
-
-  @ApiOperation({summary: 'Получение всех пользователей'})
-  @ApiResponse({status: 200})
-  @Roles('ADMIN')
-  @Get()
-  getAll() {
-    return this.usersService.getAllUsers()
-  }
-
-  @ApiOperation({summary: 'Выдать роль'})
-  @ApiResponse({status: 200})
-  @Roles('ADMIN')
-  @Post('/role')
-  addRole(@Body() dto: AddRoleDto) {
-    return this.usersService.addRole(dto)
-  }
-
-  @ApiOperation({summary: 'Забанить пользователя'})
-  @ApiResponse({status: 200})
-  @Roles('ADMIN')
-  @Post('/ban')
-  ban(@Body() dto: BanUserDto) {
-    return this.usersService.banUserById(dto)
-  }
-
-  @ApiOperation({summary: 'Разбанить пользователя'})
-  @ApiResponse({status: 200})
-  @Roles('ADMIN')
-  @Post('/unbanUser')
-  unbanUser(@Body() dto: BanUserDto) {
-    return this.usersService.unbanUser(dto.userId)
-  }
-
+  }  
 
   //удалить из корзины
   @UseGuards(JwtAuthGuard)

@@ -114,6 +114,35 @@ export const CommentSchema = SchemaFactory.createForClass(Comment);
 // export const ProductStatusSchema = SchemaFactory.createForClass(ProductStatus);
 
 @Schema()
+export class Color extends Document {
+  @Prop({ required: true })
+  name: string;
+}
+
+export const ColorSchema = SchemaFactory.createForClass(Color);
+
+@Schema()
+export class Size extends Document {
+  @Prop({ required: true })
+  name: string;
+}
+
+export const SizeSchema = SchemaFactory.createForClass(Size);
+
+@Schema()
+export class ProductPriceRange extends Document {
+  @Prop({ required: true })
+  minPrice: number;
+
+  @Prop({ required: true })
+  maxPrice: number;
+}
+
+export const ProductPriceRangeSchema = SchemaFactory.createForClass(ProductPriceRange);
+
+
+
+@Schema()
 export class SizeQuantity extends Document {
   @Prop({required: true})
   size: string
@@ -180,6 +209,15 @@ export class ProductCard extends Document {
 
   @Prop({required: false, type: [SizeQuantitySchema]})
   typeQuantity: SizeQuantity[]
+
+  @Prop({ type: [ColorSchema], default: [] })
+  colors: Color[];
+
+  @Prop({ type: [SizeSchema], default: [] })
+  sizes: Size[];
+
+  @Prop({ type: ProductPriceRangeSchema, required: false })
+  priceRange: ProductPriceRange;
 }
 export const ProductCardSchema = SchemaFactory.createForClass(ProductCard);
 
