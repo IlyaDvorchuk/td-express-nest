@@ -71,7 +71,7 @@ export class CategoriesService {
       const subcategory = await this.subcategoryRepository.findById(idCategories.subcategory.id)
       subcategory.productCards.push(productCard);
       await subcategory.save();
-        if (idCategories.section.id !== 'missing') {
+        if (idCategories.section.id.length > 6) {
         const section = await this.sectionRepository.findById(idCategories.section.id)
         section.productCards.push(productCard);
         await section.save();
