@@ -29,7 +29,7 @@ export class ProductCardService {
       async getProductCardByUserId(id: string): Promise<ProductCard> {
         const query = this.productCardRepository.findOne({ _id: id, published: true });
         //поиск по избранному и корзине для объединения в общий список
-        
+
         return query.exec();
       }
 
@@ -345,23 +345,24 @@ export class ProductCardService {
   }
 
   async searchProductCardsByCategory(category: string, page: number, limit: number) {
-    const regexCategory = new RegExp(category, 'i');
+    const regexCategory = new RegExp(category);
     const skip = (page - 1) * limit;
-
+      console.log('regexCategory', regexCategory)
     const totalCount = await this.productCardRepository.countDocuments({
       $or: [
-        { 'categories.category': regexCategory },
-        { 'categories.subcategory': regexCategory },
-        { 'categories.section': regexCategory },
+        { 'categories.category.id': regexCategory },
+        { 'categories.subcategory.id': regexCategory },
+        { 'categories.section.id': regexCategory },
       ],
     });
+
     const totalPages = Math.ceil(totalCount / limit);
 
     const productCards = await this.productCardRepository.find({
       $or: [
-        { 'categories.category': regexCategory },
-        { 'categories.subcategory': regexCategory },
-        { 'categories.section': regexCategory },
+        { 'categories.category.id': regexCategory },
+        { 'categories.subcategory.id': regexCategory },
+        { 'categories.section.id': regexCategory },
       ],
     })
       .skip(skip)
@@ -404,7 +405,7 @@ export class ProductCardService {
         }
       }
     ]);
-    
+
     const totalLastMonth = await this.productCardRepository.aggregate([
       {
         $match: {
@@ -419,7 +420,7 @@ export class ProductCardService {
         }
       }
     ]);
-    
+
     const totalAmount = await this.productCardRepository.aggregate([
       { $group: { _id: null, totalAmount: { $sum: '$pricesAndQuantity.price' } } },
     ]);
@@ -427,14 +428,14 @@ export class ProductCardService {
       { $match: { createdAt: { $gte: moment().subtract(1, 'months').toDate() } } },
       { $group: { _id: null, totalAmount: { $sum: '$pricesAndQuantity.price' } } },
     ]);
-  
+
     return {
       total: total[0].totalPurchaseCount,
       totalLastMonth: totalLastMonth[0].totalPurchaseCount,
       totalAmount: totalAmount[0] ? totalAmount[0].totalAmount : 0,
       totalAmountLastMonth: totalAmountLastMonth[0] ? totalAmountLastMonth[0].totalAmount : 0,
     };
-  } 
+  }
 
   async createQuestion(productId: string, customerId: number, questionText: string): Promise<Question> {
     const product = await this.getProductCardById(productId);
