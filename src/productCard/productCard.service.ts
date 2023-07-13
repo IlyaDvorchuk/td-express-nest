@@ -360,22 +360,28 @@ export class ProductCardService {
 
   async getUnpublishedProductCards(page: number, limit: number) {
     const skip = (page - 1) * limit;
-
-    const totalCount = await this.productCardRepository.countDocuments({ published: false });
+  
+    const totalCount = await this.productCardRepository.countDocuments({
+      published: false,
+      'shelter.isVerified': true,
+    })
+    .populate('shelter', 'isVerified');
     const totalPages = Math.ceil(totalCount / limit);
-
+  
     const unpublishedProductCards = await this.productCardRepository
-      .find({ published: false })
+      .find({ published: false, 'shelter.isVerified': true })
+      .populate('shelter', 'isVerified')
       .skip(skip)
       .limit(limit)
       .exec();
-
+  
     return {
       productCards: unpublishedProductCards,
       totalPages,
       currentPage: page,
     };
   }
+  
 
   async getTotalPurchases(): Promise<{ total: number; totalLastMonth: number; totalAmount: number; totalAmountLastMonth: number }> {
     const total = await this.productCardRepository.aggregate([

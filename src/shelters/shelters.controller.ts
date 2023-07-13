@@ -46,7 +46,7 @@ export class SheltersController {
     return await this.shelterService.getAllShelters(status, parsedFromDate, parsedToDate);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard) // отображение товаров(заказов) продавца с его статусами для самого продавца
   @Get('orders')
   async getOrdersByShelter(@Req() req) {
     const shelterId = req.user.id;
