@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ProductCard, Comment } from './productCard.schema';
-import { CreateProductCardDto } from './dto/create-product-card.dto';
+import {CreateProductCardDto, UpdateProductCardDto} from './dto/create-product-card.dto';
 import { SheltersService } from "../shelters/shelters.service";
 import { CategoriesService } from "../categories/categories.service";
 import moment from "moment";
@@ -75,7 +75,7 @@ export class ProductCardService {
         }
     }
 
-    async updateProductCard(id: string, dto: CreateProductCardDto): Promise<ProductCard> {
+    async updateProductCard(dto: UpdateProductCardDto): Promise<ProductCard> {
         const query = this.productCardRepository.findOneAndUpdate(
           { _id: id, published: true },
           dto,
