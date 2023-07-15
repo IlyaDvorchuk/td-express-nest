@@ -77,7 +77,7 @@ export class ProductCardService {
 
     async updateProductCard(dto: UpdateProductCardDto): Promise<ProductCard> {
         const query = this.productCardRepository.findOneAndUpdate(
-          { _id: id, published: true },
+          { _id: dto._id, published: true },
           dto,
           { new: true }
         );
