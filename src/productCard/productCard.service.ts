@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ProductCard, Comment } from './productCard.schema';
-import { CreateProductCardDto } from './dto/create-product-card.dto';
+import {CreateProductCardDto, UpdateProductCardDto} from './dto/create-product-card.dto';
 import { SheltersService } from "../shelters/shelters.service";
 import { CategoriesService } from "../categories/categories.service";
 import moment from "moment";
@@ -75,7 +75,7 @@ export class ProductCardService {
         }
     }
 
-    async updateProductCard(id: string, dto: CreateProductCardDto): Promise<ProductCard> {
+    async updateProductCard(dto: UpdateProductCardDto): Promise<ProductCard> {
         const query = this.productCardRepository.findOneAndUpdate(
           { _id: id, published: true },
           dto,
@@ -86,11 +86,13 @@ export class ProductCardService {
 
     async deleteProductCard(productId: string, shelterId: string): Promise<ProductCard> {
         const productCard = await this.productCardRepository.findOneAndDelete({ _id: productId });
+        console.log('deleteProductCard productCard', productCard)
         // Удаление файла mainPhoto
         const mainPhoto = productCard.mainPhoto;
         // const mainPhotoFilename = mainPhoto.substring(mainPhoto.lastIndexOf('/') + 1);
         const mainPhotoFilePath = `./static${mainPhoto}`;
         // console.log('fs', mainPhotoFilename)
+        console.log('mainPhotoFilePath', mainPhotoFilePath)
         fs.unlink(mainPhotoFilePath, (error) => {
             if (error) {
                 console.error('Ошибка при удалении файла mainPhoto:', error);
@@ -142,14 +144,14 @@ export class ProductCardService {
           { sizes: size },
         ],
       };
-  
+
       return this.productCardRepository
         .find(filter)
         .skip((page - 1) * limit)
         .limit(limit)
         .exec();
     }
-  
+
     async searchProductCards(
       query: string,
       page: number,
@@ -160,7 +162,7 @@ export class ProductCardService {
       size: string,
     ) {
       const regexQuery = new RegExp(query, 'i');
-  
+
       // Добавьте фильтрацию по ценовому диапазону, цвету и размеру
       const filter = {
         $and: [
@@ -179,23 +181,23 @@ export class ProductCardService {
           { sizes: size },
         ],
       };
-  
+
       const totalCount = await this.productCardRepository.countDocuments(filter);
       const totalPages = Math.ceil(totalCount / limit);
-  
+
       const productCards = await this.productCardRepository
         .find(filter)
         .skip((page - 1) * limit)
         .limit(limit)
         .exec();
-  
+
       return {
         productCards,
         totalPages,
         currentPage: page,
       };
     }
-  
+
     async getProductCardSummary(id: string) {
         const query = this.productCardRepository.findOne({ _id: id, published: true })
           .select('information.name information.description pricesAndQuantity');
@@ -356,32 +358,32 @@ export class ProductCardService {
     return product.comments;
   }
 
- 
+
 
   async getUnpublishedProductCards(page: number, limit: number) {
     const skip = (page - 1) * limit;
-  
+
     const totalCount = await this.productCardRepository.countDocuments({
       published: false,
       'shelter.isVerified': true,
     })
     .populate('shelter', 'isVerified');
     const totalPages = Math.ceil(totalCount / limit);
-  
+
     const unpublishedProductCards = await this.productCardRepository
       .find({ published: false, 'shelter.isVerified': true })
       .populate('shelter', 'isVerified')
       .skip(skip)
       .limit(limit)
       .exec();
-  
+
     return {
       productCards: unpublishedProductCards,
       totalPages,
       currentPage: page,
     };
   }
-  
+
 
   async getTotalPurchases(): Promise<{ total: number; totalLastMonth: number; totalAmount: number; totalAmountLastMonth: number }> {
     const total = await this.productCardRepository.aggregate([

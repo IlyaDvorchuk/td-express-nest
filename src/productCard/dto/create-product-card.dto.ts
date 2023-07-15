@@ -153,3 +153,7 @@ export class CreateProductCardDto {
   @ValidateNested()
   readonly sizeQuantity?: SizeQuantity[]
 }
+
+export class UpdateProductCardDto extends CreateProductCardDto{
+  readonly _id: string
+}

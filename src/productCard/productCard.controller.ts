@@ -12,7 +12,7 @@ import {
   UseGuards, Req
 } from '@nestjs/common';
 import { ProductCardService } from './productCard.service';
-import { CreateProductCardDto } from './dto/create-product-card.dto';
+import {CreateProductCardDto, UpdateProductCardDto} from './dto/create-product-card.dto';
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import { editFileName, imageFileFilter } from "../utils/file-upload.utils";
@@ -123,9 +123,10 @@ export class ProductCardController {
   }
 
   //обновление карточки
+  @UseGuards(JwtAuthGuard)
   @Put(':id')
-  async updateProductCard(@Param('id') id: string, @Body() updateProductCardDto: CreateProductCardDto) {
-    return this.productCardService.updateProductCard(id, updateProductCardDto);
+  async updateProductCard(@Body() updateProductCardDto: UpdateProductCardDto) {
+    return this.productCardService.updateProductCard(updateProductCardDto);
   }
 
   //удаление карточки
