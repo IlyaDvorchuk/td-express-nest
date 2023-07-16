@@ -201,6 +201,27 @@ export class ProductCardService {
         }
     }
 
+  async getNewProductCards(page: number, limit: number) {
+    const skip = (page - 1) * limit;
+
+    const totalCount = await this.productCardRepository.countDocuments();
+    const totalPages = Math.ceil(totalCount / limit);
+
+
+    const productCards = await this.productCardRepository
+      .find({ published: true })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+    return {
+      productCards,
+      totalPages,
+      currentPage: page,
+    };
+  }
+
     async searchProductCardsByCategory(
       category: string,
       page: number,
@@ -213,7 +234,7 @@ export class ProductCardService {
       // Добавьте фильтрацию по ценовому диапазону, цвету и размеру
       const filter = {
         $and: [
-          { 'categories.category': category },
+          { 'categories.category.id': category },
           { published: true },
           { 'pricesAndQuantity.price': { $gte: minPrice || 0, $lte: maxPrice || Number.MAX_SAFE_INTEGER } },
           { colors: color },

@@ -18,6 +18,7 @@ import { diskStorage } from "multer";
 import { editFileName, imageFileFilter } from "../utils/file-upload.utils";
 import { JwtAuthGuard } from "../middlewares/auth.middleware";
 import { CreateCommentDto } from './dto/create-comment.dto';
+import { ApiResponse } from "@nestjs/swagger";
 
 @Controller('product-cards')
 export class ProductCardController {
@@ -74,15 +75,15 @@ export class ProductCardController {
   }
 
 
-  // //получение новых товаров
-  // @ApiResponse({ status: 200 })
-  // @Get('/new')
-  // async getNewProductCards(
-  //   @Query('page') page: number,
-  //   @Query('limit') limit: number,
-  // ) {
-  //   return await this.productCardService.getNewProductCards(page, limit);
-  // }
+  //получение новых товаров
+  @ApiResponse({ status: 200 })
+  @Get('/new')
+  async getNewProductCards(
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ) {
+    return await this.productCardService.getNewProductCards(page, limit);
+  }
 
   //получение товара по id
   @Get(':id')
