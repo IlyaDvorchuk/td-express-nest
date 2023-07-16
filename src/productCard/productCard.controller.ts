@@ -17,9 +17,7 @@ import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import { editFileName, imageFileFilter } from "../utils/file-upload.utils";
 import { JwtAuthGuard } from "../middlewares/auth.middleware";
-import { ApiResponse } from "@nestjs/swagger";
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { Roles } from 'src/auth/roles-auth.decorator';
 
 @Controller('product-cards')
 export class ProductCardController {
@@ -114,6 +112,7 @@ export class ProductCardController {
     const shelterId = req.user.id
     const mainPhotoPath = mainPhoto ? '/main-photos/' + mainPhoto[0].filename : undefined;
     const additionalPhotosPaths = additionalPhotos.map(file => '/additional-photos/' + file.filename);
+
     return await this.productCardService.createProductCard(
       createProductCardDto,
       shelterId,
@@ -124,9 +123,12 @@ export class ProductCardController {
 
   //обновление карточки
   @UseGuards(JwtAuthGuard)
-  @Put(':id')
-  async updateProductCard(@Body() updateProductCardDto: UpdateProductCardDto) {
-    return this.productCardService.updateProductCard(updateProductCardDto);
+  @Put(':idCard')
+  async updateProductCard(
+    @Param('idCard',) idCard: string,
+    @Body() updateProductCardDto: UpdateProductCardDto
+  ) {
+    return this.productCardService.updateProductCard(updateProductCardDto, idCard);
   }
 
   //удаление карточки

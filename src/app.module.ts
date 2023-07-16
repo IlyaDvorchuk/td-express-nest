@@ -32,6 +32,9 @@ import { QuestionModule } from "./questionary/questionary.module";
     MongooseModule.forRoot(process.env.DB_URL),
     MulterModule.register({
       dest: './static',
+      limits: {
+        fileSize: 1024 * 1024 * 1024 * 1000
+      }
     }),
     UsersModule,
     AuthModule,

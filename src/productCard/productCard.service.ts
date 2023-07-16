@@ -8,8 +8,10 @@ import { CategoriesService } from "../categories/categories.service";
 import moment from "moment";
 import { Question } from "src/questionary/questionary.schema";
 import { QuestionaryService } from "../questionary/questionary.service";
+import {isBase64String} from "../utils/isBase64String";
 import * as fs from 'fs';
-
+import * as uuid from 'uuid'
+import * as path from "path";
 
 @Injectable()
 export class ProductCardService {
@@ -39,7 +41,8 @@ export class ProductCardService {
         mainPhoto: string,
         additionalPhotos: string[]
     ) {
-        for (let field of Object.keys(dto)) {
+
+      for (let field of Object.keys(dto)) {
             if (typeof dto[field] === 'string') {
                 try {
                     dto[field] = JSON.parse(dto[field]);
@@ -61,10 +64,9 @@ export class ProductCardService {
             viewsCount: 0,
             // pricesAndQuantity: new PricesAndQuantity(), // Инициализируем поле pricesAndQuantity новым экземпляром класса PricesAndQuantity
           });
-        console.log('CreateProductCardDto', product);
         const isAddInShelter = await this.shelterService.addProductCard(shelterId, product._id);
-        const isAddInCategories = await this.categoriesService.addProductCard(dto.categories, product._id);
 
+      const isAddInCategories = await this.categoriesService.addProductCard(dto.categories, product._id);
         if (isAddInShelter && isAddInCategories) {
             return product;
         } else {
@@ -75,13 +77,87 @@ export class ProductCardService {
         }
     }
 
-    async updateProductCard(dto: UpdateProductCardDto): Promise<ProductCard> {
-        const query = this.productCardRepository.findOneAndUpdate(
-          { _id: dto._id, published: true },
-          dto,
-          { new: true }
-        );
-        return query.exec();
+    async updateProductCard(dto: UpdateProductCardDto, id: string) {
+      const product = await this.productCardRepository.findById(id);
+      if (typeof dto.mainPhoto === 'string') {
+        const staticDir = path.join(__dirname, '..', '..', 'static');
+        if (isBase64String(dto.mainPhoto)) {
+          const base64Data = dto.mainPhoto.replace(/^data:image\/[a-z]+;base64,/, '');
+          // Используем значение из product.mainPhoto для пути к файлу
+          const filePath = product.mainPhoto;
+
+
+          const targetPath = path.resolve(staticDir, 'main-photos', path.basename(filePath));
+          // Создаем буфер из строки base64
+          const buffer = Buffer.from(base64Data, 'base64');
+          // Записываем буфер в файл (асинхронно)
+          fs.writeFile(targetPath, buffer, (err) => {
+            if (err) {
+              console.error('Ошибка при записи файла:', err);
+            } else {
+              console.log('Изображение успешно заменено');
+            }
+          });
+        } else {
+          console.log('Строка не является base64');
+        }
+
+        for (let i = 0; i < dto.additionalPhotos.length; i++) {
+          const photo = dto.additionalPhotos[i];
+          if (typeof photo === 'string') {
+            if (isBase64String(photo)) {
+              console.log('Элемент массива является base64:', photo);
+              // Преобразование base64 в файл и обновление элемента в product.additionalPhotos
+              const base64Data = photo.replace(/^data:image\/[a-z]+;base64,/, '');
+              const buffer = Buffer.from(base64Data, 'base64');
+
+              // Проверка индекса и добавление нового элемента, если он не существует
+              if (i >= product.additionalPhotos.length) {
+                const newFilePath = `./static/additional-photos/${uuid.v4()}.jpg`;
+                product.additionalPhotos.push(newFilePath);
+                const targetPath = path.resolve(staticDir, 'additional-photos', path.basename(newFilePath))
+                // Сохранение файла по новому пути (асинхронно)
+                fs.writeFile(targetPath, buffer, (err) => {
+                  if (err) {
+                    console.error('Ошибка при записи файла:', err);
+                  } else {
+                    console.log('Изображение успешно добавлено');
+                  }
+                });
+              } else {
+                // Используйте product.additionalPhotos[i] для пути к файлу
+                const filePath = product.additionalPhotos[i];
+                // Замена файла по указанному пути (асинхронно)
+                const targetPath = path.resolve(staticDir, 'additional-photos', path.basename(filePath))
+                fs.writeFile(targetPath, buffer, (err) => {
+                  if (err) {
+                    console.error('Ошибка при записи файла:', err);
+                  } else {
+                    console.log('Изображение успешно заменено');
+                  }
+                });
+              }
+            } else {
+              console.log('Элемент массива не является base64:', photo);
+            }
+          }
+        }
+      }
+      const modifiedDto = {
+        ...dto,
+        mainPhoto: product.mainPhoto,
+        additionalPhotos: product.additionalPhotos
+      }
+
+      const answer = await this.categoriesService.updateCategories(dto.categories, product.categories, product, id)
+      if (!answer) {
+        return
+      }
+      return await this.productCardRepository.findOneAndUpdate(
+          { _id: id },
+          modifiedDto,
+        {new: true}
+        ).exec();
       }
 
     async deleteProductCard(productId: string, shelterId: string): Promise<ProductCard> {
