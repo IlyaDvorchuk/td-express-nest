@@ -74,6 +74,16 @@ export class ProductCardController {
   }
 
 
+  // //получение новых товаров
+  // @ApiResponse({ status: 200 })
+  // @Get('/new')
+  // async getNewProductCards(
+  //   @Query('page') page: number,
+  //   @Query('limit') limit: number,
+  // ) {
+  //   return await this.productCardService.getNewProductCards(page, limit);
+  // }
+
   //получение товара по id
   @Get(':id')
   async getProductCardById(@Param('id') id: string) {
