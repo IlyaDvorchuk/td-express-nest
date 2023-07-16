@@ -18,20 +18,22 @@ import { diskStorage } from "multer";
 import { editFileName, imageFileFilter } from "../utils/file-upload.utils";
 import { JwtAuthGuard } from "../middlewares/auth.middleware";
 import { CreateCommentDto } from './dto/create-comment.dto';
+import { Question } from 'src/questionary/questionary.schema';
 
 @Controller('product-cards')
 export class ProductCardController {
   constructor(private readonly productCardService: ProductCardService) { }
 
+  //поиск по категории
   @Get('/category/:category')
   async searchProductCardsByCategory(
     @Param('category') category: string,
     @Query('page') page: number,
     @Query('limit') limit: number,
-    @Query('minPrice') minPrice: number, // Добавьте параметр для минимальной цены
-    @Query('maxPrice') maxPrice: number, // Добавьте параметр для максимальной цены
-    @Query('color') color: string, // Добавьте параметр для цвета
-    @Query('size') size: string, // Добавьте параметр для размера
+    @Query('minPrice') minPrice: number, 
+    @Query('maxPrice') maxPrice: number, 
+    @Query('color') color: string, 
+    @Query('size') size: string, 
   ) {
     return this.productCardService.searchProductCardsByCategory(
       category,
@@ -44,15 +46,16 @@ export class ProductCardController {
     );
   }
 
+  //поиск
   @Get('/search')
   async searchProductCards(
     @Query('query') query: string,
     @Query('page') page: number,
     @Query('limit') limit: number,
-    @Query('minPrice') minPrice: number, // Добавьте параметр для минимальной цены
-    @Query('maxPrice') maxPrice: number, // Добавьте параметр для максимальной цены
-    @Query('color') color: string, // Добавьте параметр для цвета
-    @Query('size') size: string, // Добавьте параметр для размера
+    @Query('minPrice') minPrice: number, 
+    @Query('maxPrice') maxPrice: number, 
+    @Query('color') color: string, 
+    @Query('size') size: string, 
   ) {
     return this.productCardService.searchProductCards(
       query,
@@ -65,6 +68,7 @@ export class ProductCardController {
     );
   }
 
+  //получение горячих товаров
   @Get('/hot-offers')
   async getHotOffers(
     @Query('page') page: number,
@@ -171,5 +175,44 @@ export class ProductCardController {
   }
 
 
+  //создание вопроса
+  @Post('createQuestion/:productId/:customerId')
+  async createQuestion(
+    @Param('productId') productId: string,
+    @Param('customerId') customerId: number,
+    @Body('questionText') questionText: string,
+  ): Promise<Question> {
+    return this.productCardService.createQuestion(productId, customerId, questionText);
+  }
 
+  //ответ на вопрос
+  @Post('answerQuestion/:questionId')
+  async answerQuestion(
+    @Param('questionId') questionId: string,
+    @Body('answerText') answerText: string,
+  ): Promise<Question> {
+    return this.productCardService.answerQuestion(questionId, answerText);
+  }
+
+  // @Get('all')
+  // async getAllQuestions(): Promise<Question[]> {
+  //   return this.productCardService.getAllQuestions();
+  // }
+
+  // @Get('getAllAnswered')
+  // async getAllAnsweredQuestions(): Promise<Question[]> {
+  //   return this.productCardService.getAllAnsweredQuestions();
+  // }
+
+  //получение вопроса (доделать еще получение всех вопросов по айди продукта)
+  @Get('getQuestion/:questionId')
+  async getQuestionById(@Param('questionId') questionId: string): Promise<Question> {
+    return this.productCardService.getQuestionById(questionId);
+  }
+
+  //получение ответа 
+  @Get('getAnswer/:questionId')
+  async getAnswerForQuestion(@Param('questionId') questionId: string): Promise<Question> {
+    return this.productCardService.getAnswerForQuestion(questionId);
+  }
 }
