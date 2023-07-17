@@ -16,4 +16,33 @@ export class QuestionaryService {
       questionText,
     })
   }
+
+  async answerQuestion(questionId: string, answerText: string) {
+    const question = await this.questionRepository.findById(questionId);
+
+    if (!question) {
+      throw new Error('Question not found');
+    }
+
+    question.answerText = answerText;
+    await question.save();
+
+    return question;
+  }
+  
+  async getAllQuestions() {
+    return await this.questionRepository.find().exec();
+  }
+
+  async getQuestionById(questionId: string) {
+    return await this.questionRepository.findById(questionId).exec();
+  }
+
+  async getAllAnsweredQuestions() {
+    return await this.questionRepository.find({ answerText: { $exists: true } }).exec();
+  }
+
+  async getAnswerForQuestion(questionId: string) {
+    return await this.questionRepository.findOne({ _id: questionId, answerText: { $exists: true } }).exec();
+  }
 }

@@ -529,4 +529,23 @@ export class ProductCardService {
     return this.questionService.createQuestion(product, customerId, questionText);
   }
 
+  async answerQuestion(questionId: string, answerText: string){
+    return this.questionService.answerQuestion(questionId, answerText);
+  }
+
+  async getAllQuestions() {
+    return this.questionService.getAllQuestions();
+  }
+
+  async getQuestionById(questionId: string) {
+    return this.questionService.getQuestionById(questionId);
+  }
+
+  async getAllAnsweredQuestions() {
+    return this.questionService.getAllAnsweredQuestions();
+  }
+
+  async getAnswerForQuestion(questionId: string) {
+    return this.questionService.getAnswerForQuestion(questionId);
+  }
 }
