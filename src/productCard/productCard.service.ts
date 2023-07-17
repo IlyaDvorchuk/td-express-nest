@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { isValidObjectId, Model } from "mongoose";
 import { ProductCard, Comment } from './productCard.schema';
 import {CreateProductCardDto, UpdateProductCardDto} from './dto/create-product-card.dto';
 import { SheltersService } from "../shelters/shelters.service";
@@ -306,14 +306,23 @@ export class ProductCardService {
         return query.exec();
       }
 
-      async addViewToProductCard(id: string) {
-        const query = this.productCardRepository.findOneAndUpdate(
-          { _id: id, published: true },
-          { $inc: { viewsCount: 1 } },
-          { new: true }
-        );
-        return query.exec();
-      }
+  async addViewToProductCard(id: string) {
+    // Проверка валидности id
+    if (!isValidObjectId(id)) {
+      return false;
+    }
+
+    const query = this.productCardRepository.findOneAndUpdate(
+      { _id: id, published: true },
+      { $inc: { viewsCount: 1 } },
+      { new: true }
+    );
+    const result = await query.exec();
+
+    return result !== null;
+
+
+  }
 
     async getAllProductCards(page: number, limit: number) {
         const skip = (page - 1) * limit;
