@@ -6,7 +6,7 @@ import { AddRoleDto } from "src/users/dto/add-role.dto";
 import { BanUserDto } from "src/users/dto/ban-user.dto";
 import { ProductCardService } from "src/productCard/productCard.service";
 
-@ApiTags('Пользователи')
+@ApiTags('Админ')
 @Controller('admin')
 export class UsersController {
   constructor(private usersService: UsersService,
@@ -23,7 +23,7 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Выдать роль' })
   @ApiResponse({ status: 200 })
-  @Roles('ADMIN')
+  //@Roles('ADMIN')
   @Post('/role')
   addRole(@Body() dto: AddRoleDto) {
     return this.usersService.addRole(dto)
