@@ -45,7 +45,7 @@ export class UsersController {
     return this.usersService.unbanUser(dto.userId)
   }
 
-  //получение неопубликованных товаров
+  //получение неопубликованных товаров // перенести в админку обновление статусов товара
   @ApiResponse({ status: 200 })
   @Roles('ADMIN')
   @Get('/unpublished')
