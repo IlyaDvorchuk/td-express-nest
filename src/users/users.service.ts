@@ -46,13 +46,8 @@ export class UsersService {
     if (!user) {
       throw new HttpException('Пользователь или роль не найдены', HttpStatus.NOT_FOUND);
     }
-    // const role = await this.roleService.getRoleByValue(dto.value)
-    // if (role) {
-    //   user.roles.push(role.id);
-    //   await user.save();
-    //   return dto;
-    // }
-    throw new HttpException('Пользователь или роль не найдены', HttpStatus.NOT_FOUND);
+    user.role = dto.role;
+    return user.save();
   }
 
   async banUserById(dto: BanUserDto) {

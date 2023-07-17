@@ -27,6 +27,9 @@ export class User {
 
   @Prop({ type: [OrderSchema], default: [] })
   orders: Order[];
+
+  @Prop({ required: true, enum: ['USER', 'ADMIN'], default: 'USER' })
+  role: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)
