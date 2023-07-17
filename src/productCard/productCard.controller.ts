@@ -90,6 +90,12 @@ export class ProductCardController {
   }
 
   //получение товара по id
+  @Get('view-count/:id')
+  async addViewCountIncrement(@Param('id') id: string) {
+    return this.productCardService.addViewToProductCard(id);
+  }
+
+  //получение товара по id
   @Get(':id')
   async getProductCardById(@Param('id') id: string) {
     return this.productCardService.getProductCardById(id);
@@ -204,6 +210,8 @@ export class ProductCardController {
   ): Promise<Question> {
     return this.productCardService.answerQuestion(questionId, answerText);
   }
+
+
 
   // @Get('all')
   // async getAllQuestions(): Promise<Question[]> {
