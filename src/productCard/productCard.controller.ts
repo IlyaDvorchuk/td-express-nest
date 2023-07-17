@@ -19,6 +19,7 @@ import { editFileName, imageFileFilter } from "../utils/file-upload.utils";
 import { JwtAuthGuard } from "../middlewares/auth.middleware";
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { Question } from 'src/questionary/questionary.schema';
+import { ApiResponse } from "@nestjs/swagger";
 
 @Controller('product-cards')
 export class ProductCardController {
@@ -30,10 +31,10 @@ export class ProductCardController {
     @Param('category') category: string,
     @Query('page') page: number,
     @Query('limit') limit: number,
-    @Query('minPrice') minPrice: number, 
-    @Query('maxPrice') maxPrice: number, 
-    @Query('color') color: string, 
-    @Query('size') size: string, 
+    @Query('minPrice') minPrice: number,
+    @Query('maxPrice') maxPrice: number,
+    @Query('color') color: string,
+    @Query('size') size: string,
   ) {
     return this.productCardService.searchProductCardsByCategory(
       category,
@@ -52,10 +53,10 @@ export class ProductCardController {
     @Query('query') query: string,
     @Query('page') page: number,
     @Query('limit') limit: number,
-    @Query('minPrice') minPrice: number, 
-    @Query('maxPrice') maxPrice: number, 
-    @Query('color') color: string, 
-    @Query('size') size: string, 
+    @Query('minPrice') minPrice: number,
+    @Query('maxPrice') maxPrice: number,
+    @Query('color') color: string,
+    @Query('size') size: string,
   ) {
     return this.productCardService.searchProductCards(
       query,
@@ -77,6 +78,16 @@ export class ProductCardController {
     return await this.productCardService.getHotOffers(page, limit);
   }
 
+
+  //получение новых товаров
+  @ApiResponse({ status: 200 })
+  @Get('/new')
+  async getNewProductCards(
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ) {
+    return await this.productCardService.getNewProductCards(page, limit);
+  }
 
   //получение товара по id
   @Get(':id')
@@ -204,15 +215,4 @@ export class ProductCardController {
   //   return this.productCardService.getAllAnsweredQuestions();
   // }
 
-  //получение вопроса (доделать еще получение всех вопросов по айди продукта)
-  @Get('getQuestion/:questionId')
-  async getQuestionById(@Param('questionId') questionId: string): Promise<Question> {
-    return this.productCardService.getQuestionById(questionId);
-  }
-
-  //получение ответа 
-  @Get('getAnswer/:questionId')
-  async getAnswerForQuestion(@Param('questionId') questionId: string): Promise<Question> {
-    return this.productCardService.getAnswerForQuestion(questionId);
-  }
 }
