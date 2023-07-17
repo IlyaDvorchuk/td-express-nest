@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import { Category, CategoryDocument } from "./schemas/categories.schema";
 import { Subcategory, SubcategoryDocument } from "./schemas/subcategories.schema";
 import { Section, SectionDocument } from "./schemas/sections.schema";
@@ -71,7 +71,7 @@ export class CategoriesService {
       const subcategory = await this.subcategoryRepository.findById(idCategories.subcategory.id)
       subcategory.productCards.push(productCard);
       await subcategory.save();
-        if (idCategories.section.id !== 'missing') {
+      if (idCategories.section.name.length > 0) {
         const section = await this.sectionRepository.findById(idCategories.section.id)
         section.productCards.push(productCard);
         await section.save();
@@ -82,6 +82,45 @@ export class CategoriesService {
       console.error('Error adding product card:', e)
       return false
     }
+  }
+
+  async updateCategories(dtoCategories, productCategories, product, id: string) {
+    try {
+      if (dtoCategories.category.id !== productCategories.category.id) {
+        await this.updateCategory(this.categoryRepository, productCategories.category.id, id, product, dtoCategories.category.id);
+      } else if (dtoCategories.subcategory.id !== productCategories.subcategory.id) {
+        await this.updateCategory(this.subcategoryRepository, productCategories.subcategory.id, id, product, dtoCategories.subcategory.id);
+      } else if (dtoCategories.section.id !== productCategories.section.id) {
+        await this.updateCategory(this.sectionRepository, productCategories.section.id, id, product, dtoCategories.section.id);
+      }
+      return true
+    } catch (e) {
+     throw new Error(e)
+    }
+  }
+
+  private async updateCategory(repository: Model<any>, oldCategoryId: string, id: string, product: any, newCategoryId: string) {
+    const oldCategory = await repository.findById(oldCategoryId).exec();
+    if (!oldCategory) {
+      throw new Error('Old category not found.');
+    }
+
+    // Convert the string id to ObjectId
+    const idToDelete = new Types.ObjectId(id).toString();
+
+    // Filter out the element with the specified id from the productCards array
+    oldCategory.productCards = oldCategory.productCards.filter((productId) => productId.toString() !== idToDelete);
+
+    // Save the updated category document
+    await oldCategory.save();
+
+    const newCategory = await repository.findById(newCategoryId).exec();
+    if (!newCategory) {
+      throw new Error('New category not found.');
+    }
+
+    newCategory.productCards.push(product);
+    await newCategory.save();
   }
 
   async removeProductCardFromCategories(productCardId: string): Promise<boolean> {

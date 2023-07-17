@@ -112,12 +112,12 @@ export class CreateProductCardDto {
 
   @ApiProperty({ example: 'mainPhoto.jpg', description: 'Main product photo' })
   @IsString()
-  readonly mainPhoto: MemoryStoredFile;
+  readonly mainPhoto: MemoryStoredFile | string;
 
   @ApiProperty({ type: [MemoryStoredFile], description: 'Additional product photos' })
   @IsArray()
   @IsString({ each: true })
-  readonly additionalPhotos: MemoryStoredFile[];
+  readonly additionalPhotos: MemoryStoredFile[] | string[];
 
   @ApiProperty({ type: Dimensions, description: 'Product dimensions' })
   @ValidateNested()
@@ -152,4 +152,10 @@ export class CreateProductCardDto {
 
   @ValidateNested()
   readonly sizeQuantity?: SizeQuantity[]
+}
+
+export class UpdateProductCardDto extends CreateProductCardDto {
+  @ApiProperty({ example: 'fgd08fdg8gfddfg', description: 'id товара' })
+  @IsString()
+  readonly _id: string
 }
