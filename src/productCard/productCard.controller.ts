@@ -12,7 +12,7 @@ import {
   UseGuards, Req
 } from '@nestjs/common';
 import { ProductCardService } from './productCard.service';
-import {CreateProductCardDto, UpdateProductCardDto} from './dto/create-product-card.dto';
+import { CreateProductCardDto, UpdateProductCardDto } from './dto/create-product-card.dto';
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import { editFileName, imageFileFilter } from "../utils/file-upload.utils";
@@ -25,16 +25,16 @@ import { ApiResponse } from "@nestjs/swagger";
 export class ProductCardController {
   constructor(private readonly productCardService: ProductCardService) { }
 
-  //поиск по категории
+  // Поиск по категории
   @Get('/category/:category')
   async searchProductCardsByCategory(
     @Param('category') category: string,
-    @Query('page') page: number,
-    @Query('limit') limit: number,
-    @Query('minPrice') minPrice: number,
-    @Query('maxPrice') maxPrice: number,
-    @Query('color') color: string,
-    @Query('size') size: string,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @Query('minPrice') minPrice: number = 0,
+    @Query('maxPrice') maxPrice: number = Number.MAX_SAFE_INTEGER,
+    @Query('color') color: string = '',
+    @Query('size') size: string = '',
   ) {
     return this.productCardService.searchProductCardsByCategory(
       category,
@@ -47,16 +47,16 @@ export class ProductCardController {
     );
   }
 
-  //поиск
+  // Поиск
   @Get('/search')
   async searchProductCards(
     @Query('query') query: string,
-    @Query('page') page: number,
-    @Query('limit') limit: number,
-    @Query('minPrice') minPrice: number,
-    @Query('maxPrice') maxPrice: number,
-    @Query('color') color: string,
-    @Query('size') size: string,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @Query('minPrice') minPrice: number = 0,
+    @Query('maxPrice') maxPrice: number = Number.MAX_SAFE_INTEGER,
+    @Query('color') color: string = '',
+    @Query('size') size: string = '',
   ) {
     return this.productCardService.searchProductCards(
       query,
@@ -69,25 +69,34 @@ export class ProductCardController {
     );
   }
 
-  //получение горячих товаров
+  // Получение горячих товаров
   @Get('/hot-offers')
   async getHotOffers(
-    @Query('page') page: number,
-    @Query('limit') limit: number,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @Query('minPrice') minPrice: number = 0,
+    @Query('maxPrice') maxPrice: number = Number.MAX_SAFE_INTEGER,
+    @Query('color') color: string = '',
+    @Query('size') size: string = '',
   ) {
-    return await this.productCardService.getHotOffers(page, limit);
+    return await this.productCardService.getHotOffers(page, limit, minPrice, maxPrice, color, size);
   }
 
-
-  //получение новых товаров
+  // Получение новых товаров
   @ApiResponse({ status: 200 })
   @Get('/new')
   async getNewProductCards(
-    @Query('page') page: number,
-    @Query('limit') limit: number,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @Query('minPrice') minPrice: number = 0,
+    @Query('maxPrice') maxPrice: number = Number.MAX_SAFE_INTEGER,
+    @Query('color') color: string = '',
+    @Query('size') size: string = '',
   ) {
-    return await this.productCardService.getNewProductCards(page, limit);
+    return await this.productCardService.getNewProductCards(page, limit, minPrice, maxPrice, color, size);
   }
+
+
 
   //получение товара по id
   @Get('view-count/:id')

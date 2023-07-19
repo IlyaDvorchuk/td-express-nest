@@ -201,26 +201,33 @@ export class ProductCardService {
         }
     }
 
-  async getNewProductCards(page: number, limit: number) {
-    const skip = (page - 1) * limit;
-
-    const totalCount = await this.productCardRepository.countDocuments();
-    const totalPages = Math.ceil(totalCount / limit);
-
-
-    const productCards = await this.productCardRepository
-      .find({ published: true })
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .exec();
-
-    return {
-      productCards,
-      totalPages,
-      currentPage: page,
-    };
+    async getNewProductCards(page: number, limit: number, minPrice: number, maxPrice: number, color: string, size: string) {
+      const skip = (page - 1) * limit;
+  
+      const totalCount = await this.productCardRepository.countDocuments();
+      const totalPages = Math.ceil(totalCount / limit);
+  
+      const filter = {
+        published: true,
+        'pricesAndQuantity.price': { $gte: minPrice || 0, $lte: maxPrice || Number.MAX_SAFE_INTEGER },
+        colors: color,
+        sizes: size,
+      };
+  
+      const productCards = await this.productCardRepository
+        .find(filter)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .exec();
+  
+      return {
+        productCards,
+        totalPages,
+        currentPage: page,
+      };
   }
+  
 
     async searchProductCardsByCategory(
       category: string,
@@ -340,25 +347,33 @@ export class ProductCardService {
         };
     }
 
-    async getHotOffers(page: number, limit: number) {
-        const skip = (page - 1) * limit;
-
-        const totalCount = await this.productCardRepository.countDocuments();
-        const totalPages = Math.ceil(totalCount / limit);
-
-        const hotOffers = await this.productCardRepository
-        .find({ published: true })
+    async getHotOffers(page: number, limit: number, minPrice: number, maxPrice: number, color: string, size: string) {
+      const skip = (page - 1) * limit;
+  
+      const totalCount = await this.productCardRepository.countDocuments();
+      const totalPages = Math.ceil(totalCount / limit);
+  
+      const filter = {
+        published: true,
+        'pricesAndQuantity.price': { $gte: minPrice || 0, $lte: maxPrice || Number.MAX_SAFE_INTEGER },
+        colors: color,
+        sizes: size,
+      };
+  
+      const hotOffers = await this.productCardRepository
+        .find(filter)
         .sort({ viewsCount: -1 })
         .skip(skip)
         .limit(limit)
         .exec();
-
-        return {
-            productCards: hotOffers,
-            totalPages,
-            currentPage: page,
-        };
-    }
+  
+      return {
+        productCards: hotOffers,
+        totalPages,
+        currentPage: page,
+      };
+  }
+  
 
 
   async applyDiscountToProductCard(id: string, discount: number) {
