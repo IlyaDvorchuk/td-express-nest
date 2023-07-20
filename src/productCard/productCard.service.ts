@@ -2,316 +2,324 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from '@nestjs/mongoose';
 import { isValidObjectId, Model } from "mongoose";
 import { ProductCard, Comment } from './productCard.schema';
-import {CreateProductCardDto, UpdateProductCardDto} from './dto/create-product-card.dto';
+import { CreateProductCardDto, UpdateProductCardDto } from './dto/create-product-card.dto';
 import { SheltersService } from "../shelters/shelters.service";
 import { CategoriesService } from "../categories/categories.service";
 import moment from "moment";
 import { Question } from "src/questionary/questionary.schema";
 import { QuestionaryService } from "../questionary/questionary.service";
-import {isBase64String} from "../utils/isBase64String";
+import { isBase64String } from "../utils/isBase64String";
 import * as fs from 'fs';
 import * as uuid from 'uuid'
 import * as path from "path";
 
 @Injectable()
 export class ProductCardService {
-    constructor(
-        @InjectModel(ProductCard.name) private productCardRepository: Model<ProductCard>,
-        @InjectModel(Comment.name) private commentRepository: Model<Comment>,
-        private questionService: QuestionaryService,
-        private shelterService: SheltersService,
-        private categoriesService: CategoriesService,
-    ) { }
+  constructor(
+    @InjectModel(ProductCard.name) private productCardRepository: Model<ProductCard>,
+    @InjectModel(Comment.name) private commentRepository: Model<Comment>,
+    private questionService: QuestionaryService,
+    private shelterService: SheltersService,
+    private categoriesService: CategoriesService,
+  ) { }
 
-    async getProductCardById(id: string): Promise<ProductCard> {
-        const query = this.productCardRepository.findOne({ _id: id, published: true });
-        return query.exec();
-      }
+  async getProductCardById(id: string): Promise<ProductCard> {
+    const query = this.productCardRepository.findOne({ _id: id, published: true });
+    return query.exec();
+  }
 
-      async getProductCardByUserId(id: string): Promise<ProductCard> {
-        const query = this.productCardRepository.findOne({ _id: id, published: true });
-        //поиск по избранному и корзине для объединения в общий список
+  async getProductCardByUserId(id: string): Promise<ProductCard> {
+    const query = this.productCardRepository.findOne({ _id: id, published: true });
+    //поиск по избранному и корзине для объединения в общий список
 
-        return query.exec();
-      }
+    return query.exec();
+  }
 
-    async createProductCard(
-        dto: CreateProductCardDto,
-        shelterId: string,
-        mainPhoto: string,
-        additionalPhotos: string[]
-    ) {
+  async createProductCard(
+    dto: CreateProductCardDto,
+    shelterId: string,
+    mainPhoto: string,
+    additionalPhotos: string[]
+  ) {
 
-      for (let field of Object.keys(dto)) {
-            if (typeof dto[field] === 'string') {
-                try {
-                    dto[field] = JSON.parse(dto[field]);
-                } catch (error) {
-                    // Handle JSON parse error
-                    throw new HttpException(
-                        'Ошибка при разборе JSON',
-                        HttpStatus.BAD_REQUEST
-                    );
-                }
-            }
+    for (let field of Object.keys(dto)) {
+      if (typeof dto[field] === 'string') {
+        try {
+          dto[field] = JSON.parse(dto[field]);
+        } catch (error) {
+          // Handle JSON parse error
+          throw new HttpException(
+            'Ошибка при разборе JSON',
+            HttpStatus.BAD_REQUEST
+          );
         }
-
-        const product = await this.productCardRepository.create({
-            ...dto,
-            shelterId,
-            mainPhoto,
-            additionalPhotos,
-            viewsCount: 0,
-            // pricesAndQuantity: new PricesAndQuantity(), // Инициализируем поле pricesAndQuantity новым экземпляром класса PricesAndQuantity
-          });
-        const isAddInShelter = await this.shelterService.addProductCard(shelterId, product._id);
-
-      const isAddInCategories = await this.categoriesService.addProductCard(dto.categories, product._id);
-        if (isAddInShelter && isAddInCategories) {
-            return product;
-        } else {
-            throw new HttpException(
-                'Не сохранились данные',
-                HttpStatus.INTERNAL_SERVER_ERROR
-            );
-        }
+      }
     }
 
-    async updateProductCard(dto: UpdateProductCardDto, id: string) {
-      const product = await this.productCardRepository.findById(id);
-      if (typeof dto.mainPhoto === 'string') {
-        const staticDir = path.join(__dirname, '..', '..', 'static');
-        if (isBase64String(dto.mainPhoto)) {
-          const base64Data = dto.mainPhoto.replace(/^data:image\/[a-z]+;base64,/, '');
-          // Используем значение из product.mainPhoto для пути к файлу
-          const filePath = product.mainPhoto;
+    const product = await this.productCardRepository.create({
+      ...dto,
+      shelterId,
+      mainPhoto,
+      additionalPhotos,
+      viewsCount: 0,
+      // pricesAndQuantity: new PricesAndQuantity(), // Инициализируем поле pricesAndQuantity новым экземпляром класса PricesAndQuantity
+    });
+    const isAddInShelter = await this.shelterService.addProductCard(shelterId, product._id);
+
+    const isAddInCategories = await this.categoriesService.addProductCard(dto.categories, product._id);
+    if (isAddInShelter && isAddInCategories) {
+      return product;
+    } else {
+      throw new HttpException(
+        'Не сохранились данные',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  async updateProductCard(dto: UpdateProductCardDto, id: string) {
+    const product = await this.productCardRepository.findById(id);
+    if (typeof dto.mainPhoto === 'string') {
+      const staticDir = path.join(__dirname, '..', '..', 'static');
+      if (isBase64String(dto.mainPhoto)) {
+        const base64Data = dto.mainPhoto.replace(/^data:image\/[a-z]+;base64,/, '');
+        // Используем значение из product.mainPhoto для пути к файлу
+        const filePath = product.mainPhoto;
 
 
-          const targetPath = path.resolve(staticDir, 'main-photos', path.basename(filePath));
-          // Создаем буфер из строки base64
-          const buffer = Buffer.from(base64Data, 'base64');
-          // Записываем буфер в файл (асинхронно)
-          fs.writeFile(targetPath, buffer, (err) => {
-            if (err) {
-              console.error('Ошибка при записи файла:', err);
+        const targetPath = path.resolve(staticDir, 'main-photos', path.basename(filePath));
+        // Создаем буфер из строки base64
+        const buffer = Buffer.from(base64Data, 'base64');
+        // Записываем буфер в файл (асинхронно)
+        fs.writeFile(targetPath, buffer, (err) => {
+          if (err) {
+            console.error('Ошибка при записи файла:', err);
+          } else {
+            console.log('Изображение успешно заменено');
+          }
+        });
+      } else {
+        console.log('Строка не является base64');
+      }
+
+      for (let i = 0; i < dto.additionalPhotos.length; i++) {
+        const photo = dto.additionalPhotos[i];
+        if (typeof photo === 'string') {
+          if (isBase64String(photo)) {
+            console.log('Элемент массива является base64:', photo);
+            // Преобразование base64 в файл и обновление элемента в product.additionalPhotos
+            const base64Data = photo.replace(/^data:image\/[a-z]+;base64,/, '');
+            const buffer = Buffer.from(base64Data, 'base64');
+
+            // Проверка индекса и добавление нового элемента, если он не существует
+            if (i >= product.additionalPhotos.length) {
+              const newFilePath = `./static/additional-photos/${uuid.v4()}.jpg`;
+              product.additionalPhotos.push(newFilePath);
+              const targetPath = path.resolve(staticDir, 'additional-photos', path.basename(newFilePath))
+              // Сохранение файла по новому пути (асинхронно)
+              fs.writeFile(targetPath, buffer, (err) => {
+                if (err) {
+                  console.error('Ошибка при записи файла:', err);
+                } else {
+                  console.log('Изображение успешно добавлено');
+                }
+              });
             } else {
-              console.log('Изображение успешно заменено');
+              // Используйте product.additionalPhotos[i] для пути к файлу
+              const filePath = product.additionalPhotos[i];
+              // Замена файла по указанному пути (асинхронно)
+              const targetPath = path.resolve(staticDir, 'additional-photos', path.basename(filePath))
+              fs.writeFile(targetPath, buffer, (err) => {
+                if (err) {
+                  console.error('Ошибка при записи файла:', err);
+                } else {
+                  console.log('Изображение успешно заменено');
+                }
+              });
             }
-          });
-        } else {
-          console.log('Строка не является base64');
-        }
-
-        for (let i = 0; i < dto.additionalPhotos.length; i++) {
-          const photo = dto.additionalPhotos[i];
-          if (typeof photo === 'string') {
-            if (isBase64String(photo)) {
-              console.log('Элемент массива является base64:', photo);
-              // Преобразование base64 в файл и обновление элемента в product.additionalPhotos
-              const base64Data = photo.replace(/^data:image\/[a-z]+;base64,/, '');
-              const buffer = Buffer.from(base64Data, 'base64');
-
-              // Проверка индекса и добавление нового элемента, если он не существует
-              if (i >= product.additionalPhotos.length) {
-                const newFilePath = `./static/additional-photos/${uuid.v4()}.jpg`;
-                product.additionalPhotos.push(newFilePath);
-                const targetPath = path.resolve(staticDir, 'additional-photos', path.basename(newFilePath))
-                // Сохранение файла по новому пути (асинхронно)
-                fs.writeFile(targetPath, buffer, (err) => {
-                  if (err) {
-                    console.error('Ошибка при записи файла:', err);
-                  } else {
-                    console.log('Изображение успешно добавлено');
-                  }
-                });
-              } else {
-                // Используйте product.additionalPhotos[i] для пути к файлу
-                const filePath = product.additionalPhotos[i];
-                // Замена файла по указанному пути (асинхронно)
-                const targetPath = path.resolve(staticDir, 'additional-photos', path.basename(filePath))
-                fs.writeFile(targetPath, buffer, (err) => {
-                  if (err) {
-                    console.error('Ошибка при записи файла:', err);
-                  } else {
-                    console.log('Изображение успешно заменено');
-                  }
-                });
-              }
-            } else {
-              console.log('Элемент массива не является base64:', photo);
-            }
+          } else {
+            console.log('Элемент массива не является base64:', photo);
           }
         }
       }
-      const modifiedDto = {
-        ...dto,
-        mainPhoto: product.mainPhoto,
-        additionalPhotos: product.additionalPhotos
-      }
-
-      const answer = await this.categoriesService.updateCategories(dto.categories, product.categories, product, id)
-      if (!answer) {
-        return
-      }
-      return await this.productCardRepository.findOneAndUpdate(
-          { _id: id },
-          modifiedDto,
-        {new: true}
-        ).exec();
-      }
-
-    async deleteProductCard(productId: string, shelterId: string): Promise<ProductCard> {
-        const productCard = await this.productCardRepository.findOneAndDelete({ _id: productId });
-        console.log('deleteProductCard productCard', productCard)
-        // Удаление файла mainPhoto
-        const mainPhoto = productCard.mainPhoto;
-        // const mainPhotoFilename = mainPhoto.substring(mainPhoto.lastIndexOf('/') + 1);
-        const mainPhotoFilePath = `./static${mainPhoto}`;
-        // console.log('fs', mainPhotoFilename)
-        console.log('mainPhotoFilePath', mainPhotoFilePath)
-        fs.unlink(mainPhotoFilePath, (error) => {
-            if (error) {
-                console.error('Ошибка при удалении файла mainPhoto:', error);
-            }
-        });
-
-        // Удаление файлов из additionalPhotos
-        const additionalPhotos = productCard.additionalPhotos;
-        additionalPhotos.forEach((photo) => {
-            const filePath = `./static/${photo}`;
-            fs.unlink(filePath, (error) => {
-                if (error) {
-                    console.error('Ошибка при удалении файла additionalPhoto:', error);
-                }
-            });
-        });
-
-        const isCategoryRemovalSuccessful = await this.categoriesService.removeProductCardFromCategories(productId);
-
-        const isShelterRemovalSuccessful = await this.shelterService.removeProductCardFromShelter(shelterId, productId);
-
-        // Проверяем, было ли успешно удаление карточки товара из категорий и приюта
-        const isDeletionSuccessful = isCategoryRemovalSuccessful && isShelterRemovalSuccessful;
-
-        if (isDeletionSuccessful) {
-            return productCard;
-        } else {
-            // Обработка случая, когда удаление не было успешным
-            // Можно выбросить исключение или вернуть null/undefined в зависимости от требований
-        }
+    }
+    const modifiedDto = {
+      ...dto,
+      mainPhoto: product.mainPhoto,
+      additionalPhotos: product.additionalPhotos
     }
 
-    async getNewProductCards(page: number, limit: number, minPrice: number, maxPrice: number, color: string, size: string) {
-      const skip = (page - 1) * limit;
-  
-      const totalCount = await this.productCardRepository.countDocuments();
-      const totalPages = Math.ceil(totalCount / limit);
-  
-      const filter = {
+    const answer = await this.categoriesService.updateCategories(dto.categories, product.categories, product, id)
+    if (!answer) {
+      return
+    }
+    return await this.productCardRepository.findOneAndUpdate(
+      { _id: id },
+      modifiedDto,
+      { new: true }
+    ).exec();
+  }
+
+  async deleteProductCard(productId: string, shelterId: string): Promise<ProductCard> {
+    const productCard = await this.productCardRepository.findOneAndDelete({ _id: productId });
+    console.log('deleteProductCard productCard', productCard)
+    // Удаление файла mainPhoto
+    const mainPhoto = productCard.mainPhoto;
+    // const mainPhotoFilename = mainPhoto.substring(mainPhoto.lastIndexOf('/') + 1);
+    const mainPhotoFilePath = `./static${mainPhoto}`;
+    // console.log('fs', mainPhotoFilename)
+    console.log('mainPhotoFilePath', mainPhotoFilePath)
+    fs.unlink(mainPhotoFilePath, (error) => {
+      if (error) {
+        console.error('Ошибка при удалении файла mainPhoto:', error);
+      }
+    });
+
+    // Удаление файлов из additionalPhotos
+    const additionalPhotos = productCard.additionalPhotos;
+    additionalPhotos.forEach((photo) => {
+      const filePath = `./static/${photo}`;
+      fs.unlink(filePath, (error) => {
+        if (error) {
+          console.error('Ошибка при удалении файла additionalPhoto:', error);
+        }
+      });
+    });
+
+    const isCategoryRemovalSuccessful = await this.categoriesService.removeProductCardFromCategories(productId);
+
+    const isShelterRemovalSuccessful = await this.shelterService.removeProductCardFromShelter(shelterId, productId);
+
+    // Проверяем, было ли успешно удаление карточки товара из категорий и приюта
+    const isDeletionSuccessful = isCategoryRemovalSuccessful && isShelterRemovalSuccessful;
+
+    if (isDeletionSuccessful) {
+      return productCard;
+    } else {
+      // Обработка случая, когда удаление не было успешным
+      // Можно выбросить исключение или вернуть null/undefined в зависимости от требований
+    }
+  }
+
+  async getNewProductCards(page: number, limit: number, minPrice: number, maxPrice: number, color: string, size: string) {
+    const skip = (page - 1) * limit;
+
+    const totalCount = await this.productCardRepository.countDocuments({
+      published: true,
+      'pricesAndQuantity.price': { $gte: minPrice || 0, $lte: maxPrice || Number.MAX_SAFE_INTEGER },
+      'pricesAndQuantity.quantity': { $gt: 0 }, // Фильтр для количества больше 0
+      colors: color,
+      sizes: size,
+    });
+
+    const totalPages = Math.ceil(totalCount / limit);
+
+    const productCards = await this.productCardRepository
+      .find({
         published: true,
         'pricesAndQuantity.price': { $gte: minPrice || 0, $lte: maxPrice || Number.MAX_SAFE_INTEGER },
+        'pricesAndQuantity.quantity': { $gt: 0 }, // Фильтр для количества больше 0
         colors: color,
         sizes: size,
-      };
-  
-      const productCards = await this.productCardRepository
-        .find(filter)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .exec();
-  
-      return {
-        productCards,
-        totalPages,
-        currentPage: page,
-      };
+      })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+    return {
+      productCards,
+      totalPages,
+      currentPage: page,
+    };
   }
-  
 
-    async searchProductCardsByCategory(
-      category: string,
-      page: number,
-      limit: number,
-      minPrice: number,
-      maxPrice: number,
-      color: string,
-      size: string,
-    ) {
-      // Добавьте фильтрацию по ценовому диапазону, цвету и размеру
-      const filter = {
-        $and: [
-          { 'categories.category.id': category },
-          { published: true },
-          { 'pricesAndQuantity.price': { $gte: minPrice || 0, $lte: maxPrice || Number.MAX_SAFE_INTEGER } },
-          { colors: color },
-          { sizes: size },
-        ],
-      };
 
-      return this.productCardRepository
-        .find(filter)
-        .skip((page - 1) * limit)
-        .limit(limit)
-        .exec();
-    }
+  async searchProductCardsByCategory(
+    category: string,
+    page: number,
+    limit: number,
+    minPrice: number,
+    maxPrice: number,
+    color: string,
+    size: string,
+  ) {
+    // Добавьте фильтрацию по ценовому диапазону, цвету, размеру и количеству больше 0
+    const filter = {
+      $and: [
+        { 'categories.category.id': category },
+        { published: true },
+        { 'pricesAndQuantity.price': { $gte: minPrice || 0, $lte: maxPrice || Number.MAX_SAFE_INTEGER } },
+        { 'pricesAndQuantity.quantity': { $gt: 0 } }, // Фильтр для количества больше 0
+        { colors: color },
+        { sizes: size },
+      ],
+    };
 
-    async searchProductCards(
-      query: string,
-      page: number,
-      limit: number,
-      minPrice: number,
-      maxPrice: number,
-      color: string,
-      size: string,
-    ) {
-      const regexQuery = new RegExp(query, 'i');
+    return this.productCardRepository
+      .find(filter)
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .exec();
+  }
 
-      // Добавьте фильтрацию по ценовому диапазону, цвету и размеру
-      const filter = {
-        $and: [
-          {
-            $or: [
-              { 'categories.category': regexQuery },
-              { 'categories.subcategory': regexQuery },
-              { 'categories.section': regexQuery },
-              { 'information.name': regexQuery },
-              { 'information.description': regexQuery },
-            ],
-          },
-          { published: true },
-          { 'pricesAndQuantity.price': { $gte: minPrice || 0, $lte: maxPrice || Number.MAX_SAFE_INTEGER } },
-          { colors: color },
-          { sizes: size },
-        ],
-      };
+  async searchProductCards(
+    query: string,
+    page: number,
+    limit: number,
+    minPrice: number,
+    maxPrice: number,
+    color: string,
+    size: string,
+  ) {
+    const regexQuery = new RegExp(query, 'i');
 
-      const totalCount = await this.productCardRepository.countDocuments(filter);
-      const totalPages = Math.ceil(totalCount / limit);
+    // Добавьте фильтрацию по ценовому диапазону, цвету, размеру и количеству больше 0
+    const filter = {
+      $and: [
+        {
+          $or: [
+            { 'categories.category': regexQuery },
+            { 'categories.subcategory': regexQuery },
+            { 'categories.section': regexQuery },
+            { 'information.name': regexQuery },
+            { 'information.description': regexQuery },
+          ],
+        },
+        { published: true },
+        { 'pricesAndQuantity.price': { $gte: minPrice || 0, $lte: maxPrice || Number.MAX_SAFE_INTEGER } },
+        { 'pricesAndQuantity.quantity': { $gt: 0 } }, // Фильтр для количества больше 0
+        { colors: color },
+        { sizes: size },
+      ],
+    };
 
-      const productCards = await this.productCardRepository
-        .find(filter)
-        .skip((page - 1) * limit)
-        .limit(limit)
-        .exec();
+    const totalCount = await this.productCardRepository.countDocuments(filter);
+    const totalPages = Math.ceil(totalCount / limit);
 
-      return {
-        productCards,
-        totalPages,
-        currentPage: page,
-      };
-    }
+    const productCards = await this.productCardRepository
+      .find(filter)
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .exec();
 
-    async getProductCardSummary(id: string) {
-        const query = this.productCardRepository.findOne({ _id: id, published: true })
-          .select('information.name information.description pricesAndQuantity');
-        return query.exec();
-      }
+    return {
+      productCards,
+      totalPages,
+      currentPage: page,
+    };
+  }
 
-      async getProductCardDetails(id: string) {
-        const query = this.productCardRepository.findOne({ _id: id, published: true });
-        return query.exec();
-      }
+  async getProductCardSummary(id: string) {
+    const query = this.productCardRepository.findOne({ _id: id, published: true })
+      .select('information.name information.description pricesAndQuantity');
+    return query.exec();
+  }
+
+  async getProductCardDetails(id: string) {
+    const query = this.productCardRepository.findOne({ _id: id, published: true });
+    return query.exec();
+  }
 
   async addViewToProductCard(id: string) {
     // Проверка валидности id
@@ -331,49 +339,61 @@ export class ProductCardService {
 
   }
 
-    async getAllProductCards(page: number, limit: number) {
-        const skip = (page - 1) * limit;
-        const totalCount = await this.productCardRepository.countDocuments();
-        const totalPages = Math.ceil(totalCount / limit);
+  async getAllProductCards(page: number, limit: number) {
+    const skip = (page - 1) * limit;
+    const totalCount = await this.productCardRepository.countDocuments({
+      published: true,
+      'pricesAndQuantity.quantity': { $gt: 0 }, // Фильтр для количества больше 0
+    });
+    const totalPages = Math.ceil(totalCount / limit);
 
-       const productCards = await this.productCardRepository.find({ published: true })
+    const productCards = await this.productCardRepository
+      .find({ published: true, 'pricesAndQuantity.quantity': { $gt: 0 } }) // Фильтр для количества больше 0
       .skip(skip)
       .limit(limit)
       .exec();
-        return {
-            productCards,
-            totalPages,
-            currentPage: page,
-        };
-    }
 
-    async getHotOffers(page: number, limit: number, minPrice: number, maxPrice: number, color: string, size: string) {
-      const skip = (page - 1) * limit;
-  
-      const totalCount = await this.productCardRepository.countDocuments();
-      const totalPages = Math.ceil(totalCount / limit);
-  
-      const filter = {
+    return {
+      productCards,
+      totalPages,
+      currentPage: page,
+    };
+  }
+
+  async getHotOffers(page: number, limit: number, minPrice: number, maxPrice: number, color: string, size: string) {
+    const skip = (page - 1) * limit;
+
+    const totalCount = await this.productCardRepository.countDocuments({
+      published: true,
+      'pricesAndQuantity.price': { $gte: minPrice || 0, $lte: maxPrice || Number.MAX_SAFE_INTEGER },
+      'pricesAndQuantity.quantity': { $gt: 0 }, // Фильтр для количества больше 0
+      colors: color,
+      sizes: size,
+    });
+
+    const totalPages = Math.ceil(totalCount / limit);
+
+    const hotOffers = await this.productCardRepository
+      .find({
         published: true,
         'pricesAndQuantity.price': { $gte: minPrice || 0, $lte: maxPrice || Number.MAX_SAFE_INTEGER },
+        'pricesAndQuantity.quantity': { $gt: 0 }, // Фильтр для количества больше 0
         colors: color,
         sizes: size,
-      };
-  
-      const hotOffers = await this.productCardRepository
-        .find(filter)
-        .sort({ viewsCount: -1 })
-        .skip(skip)
-        .limit(limit)
-        .exec();
-  
-      return {
-        productCards: hotOffers,
-        totalPages,
-        currentPage: page,
-      };
+      })
+      .sort({ viewsCount: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+
+    return {
+      productCards: hotOffers,
+      totalPages,
+      currentPage: page,
+    };
   }
-  
+
+
 
 
   async applyDiscountToProductCard(id: string, discount: number) {
@@ -487,12 +507,13 @@ export class ProductCardService {
     const totalCount = await this.productCardRepository.countDocuments({
       published: false,
       'shelter.isVerified': true,
+      'pricesAndQuantity.quantity': { $gt: 0 }, // Фильтр для количества больше 0
     })
-    .populate('shelter', 'isVerified');
+      .populate('shelter', 'isVerified');
     const totalPages = Math.ceil(totalCount / limit);
 
     const unpublishedProductCards = await this.productCardRepository
-      .find({ published: false, 'shelter.isVerified': true })
+      .find({ published: false, 'shelter.isVerified': true, 'pricesAndQuantity.quantity': { $gt: 0 } }) // Фильтр для количества больше 0
       .populate('shelter', 'isVerified')
       .skip(skip)
       .limit(limit)
@@ -553,7 +574,7 @@ export class ProductCardService {
     return this.questionService.createQuestion(product, customerId, questionText);
   }
 
-  async answerQuestion(questionId: string, answerText: string){
+  async answerQuestion(questionId: string, answerText: string) {
     return this.questionService.answerQuestion(questionId, answerText);
   }
 
