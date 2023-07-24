@@ -73,13 +73,9 @@ export class ProductCardController {
   @Get('/hot-offers')
   async getHotOffers(
     @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10,
-    @Query('minPrice') minPrice: number = 0,
-    @Query('maxPrice') maxPrice: number = Number.MAX_SAFE_INTEGER,
-    @Query('color') color: string = '',
-    @Query('size') size: string = '',
+    @Query('limit') limit: number = 10
   ) {
-    return await this.productCardService.getHotOffers(page, limit, minPrice, maxPrice, color, size);
+    return await this.productCardService.getHotOffers(page, limit);
   }
 
   // Получение новых товаров
@@ -87,13 +83,9 @@ export class ProductCardController {
   @Get('/new')
   async getNewProductCards(
     @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10,
-    @Query('minPrice') minPrice: number = 0,
-    @Query('maxPrice') maxPrice: number = Number.MAX_SAFE_INTEGER,
-    @Query('color') color: string = '',
-    @Query('size') size: string = '',
+    @Query('limit') limit: number = 10
   ) {
-    return await this.productCardService.getNewProductCards(page, limit, minPrice, maxPrice, color, size);
+    return await this.productCardService.getNewProductCards(page, limit);
   }
 
 

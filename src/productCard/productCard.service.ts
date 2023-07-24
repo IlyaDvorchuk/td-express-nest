@@ -201,26 +201,18 @@ export class ProductCardService {
     }
   }
 
-  async getNewProductCards(page: number, limit: number, minPrice: number, maxPrice: number, color: string, size: string) {
+  async getNewProductCards(page: number, limit: number) {
     const skip = (page - 1) * limit;
 
     const totalCount = await this.productCardRepository.countDocuments({
-      published: true,
-      'pricesAndQuantity.price': { $gte: minPrice || 0, $lte: maxPrice || Number.MAX_SAFE_INTEGER },
-      'pricesAndQuantity.quantity': { $gt: 0 }, // Фильтр для количества больше 0
-      colors: color,
-      sizes: size,
+      published: true
     });
 
     const totalPages = Math.ceil(totalCount / limit);
 
     const productCards = await this.productCardRepository
       .find({
-        published: true,
-        'pricesAndQuantity.price': { $gte: minPrice || 0, $lte: maxPrice || Number.MAX_SAFE_INTEGER },
-        'pricesAndQuantity.quantity': { $gt: 0 }, // Фильтр для количества больше 0
-        colors: color,
-        sizes: size,
+        published: true
       })
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -360,26 +352,18 @@ export class ProductCardService {
     };
   }
 
-  async getHotOffers(page: number, limit: number, minPrice: number, maxPrice: number, color: string, size: string) {
+  async getHotOffers(page: number, limit: number) {
     const skip = (page - 1) * limit;
 
     const totalCount = await this.productCardRepository.countDocuments({
-      published: true,
-      'pricesAndQuantity.price': { $gte: minPrice || 0, $lte: maxPrice || Number.MAX_SAFE_INTEGER },
-      'pricesAndQuantity.quantity': { $gt: 0 }, // Фильтр для количества больше 0
-      colors: color,
-      sizes: size,
+      published: true
     });
 
     const totalPages = Math.ceil(totalCount / limit);
 
     const hotOffers = await this.productCardRepository
       .find({
-        published: true,
-        'pricesAndQuantity.price': { $gte: minPrice || 0, $lte: maxPrice || Number.MAX_SAFE_INTEGER },
-        'pricesAndQuantity.quantity': { $gt: 0 }, // Фильтр для количества больше 0
-        colors: color,
-        sizes: size,
+        published: true
       })
       .sort({ viewsCount: -1 })
       .skip(skip)
