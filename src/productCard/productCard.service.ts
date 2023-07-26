@@ -226,7 +226,6 @@ export class ProductCardService {
     };
   }
 
-
   async searchProductCardsByCategory(
     category: string,
     page: number,
@@ -236,24 +235,34 @@ export class ProductCardService {
     color: string,
     size: string,
   ) {
-    // Добавьте фильтрацию по ценовому диапазону, цвету, размеру и количеству больше 0
+    const priceFilter: any = {};
+  
+    if (minPrice !== undefined && minPrice !== null) {
+      priceFilter.$gte = minPrice;
+    }
+  
+    if (maxPrice !== undefined && maxPrice !== null) {
+      priceFilter.$lte = maxPrice;
+    }
+  
     const filter = {
       $and: [
         { 'categories.category.id': category },
         { published: true },
-        { 'pricesAndQuantity.price': { $gte: minPrice || 0, $lte: maxPrice || Number.MAX_SAFE_INTEGER } },
+        { 'pricesAndQuantity.price': priceFilter },
         { 'pricesAndQuantity.quantity': { $gt: 0 } }, // Фильтр для количества больше 0
-        { colors: color },
-        { sizes: size },
+        { colors: color && color.trim() !== '' ? color : { $exists: true } },
+        { sizes: size && size.trim() !== '' ? size : { $exists: true } },
       ],
     };
-
+  
     return this.productCardRepository
       .find(filter)
       .skip((page - 1) * limit)
       .limit(limit)
       .exec();
   }
+  
 
   async searchProductCards(
     query: string,
