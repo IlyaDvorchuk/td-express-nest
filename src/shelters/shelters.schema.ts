@@ -112,8 +112,8 @@ export class Shelter extends Document {
   @Prop({required: true})
   name: string
 
-  @Prop({required: true})
-  fileScan: string
+  // @Prop({required: true})
+  // fileScan: string
 
   @Prop({required: true})
   imageShop: string

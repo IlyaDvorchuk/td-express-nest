@@ -31,7 +31,7 @@ export class AuthShelterService {
     return true;
   }
 
-  async registration(shelterDto: CreateShelterDto, photoPath: string, photoShopPath: string) {
+  async registration(shelterDto: CreateShelterDto, photoShopPath: string) {
     const candidate = await this.shelterService.getUserByEmail(shelterDto.email)
     if (candidate) {
       console.log('candidate', candidate);
@@ -50,7 +50,7 @@ export class AuthShelterService {
       }
     }
     // console.log('shelterDto 52', shelterDto)
-    return await this.shelterService.createShelter({...shelterDto, password: hashPassword}, photoPath, photoShopPath)
+    return await this.shelterService.createShelter({...shelterDto, password: hashPassword}, photoShopPath)
   }
 
   async login(shelterDto: EnterUserDto) {

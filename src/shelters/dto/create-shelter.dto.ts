@@ -67,7 +67,7 @@ export class Entity {
   readonly check: string
 }
 
-export class ShelterData {
+export class ShelterDataDto {
   @ValidateNested()
   readonly closePerson: ClosePerson
 
@@ -133,11 +133,11 @@ export class CreateShelterDto {
   @Length(7, 16, {message: 'Не меньше 1 и не больше 16'})
   readonly phone: string
 
-  @ApiProperty({example: 'Фото(скан)', description: 'Фото ИП или юр.лица продавцп'})
-  @IsFile()
-  @MaxFileSize ( 1e6 )
-  @HasMimeType ( [ 'image / jpeg' , ' image/png ' ] )
-  readonly fileScan: MemoryStoredFile
+  // @ApiProperty({example: 'Фото(скан)', description: 'Фото ИП или юр.лица продавцп'})
+  // @IsFile()
+  // @MaxFileSize ( 1e6 )
+  // @HasMimeType ( [ 'image / jpeg' , ' image/png ' ] )
+  // readonly fileScan: MemoryStoredFile
 
   @ApiProperty({example: 'Логотип магазина', description: 'Логотип магазина'})
   @IsFile()
@@ -146,7 +146,7 @@ export class CreateShelterDto {
   readonly imageShop: MemoryStoredFile
 
   @ValidateNested()
-  readonly shelterData: ShelterData
+  readonly shelterData: ShelterDataDto
 
   @ValidateNested()
   readonly shop: ShelterShop

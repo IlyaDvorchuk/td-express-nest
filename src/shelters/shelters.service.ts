@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Shelter, ShelterDocument } from "./shelters.schema";
-import { CreateShelterDto } from "./dto/create-shelter.dto";
+import { CreateShelterDto, ShelterDataDto } from "./dto/create-shelter.dto";
 import { ProductCard, ProductCardDocument } from 'src/productCard/productCard.schema';
 import { Order, OrderDocument } from 'src/order/order.schema';
 import { User, UserDocument } from 'src/users/users.schema';
@@ -29,11 +29,11 @@ export class SheltersService {
     };
   }
 
-  async createShelter(dto: CreateShelterDto, filename: string, fileNameShop: string) {
+  async createShelter(dto: CreateShelterDto, fileNameShop: string) {
     console.log('CreateShelterDto 27', dto)
-    console.log('filename 27', filename)
+    // console.log('filename 27', filename)
     console.log('fileNameShop 27', fileNameShop)
-    return await this.shelterRepository.create({...dto, fileScan: filename, imageShop: fileNameShop})
+    return await this.shelterRepository.create({...dto, imageShop: fileNameShop})
   }
 
   async getDeliveryPoints(shelterId: string) {
@@ -130,5 +130,13 @@ export class SheltersService {
         { $pull: { productCards: productCardId } },
     );
     return result.modifiedCount > 0;
+  }
+
+  async updateShelterData(shelterId: string, shelterDataDto: ShelterDataDto) {
+    return await this.shelterRepository.findOneAndUpdate(
+      { _id: shelterId },
+      shelterDataDto,
+      { new: true }
+    ).exec();
   }
 }

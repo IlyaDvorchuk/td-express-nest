@@ -29,15 +29,15 @@ export class AuthShelterController {
   @Post('/registration')
   @UseInterceptors(
     FileFieldsInterceptor([
-      { name: 'fileScan', maxCount: 1 },
+      // { name: 'fileScan', maxCount: 1 },
       { name: 'imageShop', maxCount: 1 },
     ], {
       storage: diskStorage({
         destination: (req, file, cb) => {
-          let destination = './static/shelter-scans';
-          if (file.fieldname === 'imageShop') {
-            destination = './static/shelter-shops';
-          }
+          // let destination = './static/shelter-scans';
+          // if (file.fieldname === 'imageShop') {
+            let destination = './static/shelter-shops';
+          // }
           cb(null, destination);
         },
         filename: editFileName
@@ -47,16 +47,16 @@ export class AuthShelterController {
   )
   async registration(
     @Body() shelterDto: CreateShelterDto,
-    @UploadedFiles() images: { fileScan?: Express.Multer.File, imageShop?: Express.Multer.File },
+    @UploadedFiles() images: { imageShop?: Express.Multer.File },
     @Res({passthrough: true}) response: Response
   ) {
     // console.log('shelterDto', shelterDto);
-    const {fileScan, imageShop} = images
-    const photoPath = `/shelter-scans/${fileScan[0].filename}`;
+    const {imageShop} = images
+    // const photoPath = `/shelter-scans/${fileScan[0].filename}`;
     const photoShopPath = `/shelter-shops/${imageShop[0].filename}`;
     const shelter = await this.authService.registration(
       shelterDto,
-      photoPath,
+      // photoPath,
       photoShopPath
     )
     console.log('shelter', shelter)

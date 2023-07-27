@@ -1,7 +1,8 @@
-import {Controller, Get, Query, Req, UseGuards} from "@nestjs/common";
+import { Body, Controller, Get, Param, Query, Req, UseGuards } from "@nestjs/common";
 import { SheltersService } from "./shelters.service";
 import { JwtAuthGuard } from "../middlewares/auth.middleware";
 import { Put } from "@nestjs/common";
+import { ShelterDataDto } from "./dto/create-shelter.dto";
 
 @Controller('shelters')
 export class SheltersController {
@@ -60,5 +61,14 @@ export class SheltersController {
     @Query('status') newStatus: string
   ) {
     return await this.shelterService.updateOrderStatus(orderId, newStatus);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('update-data/:shelterId')
+  async updateShelterData(
+    @Param('shelterId',) shelterId: string,
+    @Body() shelterDataDto: ShelterDataDto
+  ) {
+    return await this.shelterService.updateShelterData(shelterId, shelterDataDto);
   }
 }
