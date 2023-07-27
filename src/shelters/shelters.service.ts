@@ -133,10 +133,15 @@ export class SheltersService {
   }
 
   async updateShelterData(shelterId: string, shelterDataDto: ShelterDataDto) {
-    return await this.shelterRepository.findOneAndUpdate(
-      { _id: shelterId },
-      shelterDataDto,
-      { new: true }
-    ).exec();
+    try {
+      const shelter = await this.shelterRepository.findById(shelterId)
+      // @ts-ignore
+      shelter.shelterData = shelterDataDto
+      await shelter.save()
+      return shelter
+    } catch (e) {
+      return false
+    }
+
   }
 }

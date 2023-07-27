@@ -66,7 +66,6 @@ export class AuthShelterService {
     if (shelter && passwordEquals) {
       return shelter
     }
-    console.log('aloha 59');
     throw new UnauthorizedException({message: 'Некорректный емайл или пароль'})
   }
 
