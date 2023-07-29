@@ -15,11 +15,11 @@ export class AuthShelterService {
 
 
   async checkShelter(email: string) {
-    return await this.shelterService.getUserByEmail(email)
+    return await this.shelterService.getShelterByEmail(email)
   }
 
   async createNewPassword(passwordDto: NewPasswordDto) {
-    const shelter = await this.shelterService.getUserByEmail(passwordDto.email)
+    const shelter = await this.shelterService.getShelterByEmail(passwordDto.email)
     if (!shelter) {
       throw new HttpException(
         'Продавца с таким email не существует',
@@ -32,7 +32,7 @@ export class AuthShelterService {
   }
 
   async registration(shelterDto: CreateShelterDto, photoShopPath: string) {
-    const candidate = await this.shelterService.getUserByEmail(shelterDto.email)
+    const candidate = await this.shelterService.getShelterByEmail(shelterDto.email)
     if (candidate) {
       console.log('candidate', candidate);
 
@@ -58,7 +58,7 @@ export class AuthShelterService {
   }
 
   private async validateShelter(userDto: EnterUserDto) {
-    const shelter = await this.shelterService.getUserByEmail(userDto.email)
+    const shelter = await this.shelterService.getShelterByEmail(userDto.email)
     if (!shelter) {
       throw new UnauthorizedException({message: 'Некорректный емайл или пароль'})
     }

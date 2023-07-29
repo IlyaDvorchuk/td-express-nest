@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Query, Req, UseGuards } from "@nestjs/com
 import { SheltersService } from "./shelters.service";
 import { JwtAuthGuard } from "../middlewares/auth.middleware";
 import { Put } from "@nestjs/common";
-import { ShelterDataDto } from "./dto/create-shelter.dto";
+import {ShelterDataDto, UpdateShelterShopDto} from "./dto/create-shelter.dto";
 
 @Controller('shelters')
 export class SheltersController {
@@ -70,5 +70,14 @@ export class SheltersController {
     @Body() shelterDataDto: ShelterDataDto
   ) {
     return await this.shelterService.updateShelterData(shelterId, shelterDataDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('update-shop/:shelterId')
+  async updateShopData(
+      @Param('shelterId',) shelterId: string,
+      @Body() shelterDataDto: UpdateShelterShopDto
+  ) {
+    return await this.shelterService.updateShopData(shelterId, shelterDataDto);
   }
 }

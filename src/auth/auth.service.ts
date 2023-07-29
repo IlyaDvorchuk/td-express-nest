@@ -72,7 +72,7 @@ export class AuthService {
       user = await this.userService.getUserByEmail(userData.email)
       tokens = await this.tokensService.generateTokens({email: user.email, userId: user._id})
     } else {
-      user = await this.shelterService.getUserByEmail(userData.email)
+      user = await this.shelterService.getShelterByEmail(userData.email)
       tokens = await this.tokensService.generateTokens({email: user.email, userId: user._id})
     }
     await this.tokensService.saveToken(user._id, tokens.refreshToken)

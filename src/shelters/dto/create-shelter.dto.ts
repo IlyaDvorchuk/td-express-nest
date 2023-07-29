@@ -92,19 +92,19 @@ export class DeliveryPoint {
   @ApiProperty({example: 'У Витька', description: 'Название торговой точки'})
   @IsString({message: 'Должно быть строкой'})
   @Length(1, 40, {message: 'Не меньше 1 и не больше 5000'})
-  readonly shopName?: string
+  readonly shopName: string
 
   @ApiProperty({example: 'В подвале кожвена', description: 'Примечания'})
   @IsString({message: 'Должно быть строкой'})
   @Length(1, 5000, {message: 'Не меньше 1 и не больше 5000'})
-  readonly notes?: string
+  readonly notes: string
 }
 
 export class ShelterShop {
   @ApiProperty({example: 'Пятёрочка', description: 'Название магазина'})
   @IsString({message: 'Должно быть строкой'})
   @Length(1, 16, {message: 'Не меньше 1 и не больше 16'})
-  readonly name: string
+  readonly nameMarket: string
 
   @ApiProperty({example: 'Лучший магазин', description: 'Описание магазина'})
   @IsString({message: 'Должно быть строкой'})
@@ -153,4 +153,19 @@ export class CreateShelterDto {
 
   @ValidateNested()
   readonly deliveryPoints: DeliveryPoint[]
+}
+
+export class UpdateShelterShopDto {
+  @ValidateNested()
+  readonly shelterShop: ShelterShop
+
+  @ValidateNested()
+  readonly deliveryPoints: DeliveryPoint[]
+
+  @ApiProperty({example: 'Логотип магазина', description: 'Логотип магазина'})
+  @IsFile()
+  @MaxFileSize ( 1e6 )
+  @HasMimeType ( [ 'image / jpeg' , ' image/png ' ] )
+  readonly imageShop: MemoryStoredFile | string
+
 }

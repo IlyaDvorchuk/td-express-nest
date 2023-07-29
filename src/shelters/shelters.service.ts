@@ -1,11 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Shelter, ShelterDocument } from "./shelters.schema";
-import { CreateShelterDto, ShelterDataDto } from "./dto/create-shelter.dto";
+import {CreateShelterDto, ShelterDataDto, UpdateShelterShopDto} from "./dto/create-shelter.dto";
 import { ProductCard, ProductCardDocument } from 'src/productCard/productCard.schema';
 import { Order, OrderDocument } from 'src/order/order.schema';
 import { User, UserDocument } from 'src/users/users.schema';
+import * as path from "path";
+import {isBase64String} from "../utils/isBase64String";
+import fs from "fs";
 
 @Injectable()
 export class SheltersService {
@@ -16,7 +19,7 @@ export class SheltersService {
   ) {
   }
 
-  async getUserByEmail(email: string) {
+  async getShelterByEmail(email: string) {
     return await this.shelterRepository.findOne({ email }).exec();
   }
 
@@ -141,6 +144,49 @@ export class SheltersService {
       return shelter
     } catch (e) {
       return false
+    }
+
+  }
+
+  async updateShopData(shelterId: string, shelterShopDto: UpdateShelterShopDto) {
+
+    try {
+      const shelter = await this.shelterRepository.findById(shelterId)
+      if (typeof shelterShopDto.imageShop === 'string') {
+        const staticDir = path.join(__dirname, '..', '..', 'static');
+        if (isBase64String(shelterShopDto.imageShop)) {
+          const base64Data = shelter.imageShop.replace(/^data:image\/[a-z]+;base64,/, '');
+          // Используем значение из product.mainPhoto для пути к файлу
+          const filePath = shelter.imageShop;
+
+
+          const targetPath = path.resolve(staticDir, 'shelter-shops', path.basename(filePath));
+          // Создаем буфер из строки base64
+          const buffer = Buffer.from(base64Data, 'base64');
+          // Записываем буфер в файл (асинхронно)
+          fs.writeFile(targetPath, buffer, (err) => {
+            if (err) {
+              console.error('Ошибка при записи файла:', err);
+            } else {
+              console.log('Изображение успешно заменено');
+            }
+          });
+        } else {
+          console.log('Строка не является base64');
+        }
+      }
+
+      shelter.shop.nameMarket = shelterShopDto.shelterShop.nameMarket
+      shelter.shop.description = shelterShopDto.shelterShop.description
+      // @ts-ignore
+      shelter.deliveryPoints = shelterShopDto.deliveryPoints
+      await shelter.save()
+      return shelter
+    } catch (e) {
+      throw new HttpException(
+          'Не удается обновить: ' + e.message,
+          HttpStatus.BAD_REQUEST
+      )
     }
 
   }
