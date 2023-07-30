@@ -1,16 +1,19 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Param, Patch, Post, Query, Req, UseGuards, UsePipes } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Query} from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Roles } from "../auth/roles-auth.decorator";
 import { UsersService } from "src/users/users.service";
 import { AddRoleDto } from "src/users/dto/add-role.dto";
 import { BanUserDto } from "src/users/dto/ban-user.dto";
 import { ProductCardService } from "src/productCard/productCard.service";
+import {SheltersService} from "../shelters/shelters.service";
 
 @ApiTags('Админ')
 @Controller('admin')
-export class UsersController {
+export class AdminController {
   constructor(private usersService: UsersService,
-    private readonly productCardService: ProductCardService) {
+    private productCardService: ProductCardService,
+              private sheltersService: SheltersService
+              ) {
   }
 
   @ApiOperation({ summary: 'Получение всех пользователей' })
@@ -62,4 +65,20 @@ export class UsersController {
   async getTotalPurchases() {
     return this.productCardService.getTotalPurchases();
   }
+
+  //получение всех непровереныых продавцов
+  @Get('/unverified-shelter')
+  @Roles('ADMIN')
+  async getUnverifiedShelters() {
+    return this.sheltersService.getUnverifiedShelters()
+  }
+
+  @ApiOperation({ summary: 'Подтвердить продавца' })
+  @ApiResponse({ status: 200 })
+  @Roles('ADMIN')
+  @Get('/agreement-shelter/:id')
+  agreementShelter(@Param('id') id: string) {
+    return this.sheltersService.agreementShelter(id)
+  }
+
 }

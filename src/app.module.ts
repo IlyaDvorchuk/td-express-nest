@@ -14,10 +14,9 @@ import { MulterModule } from "@nestjs/platform-express";
 import { ProductCardsModule } from "./productCard/productCard.module";
 import { FavoriteModule } from "./favorite/favorite.module";
 import { CartModule } from "./cart/cart.module";
-// import { ProductStatusModel } from "./status/status.schema";
-// import { ProductStatusesModule } from "./status/status.module";
 import { NotificationsModule } from "./notification/notification.module";
 import { QuestionModule } from "./questionary/questionary.module";
+import {AdminModule} from "./admin/admin.module";
 
 @Module({
   controllers: [],
@@ -48,7 +47,8 @@ import { QuestionModule } from "./questionary/questionary.module";
     CartModule,
     //ProductStatusesModule,
     NotificationsModule,
-    QuestionModule
+    QuestionModule,
+    AdminModule
   ]
 })
 

@@ -13,19 +13,19 @@ import fs from "fs";
 @Injectable()
 export class SheltersService {
   constructor(@InjectModel(Shelter.name) private shelterRepository: Model<ShelterDocument>,
-    @InjectModel(ProductCard.name) private readonly productCardModel: Model<ProductCardDocument>,
-    @InjectModel(Order.name) private readonly orderModel: Model<OrderDocument>,
-    @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+              @InjectModel(ProductCard.name) private readonly productCardModel: Model<ProductCardDocument>,
+              @InjectModel(Order.name) private readonly orderModel: Model<OrderDocument>,
+              @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
   ) {
   }
 
   async getShelterByEmail(email: string) {
-    return await this.shelterRepository.findOne({ email }).exec();
+    return await this.shelterRepository.findOne({email}).exec();
   }
 
   async checkShelter(email: string, phone: string) {
-    const shelterEmail = await this.shelterRepository.findOne({ email }).exec();
-    const shelterPhone = await this.shelterRepository.findOne({ phone }).exec();
+    const shelterEmail = await this.shelterRepository.findOne({email}).exec();
+    const shelterPhone = await this.shelterRepository.findOne({phone}).exec();
     return {
       email: Boolean(shelterEmail),
       phone: Boolean(shelterPhone),
@@ -50,29 +50,28 @@ export class SheltersService {
 
   async getCards(shelterId: string, page: number, limit: number) {
     const shelter = await this.shelterRepository
-      .findById(shelterId)
-      .populate({
-        path: 'productCards',
-        options: {
-          skip: (page - 1) * limit, // Пропустить элементы предыдущих страниц
-          limit: limit // Ограничить количество элементов на странице
-        }
-      })
-      .exec();
+        .findById(shelterId)
+        .populate({
+          path: 'productCards',
+          options: {
+            skip: (page - 1) * limit, // Пропустить элементы предыдущих страниц
+            limit: limit // Ограничить количество элементов на странице
+          }
+        })
+        .exec();
     return shelter.productCards;
   }
 
   async addProductCard(shelterId: string, productCard: ProductCard) {
     try {
       const shelter = await this.shelterRepository.findById(shelterId)
-      if(!shelter.isVerified){
+      if (!shelter.isVerified) {
         productCard.published = false;
       }
       shelter.productCards.push(productCard);
       await shelter.save();
       return true
-    }
-    catch (e) {
+    } catch (e) {
       console.error('\'Error adding product card:\',', e)
       return false
     }
@@ -86,30 +85,30 @@ export class SheltersService {
     }
 
     if (fromDate && toDate) {
-      filter.createdAt = { $gte: fromDate, $lte: toDate };
+      filter.createdAt = {$gte: fromDate, $lte: toDate};
     }
 
     return this.shelterRepository.find(filter).exec();
   }
 
   async getOrdersByShelter(shelterId: string): Promise<any[]> {
-    const productCards = await this.productCardModel.find({ shelterId }).exec();
+    const productCards = await this.productCardModel.find({shelterId}).exec();
     const productCardIds = productCards.map((card) => card._id);
 
-    const orders = await this.orderModel.find({ productId: { $in: productCardIds } }).exec();
+    const orders = await this.orderModel.find({productId: {$in: productCardIds}}).exec();
 
     const results = await Promise.all(
-      orders.map(async (order) => {
-        const user = await this.userModel.findById(order.userId).exec();
-        const product = await this.productCardModel.findById(order.productId).exec();
+        orders.map(async (order) => {
+          const user = await this.userModel.findById(order.userId).exec();
+          const product = await this.productCardModel.findById(order.productId).exec();
 
-        return {
-          user,
-          product,
-          status: order.status,
-          order: order
-        };
-      })
+          return {
+            user,
+            product,
+            status: order.status,
+            order: order
+          };
+        })
     );
 
     return results;
@@ -129,8 +128,8 @@ export class SheltersService {
 
   async removeProductCardFromShelter(shelterId: string, productCardId: string): Promise<boolean> {
     const result = await this.shelterRepository.updateOne(
-        { _id: shelterId },
-        { $pull: { productCards: productCardId } },
+        {_id: shelterId},
+        {$pull: {productCards: productCardId}},
     );
     return result.modifiedCount > 0;
   }
@@ -189,5 +188,20 @@ export class SheltersService {
       )
     }
 
+  }
+
+  async getUnverifiedShelters() {
+    return this.shelterRepository.find({isVerified: false});
+  }
+
+  async agreementShelter(id: string) {
+    try {
+      const shelter = await this.shelterRepository.findById(id)
+      shelter.isVerified = true
+      await shelter.save()
+      return true
+    } catch (e) {
+      return false
+    }
   }
 }
