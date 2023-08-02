@@ -6,13 +6,15 @@ import { AddRoleDto } from "src/users/dto/add-role.dto";
 import { BanUserDto } from "src/users/dto/ban-user.dto";
 import { ProductCardService } from "src/productCard/productCard.service";
 import {SheltersService} from "../shelters/shelters.service";
+import {NotificationService} from "../notification/notification.service";
 
 @ApiTags('Админ')
 @Controller('admin')
 export class AdminController {
   constructor(private usersService: UsersService,
     private productCardService: ProductCardService,
-              private sheltersService: SheltersService
+              private sheltersService: SheltersService,
+              private notificationsService: NotificationService
               ) {
   }
 
@@ -81,4 +83,12 @@ export class AdminController {
     return this.sheltersService.agreementShelter(id)
   }
 
+
+  @ApiOperation({ summary: 'Подтвердить продавца' })
+  @ApiResponse({ status: 200 })
+  @Roles('ADMIN')
+  @Get('/create-notification/:id/')
+    createNotification(@Param('id') id: string, @Query('text') text: string) {
+    return this.notificationsService.createNotification(id, text);
+  }
 }

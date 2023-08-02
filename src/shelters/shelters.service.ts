@@ -33,9 +33,6 @@ export class SheltersService {
   }
 
   async createShelter(dto: CreateShelterDto, fileNameShop: string) {
-    console.log('CreateShelterDto 27', dto)
-    // console.log('filename 27', filename)
-    console.log('fileNameShop 27', fileNameShop)
     return await this.shelterRepository.create({...dto, imageShop: fileNameShop})
   }
 
@@ -203,5 +200,17 @@ export class SheltersService {
     } catch (e) {
       return false
     }
+  }
+
+  async pushNotificationRefToShelter(userId: string, notificationId) {
+    try {
+      const shelter = await this.shelterRepository.findById(userId)
+      shelter.notifications.push(notificationId)
+      await shelter.save()
+      return true
+    } catch (e) {
+      return false
+    }
+
   }
 }

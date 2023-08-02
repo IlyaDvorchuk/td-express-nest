@@ -132,6 +132,9 @@ export class Shelter extends Document {
 
   @Prop({required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: "ProductCard" }]})
   productCards: ProductCard[]
+
+  @Prop({required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Notification" }]})
+  notifications: string[]
 }
 
 export const ShelterSchema = SchemaFactory.createForClass(Shelter)
