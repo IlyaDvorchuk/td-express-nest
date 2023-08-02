@@ -10,7 +10,7 @@ export class ParentCategory extends Document {
   @Prop({ required: true })
   id: string;
 
-  @Prop({ })
+  @Prop({ type: String})
   name: string;
 }
 

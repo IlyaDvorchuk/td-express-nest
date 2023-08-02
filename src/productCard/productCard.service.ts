@@ -227,42 +227,70 @@ export class ProductCardService {
   }
 
   async searchProductCardsByCategory(
-    category: string,
-    page: number,
-    limit: number,
-    minPrice: number,
-    maxPrice: number,
-    color: string,
-    size: string,
+    category?: string,
+    page?: number,
+    limit?: number,
+    minPrice?: number,
+    maxPrice?: number,
+    color?: string,
+    size?: string,
   ) {
-    const priceFilter: any = {};
+
+    var query = this.productCardRepository.find({
+       published: true ,
+      'pricesAndQuantity.quantity': { $gt: 0 } });
   
-    if (minPrice !== undefined && minPrice !== null) {
-      priceFilter.$gte = minPrice;
+    // if (category !== undefined && category !== null && category !== '') {      
+    //   query = query.find({ 'categories.category.name': category });
+    // }
+  
+    if (minPrice !== undefined && minPrice !== null) {      
+      query = query.find({ 'pricesAndQuantity.price': { $gte: minPrice } });
     }
   
     if (maxPrice !== undefined && maxPrice !== null) {
-      priceFilter.$lte = maxPrice;
+      query = query.find({  'pricesAndQuantity.price': { $lte: maxPrice } });
     }
   
-    const filter = {
-      $and: [
-        { 'categories.category.id': category },
-        { published: true },
-        { 'pricesAndQuantity.price': priceFilter },
-        { 'pricesAndQuantity.quantity': { $gt: 0 } }, // Фильтр для количества больше 0
-        { colors: color && color.trim() !== '' ? color : { $exists: true } },
-        { sizes: size && size.trim() !== '' ? size : { $exists: true } },
-      ],
-    };
+    if (color && color.trim() !== '') {
+      query = query.find({ colors: color });
+    }
   
-    return this.productCardRepository
-      .find(filter)
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .exec();
+    if (size && size.trim() !== '') {
+      query = query.find({ 'typeQuantity.size': size });
+    }
+  
+    return query
+    .skip((page - 1) * limit)
+    .limit(limit)
+    .exec();
   }
   
+  
+  
+  // if (minPrice !== -1 && minPrice !== null) {
+  //   //filter.$and.push({'pricesAndQuantity.price': {$gt: minPrice}});
+  //   filter.pricesAndQuantity.price >= minPrice;
+  // }
+
+  // if (maxPrice !== -1 && maxPrice !== null) {
+  //   filter.pricesAndQuantity.price <= maxPrice;
+  // }
+
+  // // Добавляем фильтр для цвета, если параметр передан
+  // // if (color && color.trim() !== '') {
+  // //   filter.colors = color;
+  // // }
+
+  // // Добавляем фильтр для размера, если параметр передан
+  // if (size && size.trim() !== '') {
+  //   filter. = size;
+  // }
+
+
+  // // if (category && category.trim() !== '') {
+  // //   filter.categories.category.name = category;
+  // // }
 
   async searchProductCards(
     query: string,

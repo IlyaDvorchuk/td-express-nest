@@ -28,11 +28,11 @@ export class ProductCardController {
   // Поиск по категории
   @Get('/category/:category')
   async searchProductCardsByCategory(
-    @Param('category') category: string,
+    @Param('category') category: string = '',
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
-    @Query('minPrice') minPrice: number = 0,
-    @Query('maxPrice') maxPrice: number = Number.MAX_SAFE_INTEGER,
+    @Query('minPrice') minPrice: number,
+    @Query('maxPrice') maxPrice: number,
     @Query('color') color: string = '',
     @Query('size') size: string = '',
   ) {
