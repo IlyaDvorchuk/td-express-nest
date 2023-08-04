@@ -41,8 +41,40 @@ export class SheltersService {
     return shelter.deliveryPoints;
   }
 
+  // async countUnreadNotifications(shelter: Shelter): Promise<number> {
+  //   const notifications = await shelter.populate('notifications');
+  //
+  //   const unreadCount = notifications.reduce((count, notification) => {
+  //     console.log('notification', notification)
+  //     // @ts-ignore
+  //     if (!notification.isRead) {
+  //       count++;
+  //     }
+  //     return count;
+  //   }, 0);
+  //
+  //   return unreadCount;
+  // }
+
   async findById(shelterId: string) {
-    return this.shelterRepository.findById(shelterId).exec();
+
+    const shelter = await this.shelterRepository
+        .findById(shelterId)
+        .populate('notifications')
+        .exec();
+
+    const unreadCount = shelter.notifications.reduce((count, notification) => {
+      // @ts-ignore
+      if (!notification.isRead) {
+        count++;
+      }
+      return count;
+    }, 0);
+
+    // console.log('shelter', shelter)
+    // console.log('unreadCount', unreadCount)
+
+    return { shelter, unreadCount };
   }
 
   async getCards(shelterId: string, page: number, limit: number) {
@@ -212,5 +244,13 @@ export class SheltersService {
       return false
     }
 
+  }
+
+  async getNotificationsByShelter(shelterId: string) {
+    const shelter = await this.shelterRepository
+        .findById(shelterId)
+        .populate('notifications')
+        .exec();
+    return shelter.notifications
   }
 }

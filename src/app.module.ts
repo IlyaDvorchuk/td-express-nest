@@ -28,7 +28,12 @@ import {AdminModule} from "./admin/admin.module";
     ServeStaticModule.forRoot({
       rootPath: path.join(__dirname, '..', 'static'),
     }),
-    MongooseModule.forRoot(process.env.DB_URL),
+    MongooseModule.forRoot(process.env.DB_URL, {
+      connectionFactory: (connection) => {
+        connection.plugin(require('mongoose-autopopulate'));
+        return connection;
+      }
+    }),
     MulterModule.register({
       dest: './static',
       limits: {
