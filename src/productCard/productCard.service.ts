@@ -237,60 +237,36 @@ export class ProductCardService {
   ) {
 
     var query = this.productCardRepository.find({
-       published: true ,
-      'pricesAndQuantity.quantity': { $gt: 0 } });
-  
-    // if (category !== undefined && category !== null && category !== '') {      
-    //   query = query.find({ 'categories.category.name': category });
-    // }
-  
-    if (minPrice !== undefined && minPrice !== null) {      
+      published: true,
+      'pricesAndQuantity.quantity': { $gt: 0 }
+    });
+
+    if (category && category.trim() !== '') {
+      query = query.find({ 'categories.category.name': category });
+    }
+
+    if (minPrice !== undefined && minPrice !== null) {
       query = query.find({ 'pricesAndQuantity.price': { $gte: minPrice } });
     }
-  
+
     if (maxPrice !== undefined && maxPrice !== null) {
-      query = query.find({  'pricesAndQuantity.price': { $lte: maxPrice } });
+      query = query.find({ 'pricesAndQuantity.price': { $lte: maxPrice } });
     }
-  
+
     if (color && color.trim() !== '') {
       query = query.find({ colors: color });
     }
-  
+
     if (size && size.trim() !== '') {
       query = query.find({ 'typeQuantity.size': size });
     }
-  
+
     return query
-    .skip((page - 1) * limit)
-    .limit(limit)
-    .exec();
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .exec();
   }
-  
-  
-  
-  // if (minPrice !== -1 && minPrice !== null) {
-  //   //filter.$and.push({'pricesAndQuantity.price': {$gt: minPrice}});
-  //   filter.pricesAndQuantity.price >= minPrice;
-  // }
 
-  // if (maxPrice !== -1 && maxPrice !== null) {
-  //   filter.pricesAndQuantity.price <= maxPrice;
-  // }
-
-  // // Добавляем фильтр для цвета, если параметр передан
-  // // if (color && color.trim() !== '') {
-  // //   filter.colors = color;
-  // // }
-
-  // // Добавляем фильтр для размера, если параметр передан
-  // if (size && size.trim() !== '') {
-  //   filter. = size;
-  // }
-
-
-  // // if (category && category.trim() !== '') {
-  // //   filter.categories.category.name = category;
-  // // }
 
   async searchProductCards(
     query: string,
