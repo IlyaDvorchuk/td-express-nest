@@ -1,4 +1,4 @@
-import {Global, Module, forwardRef} from '@nestjs/common';
+import {Global, Module} from '@nestjs/common';
 import { SheltersController } from './shelters.controller';
 import { SheltersService } from './shelters.service';
 import { MongooseModule } from "@nestjs/mongoose";
@@ -8,6 +8,7 @@ import { JwtStrategy } from "../utils/jwt.strategy";
 import { ProductCard, ProductCardSchema } from 'src/productCard/productCard.schema';
 import { Order, OrderSchema } from 'src/order/order.schema';
 import { User, UserSchema } from 'src/users/users.schema';
+import {NotificationSchema, Notification} from "../notification/notification.schema";
 
 @Global()
 @Module({
@@ -19,14 +20,15 @@ import { User, UserSchema } from 'src/users/users.schema';
       { name: ProductCard.name, schema: ProductCardSchema },
       { name: Order.name, schema: OrderSchema },
       { name: User.name, schema: UserSchema },
-    ]),    
+      { name: Notification.name, schema: NotificationSchema },
+    ]),
     JwtModule.register({
       secret: process.env.PRIVATE_KEY || 'SECRET',
       signOptions: {
         expiresIn: '24d'
       }
-    })
-  ], 
+    }),
+  ],
   exports: [SheltersService]
 })
 export class SheltersModule {}

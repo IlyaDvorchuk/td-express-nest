@@ -33,4 +33,8 @@ export class NotificationService {
     await this.shelterService
     return await this.notificationModel.find({ userId });
   }
+
+  async deleteNotifications(deleteIds: string[]) {
+    await this.notificationModel.deleteMany({ _id: { $in: deleteIds } });
+  }
 }

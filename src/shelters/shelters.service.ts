@@ -9,6 +9,7 @@ import { User, UserDocument } from 'src/users/users.schema';
 import * as path from "path";
 import {isBase64String} from "../utils/isBase64String";
 import fs from "fs";
+import {NotificationDocument, Notification} from "../notification/notification.schema";
 
 @Injectable()
 export class SheltersService {
@@ -16,6 +17,7 @@ export class SheltersService {
               @InjectModel(ProductCard.name) private readonly productCardModel: Model<ProductCardDocument>,
               @InjectModel(Order.name) private readonly orderModel: Model<OrderDocument>,
               @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+              @InjectModel(Notification.name) private readonly notificationModel: Model<NotificationDocument>,
   ) {
   }
 
@@ -252,5 +254,49 @@ export class SheltersService {
         .populate('notifications')
         .exec();
     return shelter.notifications
+  }
+
+  async readNotificationsByShelter(shelterId: string) {
+    const shelter = await this.shelterRepository
+        .findById(shelterId)
+        .populate('notifications')
+        .exec();
+
+    // Обновление поля isRead для каждого уведомления
+    for (const notification of shelter.notifications) {
+      // @ts-ignore
+      await notification.updateOne({isRead: true});
+    }
+
+    // Вернуть обновленный объект Shelter
+    return shelter;
+
+  }
+
+  async deleteNotificationsByShelter(shelterId: string, deleteIds: string[]) {
+    try {
+
+      await this.notificationModel.deleteMany({ _id: { $in: deleteIds } });
+      const shelter = await this.shelterRepository
+          .findById(shelterId)
+          .populate('notifications')
+          .exec();
+
+      // Удаление ObjectId из массива notifications
+
+      shelter.notifications = shelter.notifications.filter(notification => {
+            // @ts-ignore
+            return !deleteIds.includes(notification._id.toString())
+
+      }
+      );
+      // Сохранение обновленного объекта Shelter
+      await shelter.save();
+
+      return shelter.notifications;
+    } catch (error) {
+      console.error('Ошибка при удалении уведомлений:', error);
+      return [];
+    }
   }
 }

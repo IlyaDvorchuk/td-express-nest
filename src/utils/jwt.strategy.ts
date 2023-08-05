@@ -24,7 +24,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     } else if (payload.user === 'shelter') {
       user =  await this.shelterService.findById(payload.sub);
-      console.log('user validate', user)
 
     }
     if (!user) {

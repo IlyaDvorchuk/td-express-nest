@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Query, Req, UseGuards } from "@nestjs/common";
+import {Body, Controller, Delete, Get, Param, Query, Req, UseGuards} from "@nestjs/common";
 import { SheltersService } from "./shelters.service";
 import { JwtAuthGuard } from "../middlewares/auth.middleware";
 import { Put } from "@nestjs/common";
@@ -88,5 +88,23 @@ export class SheltersController {
   async getNotificationsByShelter(@Req() req) {
     const shelterId =  req.user.shelter.id;
     return await this.shelterService.getNotificationsByShelter(shelterId);
+  }
+
+  // Уведомления продавца
+  @UseGuards(JwtAuthGuard)
+  @Delete('notifications')
+  async deleteNotificationsByShelter(
+      @Req() req,
+      @Body() deleteDto: string[]) {
+    const shelterId =  req.user.shelter.id;
+    return await this.shelterService.deleteNotificationsByShelter(shelterId, deleteDto);
+  }
+
+  // Продавец прочитал уведомления
+  @UseGuards(JwtAuthGuard)
+  @Get('read-notifications')
+  async readNotificationsByShelter(@Req() req) {
+    const shelterId =  req.user.shelter.id;
+    return await this.shelterService.readNotificationsByShelter(shelterId);
   }
 }
