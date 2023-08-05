@@ -30,7 +30,6 @@ import {AdminModule} from "./admin/admin.module";
     }),
     MongooseModule.forRoot(process.env.DB_URL, {
       connectionFactory: (connection) => {
-        connection.plugin(require('mongoose-autopopulate'));
         return connection;
       }
     }),
