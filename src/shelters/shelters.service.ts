@@ -25,6 +25,11 @@ export class SheltersService {
     return await this.shelterRepository.findOne({email}).exec();
   }
 
+  async getShelterName(id: string) {
+    const shelter = await this.shelterRepository.findById(id).exec();
+    return shelter?.name
+  }
+
   async checkShelter(email: string, phone: string) {
     const shelterEmail = await this.shelterRepository.findOne({email}).exec();
     const shelterPhone = await this.shelterRepository.findOne({phone}).exec();

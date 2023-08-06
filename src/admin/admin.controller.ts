@@ -58,6 +58,8 @@ export class AdminController {
     @Query('page') page: number,
     @Query('limit') limit: number,
   ) {
+    console.log('page', page);
+    console.log('limit', limit);
     return this.productCardService.getUnpublishedProductCards(page, limit);
   }
 
@@ -91,4 +93,29 @@ export class AdminController {
     createNotification(@Param('id') id: string, @Query('text') text: string) {
     return this.notificationsService.createNotification(id, text);
   }
+
+  @ApiOperation({ summary: '`Получить имя продавца' })
+  @ApiResponse({ status: 200 })
+  @Roles('ADMIN')
+  @Get('/name-shelter/:id/')
+  getNameShelter(@Param('id') id: string) {
+    return this.sheltersService.getShelterName(id);
+  }
+
+  @ApiOperation({ summary: 'Подтвердить товар' })
+  @ApiResponse({ status: 200 })
+  @Roles('ADMIN')
+  @Get('/agreement-good/:id')
+  agreementGood(@Param('id') id: string) {
+    return this.productCardService.agreementGood(id)
+  }
+
+  @ApiOperation({ summary: 'Отклонить товар' })
+  @ApiResponse({ status: 200 })
+  @Roles('ADMIN')
+  @Get('/reject-good/:id')
+  rejectGood(@Param('id') id: string) {
+    return this.productCardService.rejectGood(id)
+  }
+
 }

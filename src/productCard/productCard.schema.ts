@@ -193,6 +193,9 @@ export class ProductCard extends Document {
   @Prop({ type: Boolean, default: false })
   published: boolean;
 
+  @Prop({ type: Boolean, default: false })
+  isReject: boolean;
+
   @Prop({ type: [NotificationSchema], default: [] })
   notifications: NotificationDocument[];
 

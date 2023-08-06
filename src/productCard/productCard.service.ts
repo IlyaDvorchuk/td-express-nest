@@ -499,28 +499,32 @@ export class ProductCardService {
 
 
   async getUnpublishedProductCards(page: number, limit: number) {
-    const skip = (page - 1) * limit;
+    // const skip = (page - 1) * limit;
 
     const totalCount = await this.productCardRepository.countDocuments({
       published: false,
-      'shelter.isVerified': true,
-      'pricesAndQuantity.quantity': { $gt: 0 }, // Фильтр для количества больше 0
+      // 'shelter.isVerified': true,
+      // 'pricesAndQuantity.quantity': { $gt: 0 }, // Фильтр для количества больше 0
     })
-      .populate('shelter', 'isVerified');
-    const totalPages = Math.ceil(totalCount / limit);
+      // .populate('shelter', 'isVerified');
+    // const totalPages = Math.ceil(totalCount / limit);
 
+    console.log('totalCount', totalCount);
     const unpublishedProductCards = await this.productCardRepository
-      .find({ published: false, 'shelter.isVerified': true, 'pricesAndQuantity.quantity': { $gt: 0 } }) // Фильтр для количества больше 0
-      .populate('shelter', 'isVerified')
-      .skip(skip)
-      .limit(limit)
+      .find({ published: false, }) // Фильтр для количества больше 0
+      // .populate('shelter', 'isVerified')
+      // .skip(skip)
+      // .limit(limit)
       .exec();
 
-    return {
-      productCards: unpublishedProductCards,
-      totalPages,
-      currentPage: page,
-    };
+    console.log('unpublishedProductCards', unpublishedProductCards);
+
+    return [
+      ...unpublishedProductCards
+      // productCards: unpublishedProductCards,
+      // totalPages,
+      // currentPage: page,
+    ];
   }
 
 
@@ -589,5 +593,27 @@ export class ProductCardService {
 
   async getAnswerForQuestion(questionId: string) {
     return this.questionService.getAnswerForQuestion(questionId);
+  }
+
+  async agreementGood(id: string) {
+    try {
+      const good = await this.productCardRepository.findById(id)
+      good.published = true
+      await good.save()
+      return true
+    } catch (e) {
+      return false
+    }
+  }
+
+  async rejectGood(id: string) {
+    try {
+      const good = await this.productCardRepository.findById(id)
+      good.isReject = true
+      await good.save()
+      return true
+    } catch (e) {
+      return false
+    }
   }
 }
