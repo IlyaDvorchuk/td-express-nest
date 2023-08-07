@@ -236,13 +236,12 @@ export class ProductCardService {
     size?: string,
   ) {
 
-    var query = this.productCardRepository.find({
+    let query = this.productCardRepository.find({
       published: true,
-      'pricesAndQuantity.quantity': { $gt: 0 }
+      // 'pricesAndQuantity.quantity': { $gt: 0 }
     });
-
     if (category && category.trim() !== '') {
-      query = query.find({ 'categories.category.name': category });
+      query = query.find({ 'categories.category.id': category });
     }
 
     if (minPrice !== undefined && minPrice !== null) {

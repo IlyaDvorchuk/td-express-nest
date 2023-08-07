@@ -28,7 +28,7 @@ export class ProductCardController {
   // Поиск по категории
   @Get('/category/:category')
   async searchProductCardsByCategory(
-    @Query('category') category: string,
+    @Param('category') category: string,
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
     @Query('minPrice') minPrice: number,
