@@ -501,23 +501,20 @@ export class ProductCardService {
   async getUnpublishedProductCards(page: number, limit: number) {
     // const skip = (page - 1) * limit;
 
-    const totalCount = await this.productCardRepository.countDocuments({
-      published: false,
+    // const totalCount = await this.productCardRepository.countDocuments({
+    //   published: false,
       // 'shelter.isVerified': true,
       // 'pricesAndQuantity.quantity': { $gt: 0 }, // Фильтр для количества больше 0
-    })
+    // })
       // .populate('shelter', 'isVerified');
     // const totalPages = Math.ceil(totalCount / limit);
 
-    console.log('totalCount', totalCount);
     const unpublishedProductCards = await this.productCardRepository
       .find({ published: false, }) // Фильтр для количества больше 0
       // .populate('shelter', 'isVerified')
       // .skip(skip)
       // .limit(limit)
       .exec();
-
-    console.log('unpublishedProductCards', unpublishedProductCards);
 
     return [
       ...unpublishedProductCards
