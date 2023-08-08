@@ -13,9 +13,9 @@ export class CartItem {
 
   @Prop({ required: true })
   quantity: number;
-
-  @Prop({ required: true })
-  totalPrice: number;
+  //
+  // @Prop({ required: true })
+  // totalPrice: number;
 
   @Prop()
   size: string

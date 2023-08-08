@@ -19,7 +19,6 @@ export class UsersController {
   @Post('/addToCart')
   addItemToCart(@Req() req, @Body() dto: CreateCartDto) {
     const userId = req.user.id
-    console.log('addItemToCart', userId, dto)
     return this.usersService.addToCart(userId, dto)
   }
 
@@ -37,7 +36,7 @@ export class UsersController {
   removeFromCart(@Req() req, @Body() productCardId: string, product: CreateProductCardDto) {
     const userId = req.user.id
     console.log('removeFromCart', userId)
-    return this.usersService.removeFromCart(userId, productCardId, product)
+    return this.usersService.removeFromCart(userId, productCardId)
   }
 
   //показать избранное
@@ -62,7 +61,7 @@ export class UsersController {
   removeFromFavorite(@Req() req, @Body() productCardId: string, product: CreateProductCardDto) {
     const userId = req.user.id
     console.log('removeFromFavorite', userId)
-    return this.usersService.removeFromFavorite(userId, productCardId, product)
+    return this.usersService.removeFromFavorite(userId, productCardId)
   }
 
   //создание уведомления для пользователя

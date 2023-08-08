@@ -25,7 +25,6 @@ export class CartService {
                 cart.items.push({
                     productId: dto.productId,
                     quantity: dto.quantity,
-                    totalPrice: dto.totalPrice,
                     size: dto.size
                 });
                 await cart.save();
@@ -37,9 +36,7 @@ export class CartService {
                     {
                         productId: dto.productId,
                         quantity: dto.quantity,
-                        totalPrice: dto.totalPrice,
                         isCart: true,
-                        isFavorite: dto.isFavorite,
                     },
                 ],
             });
