@@ -5,14 +5,12 @@ import { AddRoleDto } from './dto/add-role.dto';
 import { BanUserDto } from './dto/ban-user.dto';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { CreateFavoritesDto } from 'src/favorite/dto/create-favorites.dto';
 import { CreateCartDto } from 'src/cart/dto/create-cart.dto';
 import { CartService } from "../cart/cart.service";
 import { FavoriteService } from "../favorite/favorite.service";
 import { CreateNotificationDto } from 'src/notification/dto/notification.dto';
 import { NotificationService } from 'src/notification/notification.service';
 import { ProductCardService } from 'src/productCard/productCard.service';
-import { CreateProductCardDto } from 'src/productCard/dto/create-product-card.dto';
 
 @Injectable()
 export class UsersService {
@@ -117,7 +115,7 @@ export class UsersService {
     //await this.productCardService.updateProductCard(dto.productId, product);
   }
 
-  async removeFromCart(userId: string, productCardId: string, product: CreateProductCardDto) {
+  async removeFromCart(userId: string, productCardId: string) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
@@ -128,19 +126,24 @@ export class UsersService {
     //await this.productCardService.updateProductCard(productCardId, product);
   }
 
-  async addToFavorites(userId: string, dto: CreateFavoritesDto, product: CreateProductCardDto) {
-    const user = await this.userRepository.findById(userId);
-    if (!user) {
-      throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
+  async getFavorites(userId: string) {
+    try {
+      return await this.favoriteService.getFavoriteProductsCards(userId)
+    } catch (e) {
+      throw new HttpException('Избранное не найдено', HttpStatus.NOT_FOUND)
     }
-
-    await this.favoriteService.addToFavorite(userId, dto)
-
-    //product.isCart = true;
-    //await this.productCardService.updateProductCard(dto.productId, product);
   }
 
-  async removeFromFavorite(userId: string, productCardId: string, product: CreateProductCardDto) {
+  async addToFavorites(userId: string, productId: string) {
+    try {
+      await this.favoriteService.addToFavorite(userId, productId)
+      return true
+    } catch (e) {
+      return false
+    }
+  }
+
+  async removeFromFavorite(userId: string, productCardId: string) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
@@ -156,7 +159,7 @@ export class UsersService {
     return this.userRepository.findById(userId).exec();
   }
 
-  async denyProductPublishingRequest(productId: string, userId: string, message: string): Promise<void> {
+  // async denyProductPublishingRequest(productId: string, userId: string, message: string): Promise<void> {
     //   const productCard = await this.productCardRepository.findById(productId);
     //   if (!productCard) {
     //     throw new Error('Товар не найден');
@@ -172,7 +175,7 @@ export class UsersService {
     //   productCard.notifications.push(notification);
 
     //   await Promise.all([productCard.save(), notification.save()]);
-  }
+  // }
 
   async createNotification(dto: CreateNotificationDto) /*: Promise<NotificationDocument>*/ {
     return this.notificationService.createNotification(dto.userId, dto.message);

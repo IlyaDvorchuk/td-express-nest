@@ -2,9 +2,6 @@ import {Body, Controller, Get, HttpException, HttpStatus, Param, Patch, Post, Re
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import {Roles} from "../auth/roles-auth.decorator";
-import {AddRoleDto} from "./dto/add-role.dto";
-import {BanUserDto} from "./dto/ban-user.dto";
 import { ValidationPipe } from "../pipes/validation.pipe";
 import {JwtAuthGuard} from "../middlewares/auth.middleware";
 import { CreateNotificationDto } from "src/notification/dto/notification.dto";
@@ -32,7 +29,7 @@ export class UsersController {
   @Post()
   create(@Body() userDto: CreateUserDto) {
     return this.usersService.createUser(userDto)
-  }  
+  }
 
   //удалить из корзины
   @UseGuards(JwtAuthGuard)
@@ -43,13 +40,20 @@ export class UsersController {
     return this.usersService.removeFromCart(userId, productCardId, product)
   }
 
+  //показать избранное
+  @UseGuards(JwtAuthGuard)
+  @Get('/getFavorites')
+  getFavorites(@Req() req) {
+    const userId = req.user.id
+    return this.usersService.getFavorites(userId)
+  }
+
   //добавить в избранное
   @UseGuards(JwtAuthGuard)
-  @Get('/addToFavorite')
-  addToFavorite(@Req() req, @Body() dto: CreateCartDto, product: CreateProductCardDto) {
+  @Get('/addToFavorite/:goodId')
+  addToFavorite(@Req() req, @Param('goodId') goodId: string) {
     const userId = req.user.id
-    console.log('addToFavorite', userId)
-    return this.usersService.addToFavorites(userId, dto, product)
+    return this.usersService.addToFavorites(userId, goodId)
   }
 
   //удалить из избранного

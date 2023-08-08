@@ -28,6 +28,10 @@ export class ProductCardService {
     return query.exec();
   }
 
+  async getProductCardsById(productIds: string[]): Promise<ProductCard[]> {
+    return this.productCardRepository.find({ _id: { $in: productIds } });
+  }
+
   async getProductCardByUserId(id: string): Promise<ProductCard> {
     const query = this.productCardRepository.findOne({ _id: id, published: true });
     //поиск по избранному и корзине для объединения в общий список
