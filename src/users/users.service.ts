@@ -212,4 +212,14 @@ export class UsersService {
     return productCards;
   }
 
+  async getCartProducts(userId: string) {
+    const cart = await this.cartService.getCartProductsWithPrices(userId);
+
+    if (!cart) {
+      return []; // Return an empty array if no favorites found
+    }
+
+    return cart;
+  }
+
 }

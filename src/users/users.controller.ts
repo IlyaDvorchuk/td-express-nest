@@ -112,6 +112,6 @@ async getProductCards(
   @Get('/get-cart')
   async getCart(@Req() req) {
     const shelterId = req.user.id
-    return this.usersService.findById(shelterId)
+    return this.usersService.getCartProducts(shelterId)
   }
 }
