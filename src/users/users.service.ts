@@ -106,13 +106,19 @@ export class UsersService {
   }
 
   async addToCart(userId: string, dto: CreateCartDto) {
-    const user = await this.userRepository.findById(userId);
-    if (!user) {
-      throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
+    try {
+      const user = await this.userRepository.findById(userId);
+      if (!user) {
+        throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
+      }
+      await this.cartService.addToCart(userId, dto)
+      return true
+      //product.isCart = true;
+      //await this.productCardService.updateProductCard(dto.productId, product);
+    } catch (e) {
+      return false
     }
-    await this.cartService.addToCart(userId, dto)
-    //product.isCart = true;
-    //await this.productCardService.updateProductCard(dto.productId, product);
+
   }
 
   async removeFromCart(userId: string, productCardId: string) {

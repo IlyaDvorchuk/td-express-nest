@@ -107,4 +107,11 @@ async getProductCards(
     const shelterId = req.user.id
     return this.usersService.findById(shelterId)
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/get-cart')
+  async getCart(@Req() req) {
+    const shelterId = req.user.id
+    return this.usersService.findById(shelterId)
+  }
 }
