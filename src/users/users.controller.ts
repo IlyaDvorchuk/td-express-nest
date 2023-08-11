@@ -33,10 +33,10 @@ export class UsersController {
   //удалить из корзины
   @UseGuards(JwtAuthGuard)
   @Post('/removeFromCart')
-  removeFromCart(@Req() req, @Body() productCardId: string, product: CreateProductCardDto) {
+  removeFromCart(@Req() req, @Body() productCardIds: string[]) {
     const userId = req.user.id
     console.log('removeFromCart', userId)
-    return this.usersService.removeFromCart(userId, productCardId)
+    return this.usersService.removeFromCart(userId, productCardIds)
   }
 
   //показать избранное

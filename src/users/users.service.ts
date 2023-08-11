@@ -121,13 +121,14 @@ export class UsersService {
 
   }
 
-  async removeFromCart(userId: string, productCardId: string) {
+  async removeFromCart(userId: string, productCardId: string[]) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
     }
 
-    await this.cartService.removeFromCart(userId, productCardId)
+
+    // await this.cartService.removeFromCart(userId, productCardId)
     //product.isCart = false;
     //await this.productCardService.updateProductCard(productCardId, product);
   }
