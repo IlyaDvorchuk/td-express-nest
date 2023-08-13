@@ -122,15 +122,21 @@ export class UsersService {
   }
 
   async removeFromCart(userId: string, productCardId: string[]) {
-    const user = await this.userRepository.findById(userId);
-    if (!user) {
-      throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
+    try {
+
+      const user = await this.userRepository.findById(userId);
+      if (!user) {
+        throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
+      }
+
+      await this.cartService.removeFromCart(userId, productCardId)
+      return true
+      // product.isCart = false;
+      //await this.productCardService.updateProductCard(productCardId, product);
+    } catch (e) {
+      return false
     }
 
-
-    // await this.cartService.removeFromCart(userId, productCardId)
-    //product.isCart = false;
-    //await this.productCardService.updateProductCard(productCardId, product);
   }
 
   async getFavorites(userId: string) {
@@ -223,4 +229,7 @@ export class UsersService {
     return cart;
   }
 
+  async setCountCart(userId: string, typeId: string, count: number) {
+    await this.cartService.setCountCart(userId, typeId, count)
+  }
 }

@@ -273,12 +273,12 @@ export class ProductCardService {
 
   async searchProductCards(
     query: string,
-    page: number,
-    limit: number,
-    minPrice: number,
-    maxPrice: number,
-    color: string,
-    size: string,
+    page?: number,
+    limit?: number,
+    minPrice?: number,
+    maxPrice?: number,
+    color?: string,
+    size?: string,
   ) {
     const regexQuery = new RegExp(query, 'i');
 

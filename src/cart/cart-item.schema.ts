@@ -19,6 +19,9 @@ export class CartItem {
 
   @Prop()
   size: string
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'SizeQuantity' })
+  typeId: string
 }
 
 export const CartItemSchema = SchemaFactory.createForClass(CartItem);
