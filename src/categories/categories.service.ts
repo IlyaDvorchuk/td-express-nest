@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { Category, CategoryDocument } from "./schemas/categories.schema";
@@ -54,6 +54,25 @@ export class CategoriesService {
     await parent.save()
     return parent
   }
+
+  async getCategory(id: string) {
+    let category
+    category = await this.categoryRepository.findById(id)
+    if (category) {
+      return category
+    }
+    category = await this.subcategoryRepository.findById(id)
+    if (category) {
+      return category
+    }
+    category = await this.sectionRepository.findById(id)
+    if (category) {
+      return category
+    }
+
+    throw new HttpException("Не найдена категория", HttpStatus.BAD_REQUEST)
+  }
+
 
   async getAll() {
     return await this.categoryRepository.find().populate({

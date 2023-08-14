@@ -1,5 +1,5 @@
 
-import { Body, Controller, Get, Post } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post } from "@nestjs/common";
 
 import { CategoriesService } from "./categories.service";
 
@@ -34,6 +34,11 @@ export class CategoriesController {
   // async subtoSec(@Body() dtoCat) {
   //   return this.categoriesService.subtoSec(dtoCat)
   // }
+
+  @Get(':id')
+  async getCategory(@Param('id') id: string) {
+    return await this.categoriesService.getCategory(id)
+  }
 
   @Get()
   async getAllCategories() {
