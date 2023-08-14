@@ -222,7 +222,7 @@ export class ProductCard extends Document {
   @Prop({ type: ProductPriceRangeSchema, required: false })
   priceRange: ProductPriceRange;
 
-  @Prop({ type: String, required: true })
+  @Prop({ type: String })
   nameShelter: string
 }
 export const ProductCardSchema = SchemaFactory.createForClass(ProductCard);

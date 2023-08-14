@@ -600,8 +600,11 @@ export class ProductCardService {
       const good = await this.productCardRepository.findById(id)
       good.published = true
       await good.save()
+      console.log('good', good);
+
       return true
     } catch (e) {
+      console.log('e', e);
       return false
     }
   }
