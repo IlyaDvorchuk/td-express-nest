@@ -123,11 +123,6 @@ export class CreateShelterDto {
   @Length(4, 16, {message: 'Не меньше 4 и не больше 16'})
   readonly password: string
 
-  @ApiProperty({example: 'Борис', description: 'Имя или наименование продавца'})
-  @IsString({message: 'Должно быть строкой'})
-  @Length(1, 16, {message: 'Не меньше 1 и не больше 16'})
-  readonly name: string
-
   @ApiProperty({example: '77546548', description: 'Номер продавца'})
   @IsString({message: 'Должно быть строкой'})
   @Length(7, 16, {message: 'Не меньше 1 и не больше 16'})

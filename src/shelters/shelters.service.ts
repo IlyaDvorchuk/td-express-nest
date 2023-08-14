@@ -27,7 +27,7 @@ export class SheltersService {
 
   async getShelterName(id: string) {
     const shelter = await this.shelterRepository.findById(id).exec();
-    return shelter?.name
+    return shelter?.shop.nameMarket
   }
 
   async checkShelter(email: string, phone: string) {

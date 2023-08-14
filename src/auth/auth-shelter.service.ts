@@ -34,8 +34,6 @@ export class AuthShelterService {
   async registration(shelterDto: CreateShelterDto, photoShopPath: string) {
     const candidate = await this.shelterService.getShelterByEmail(shelterDto.email)
     if (candidate) {
-      console.log('candidate', candidate);
-
       throw new HttpException(
         'Продавец с таким email существует',
         HttpStatus.BAD_REQUEST
@@ -49,7 +47,6 @@ export class AuthShelterService {
         shelterDto[field] = JSON.parse(shelterDto[field])
       }
     }
-    // console.log('shelterDto 52', shelterDto)
     return await this.shelterService.createShelter({...shelterDto, password: hashPassword}, photoShopPath)
   }
 

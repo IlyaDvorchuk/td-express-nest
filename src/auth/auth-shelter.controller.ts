@@ -50,7 +50,6 @@ export class AuthShelterController {
     @UploadedFiles() images: { imageShop?: Express.Multer.File },
     @Res({passthrough: true}) response: Response
   ) {
-    // console.log('shelterDto', shelterDto);
     const {imageShop} = images
     // const photoPath = `/shelter-scans/${fileScan[0].filename}`;
     const photoShopPath = `/shelter-shops/${imageShop[0].filename}`;
@@ -59,7 +58,6 @@ export class AuthShelterController {
       // photoPath,
       photoShopPath
     )
-    console.log('shelter', shelter)
     const token = await this.authService.createAccessToken(shelter);
     response.cookie('access_token_shelter', token, {
       maxAge: 30 * 24 * 60 * 60 * 1000,

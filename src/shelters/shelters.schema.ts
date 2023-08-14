@@ -109,9 +109,6 @@ export class Shelter extends Document {
   @Prop({required: true})
   password: string
 
-  @Prop({required: true})
-  name: string
-
   // @Prop({required: true})
   // fileScan: string
 
