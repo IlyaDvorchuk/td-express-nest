@@ -131,7 +131,8 @@ export class ProductCardController {
     @UploadedFiles() files: { mainPhoto: Express.Multer.File, additionalPhotos: Express.Multer.File[] },
   ) {
     const { mainPhoto, additionalPhotos } = files
-    const shelterId = req.user.id
+    const shelterId = req.user
+
     const mainPhotoPath = mainPhoto ? '/main-photos/' + mainPhoto[0].filename : undefined;
     const additionalPhotosPaths = additionalPhotos.map(file => '/additional-photos/' + file.filename);
 
@@ -159,7 +160,7 @@ export class ProductCardController {
   async deleteProductCard(
     @Req() req,
     @Param('idCard',) idCard: string) {
-    const shelterId = req.user.id
+    const shelterId = req.user
     return this.productCardService.deleteProductCard(idCard, shelterId);
   }
 

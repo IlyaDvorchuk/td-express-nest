@@ -29,7 +29,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Post('/addToCart')
   addItemToCart(@Req() req, @Body() dto: CreateCartDto) {
-    const userId = req.user.id
+    const userId = req.user
     return this.usersService.addToCart(userId, dto)
   }
 
@@ -37,7 +37,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Post('/deleteCart')
   deleteItemToCart(@Req() req, @Body() dto: {idsCart: string[]}) {
-    const userId = req.user.id;
+    const userId = req.user
     console.log('dto: {idsCart: string[]}', dto);
     return this.usersService.removeFromCart(userId, dto.idsCart);
   }
@@ -54,7 +54,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Post('/removeFromCart')
   removeFromCart(@Req() req, @Body() productCardIds: string[]) {
-    const userId = req.user.id
+    const userId = req.user
     return this.usersService.removeFromCart(userId, productCardIds)
   }
 
@@ -62,7 +62,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get('/getFavorites')
   getFavorites(@Req() req) {
-    const userId = req.user.id
+    const userId = req.user
     return this.usersService.getFavorites(userId)
   }
 
@@ -70,7 +70,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get('/addToFavorite/:goodId')
   addToFavorite(@Req() req, @Param('goodId') goodId: string) {
-    const userId = req.user.id
+    const userId = req.user
     return this.usersService.addToFavorites(userId, goodId)
   }
 
@@ -78,8 +78,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get('/removeFromFavorite')
   removeFromFavorite(@Req() req, @Body() productCardId: string,) {
-    const userId = req.user.id
-    console.log('removeFromFavorite', userId)
+    const userId = req.user
     return this.usersService.removeFromFavorite(userId, productCardId)
   }
 
@@ -123,21 +122,21 @@ async getProductCards(
   @UseGuards(JwtAuthGuard)
   @Get('/get-user')
   async getUser(@Req() req) {
-    const shelterId = req.user.id
+    const shelterId = req.user
     return this.usersService.findById(shelterId)
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('/get-cart')
   async getCart(@Req() req) {
-    const shelterId = req.user.id
+    const shelterId = req.user
     return this.usersService.getCartProducts(shelterId)
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('/set-count-cart/:typeId/:count')
   async setCountCart(@Req() req, @Param('typeId') typeId: string, @Param('count') count: number) {
-    const userId = req.user.id
+    const userId = req.user
     return this.usersService.setCountCart(userId, typeId, count)
   }
 }

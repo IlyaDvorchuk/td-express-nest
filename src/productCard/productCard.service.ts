@@ -45,12 +45,22 @@ export class ProductCardService {
     mainPhoto: string,
     additionalPhotos: string[]
   ) {
+    // console.log('CreateProductCardDto', dto);
 
     for (let field of Object.keys(dto)) {
-      if (typeof dto[field] === 'string') {
+      if (typeof dto[field] === 'string' && field !== 'nameShelter') {
         try {
-          dto[field] = JSON.parse(dto[field]);
+
+          const parsedJson = JSON.parse(dto[field]);
+          if (typeof parsedJson === 'object' && parsedJson !== null) {
+            dto[field] = parsedJson;
+          } else {
+            // The parsed JSON is not an object, handle this case
+            console.log('Parsed JSON is not an object:', parsedJson);
+            // You can throw an error or handle it in some other way
+          }
         } catch (error) {
+          console.log('error', error);
           // Handle JSON parse error
           throw new HttpException(
             'Ошибка при разборе JSON',
@@ -71,6 +81,8 @@ export class ProductCardService {
     const isAddInShelter = await this.shelterService.addProductCard(shelterId, product._id);
 
     const isAddInCategories = await this.categoriesService.addProductCard(dto.categories, product._id);
+    console.log('product', product);
+
     if (isAddInShelter && isAddInCategories) {
       return product;
     } else {

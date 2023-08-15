@@ -13,7 +13,7 @@ export class SheltersController {
   @UseGuards(JwtAuthGuard)
   @Get('delivery-points')
   async getDeliveryPoints(@Req() req) {
-    const shelterId = req.user.shelter.id
+    const shelterId = req.user
     return await this.shelterService.getDeliveryPoints(shelterId)
   }
 
@@ -24,15 +24,14 @@ export class SheltersController {
     @Query('page') page: number = 1, // Номер страницы по умолчанию: 1
     @Query('limit') limit: number = 10 // Количество элементов на странице по умолчанию: 10
   ) {
-    const shelterId = req.user.shelter.id;
+    const shelterId = req.user;
     return  await this.shelterService.getCards(shelterId, page, limit);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get()
   async getShelter(@Req() req) {
-    const shelterId = req.user.shelter.id
-    console.log('req.user', req.user)
+    const shelterId = req.user
     return this.shelterService.findById(shelterId)
   }
 
@@ -51,7 +50,7 @@ export class SheltersController {
   @UseGuards(JwtAuthGuard) // отображение товаров(заказов) продавца с его статусами для самого продавца
   @Get('orders')
   async getOrdersByShelter(@Req() req) {
-    const shelterId = req.user.shelter.id;
+    const shelterId = req.user
     return await this.shelterService.getOrdersByShelter(shelterId);
   }
 
@@ -86,7 +85,7 @@ export class SheltersController {
   @UseGuards(JwtAuthGuard)
   @Get('notifications')
   async getNotificationsByShelter(@Req() req) {
-    const shelterId =  req.user.shelter.id;
+    const shelterId =  req.user
     return await this.shelterService.getNotificationsByShelter(shelterId);
   }
 
@@ -96,7 +95,7 @@ export class SheltersController {
   async deleteNotificationsByShelter(
       @Req() req,
       @Body() deleteDto: string[]) {
-    const shelterId =  req.user.shelter.id;
+    const shelterId =  req.user
     return await this.shelterService.deleteNotificationsByShelter(shelterId, deleteDto);
   }
 
@@ -104,7 +103,7 @@ export class SheltersController {
   @UseGuards(JwtAuthGuard)
   @Get('read-notifications')
   async readNotificationsByShelter(@Req() req) {
-    const shelterId =  req.user.shelter.id;
+    const shelterId =  req.user
     return await this.shelterService.readNotificationsByShelter(shelterId);
   }
 }
