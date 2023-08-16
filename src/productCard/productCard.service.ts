@@ -257,7 +257,11 @@ export class ProductCardService {
       // 'pricesAndQuantity.quantity': { $gt: 0 }
     });
     if (category && category.trim() !== '') {
-      query = query.find({ 'categories.category.id': category });
+      query = query.or([
+        { 'categories.category.id': category },
+        { 'categories.subcategory.id': category },
+        { 'categories.section.id': category }
+      ]);
     }
 
     if (minPrice !== undefined && minPrice !== null) {
@@ -293,7 +297,6 @@ export class ProductCardService {
     size?: string,
   ) {
     const regexQuery = new RegExp(query, 'i');
-
     // Добавьте фильтрацию по ценовому диапазону, цвету, размеру и количеству больше 0
     const filter = {
       $and: [
@@ -308,13 +311,38 @@ export class ProductCardService {
         },
         { published: true },
         { 'pricesAndQuantity.price': { $gte: minPrice || 0, $lte: maxPrice || Number.MAX_SAFE_INTEGER } },
-        { 'pricesAndQuantity.quantity': { $gt: 0 } }, // Фильтр для количества больше 0
-        { colors: color },
-        { sizes: size },
+        // Добавляем фильтр только если size не пустая строка
+        ...(size !== "" ? [
+          {
+            typeQuantity: {
+              $elemMatch: { size: size },
+            },
+          },
+        ] : []),
+        {
+          // Фильтр для суммы quantity больше 0
+          $expr: {
+            $gt: [
+              {
+                $sum: {
+                  $map: {
+                    input: '$typeQuantity',
+                    as: 'item',
+                    in: '$$item.quantity',
+                  },
+                },
+              },
+              0,
+            ],
+          },
+        },
       ],
     };
 
+// { 'pricesAndQuantity.quantity': { $gt: 0 } }, // Фильтр для количества больше 0
+
     const totalCount = await this.productCardRepository.countDocuments(filter);
+
     const totalPages = Math.ceil(totalCount / limit);
 
     const productCards = await this.productCardRepository
@@ -322,7 +350,6 @@ export class ProductCardService {
       .skip((page - 1) * limit)
       .limit(limit)
       .exec();
-
     return {
       productCards,
       totalPages,
