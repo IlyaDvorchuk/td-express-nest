@@ -61,7 +61,7 @@ export class AuthShelterService {
     }
     const passwordEquals = await bcrypt.compare(userDto?.password, shelter?.password)
     if (shelter && passwordEquals) {
-      return shelter
+      return userDto?.isTelegram ? 'Продавец существует' : shelter
     }
     throw new UnauthorizedException({message: 'Некорректный емайл или пароль'})
   }

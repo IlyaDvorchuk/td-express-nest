@@ -17,7 +17,6 @@ import { CartModule } from "./cart/cart.module";
 import { NotificationsModule } from "./notification/notification.module";
 import { QuestionModule } from "./questionary/questionary.module";
 import {AdminModule} from "./admin/admin.module";
-import { TelegramModule } from "./telegram/telegram.module";
 
 @Module({
   controllers: [],
@@ -54,7 +53,6 @@ import { TelegramModule } from "./telegram/telegram.module";
     NotificationsModule,
     QuestionModule,
     AdminModule,
-    TelegramModule
   ]
 })
 
