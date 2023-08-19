@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Notification, NotificationDocument } from './notification.schema';
 import {SheltersService} from "../shelters/shelters.service";
-// import axios from "axios";
 
 @Injectable()
 export class NotificationService {
@@ -59,7 +58,6 @@ export class NotificationService {
         body: JSON.stringify(payload),
         headers: { 'Content-Type': 'application/json' },
       });
-      // await axios.post(apiUrl, payload);
     } catch (error) {
       console.error('Error sending message to Telegram:', error);
     }
