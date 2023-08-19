@@ -61,7 +61,7 @@ export class AuthShelterService {
     }
     const passwordEquals = await bcrypt.compare(userDto?.password, shelter?.password)
     if (shelter && passwordEquals) {
-      return userDto?.isTelegram ? 'Продавец существует' : shelter
+      return shelter
     }
     throw new UnauthorizedException({message: 'Некорректный емайл или пароль'})
   }
@@ -74,6 +74,12 @@ export class AuthShelterService {
 
   async getUserById(id: string) {
     return await this.shelterService.findById(id);
+  }
+
+  async addTelegramShelter(dto: EnterUserDto) {
+    const validationShelter = await this.validateShelter(dto)
+
+    return await this.shelterService.addTelegramPush(validationShelter, dto.chatId)
   }
 }
 

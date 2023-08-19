@@ -133,7 +133,7 @@ export class SheltersService {
 
     const orders = await this.orderModel.find({productId: {$in: productCardIds}}).exec();
 
-    const results = await Promise.all(
+    return await Promise.all(
         orders.map(async (order) => {
           const user = await this.userModel.findById(order.userId).exec();
           const product = await this.productCardModel.findById(order.productId).exec();
@@ -147,7 +147,6 @@ export class SheltersService {
         })
     );
 
-    return results;
   }
 
   async updateOrderStatus(orderId: string, newStatus: string): Promise<Order | null> {
@@ -303,5 +302,20 @@ export class SheltersService {
       console.error('Ошибка при удалении уведомлений:', error);
       return [];
     }
+  }
+
+  async addTelegramPush(shelter: Shelter, chatId: string) {
+    try {
+      shelter.isPushTelegram = chatId
+      await shelter.save()
+      console.log('dfoifjgdo');
+      return true
+    } catch (e) {
+      throw new HttpException(
+        'Не удается подключить уведомления: ' + e.message,
+        HttpStatus.BAD_REQUEST
+      )
+    }
+
   }
 }
