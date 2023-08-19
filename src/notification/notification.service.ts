@@ -19,7 +19,7 @@ export class NotificationService {
     if (user.shelter.isPushTelegram) {
       await this.sendMessage(
         user.shelter.isPushTelegram,
-        `<p>${notification.message}</p>`
+        notification.message
         )
     }
     if (answer && notification) {
