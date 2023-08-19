@@ -308,7 +308,6 @@ export class SheltersService {
     try {
       shelter.isPushTelegram = chatId
       await shelter.save()
-      console.log('dfoifjgdo');
       return true
     } catch (e) {
       throw new HttpException(
