@@ -13,6 +13,5 @@ export class EnterUserDto {
   readonly password: string
 
   @ApiProperty({example: '12344556', description: 'Id чата телеграма'})
-  @IsString({message: 'Должно быть строкой'})
-  readonly chatId?: string
+  readonly chatId?: string | undefined
 }
