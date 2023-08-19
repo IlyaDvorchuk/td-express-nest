@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Notification, NotificationDocument } from './notification.schema';
 import {SheltersService} from "../shelters/shelters.service";
+import fetch from 'node-fetch';
 
 @Injectable()
 export class NotificationService {
