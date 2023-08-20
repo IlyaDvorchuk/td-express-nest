@@ -52,6 +52,7 @@ export class NotificationService {
     const payload = {
       chat_id: chatId,
       text: message,
+      parse_mode: 'HTML',
     };
     try {
       await fetch(apiUrl, {
