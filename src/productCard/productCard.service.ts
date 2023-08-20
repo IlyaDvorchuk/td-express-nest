@@ -638,10 +638,11 @@ export class ProductCardService {
   async agreementGood(id: string) {
     try {
       const good = await this.productCardRepository.findById(id)
+      console.log('good', good);
+
       good.published = true
       good.isReject = false
       await good.save()
-      console.log('good', good);
 
       return true
     } catch (e) {
