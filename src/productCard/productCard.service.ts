@@ -162,7 +162,8 @@ export class ProductCardService {
     const modifiedDto = {
       ...dto,
       mainPhoto: product.mainPhoto,
-      additionalPhotos: product.additionalPhotos
+      additionalPhotos: product.additionalPhotos,
+      published: false
     }
 
     const answer = await this.categoriesService.updateCategories(dto.categories, product.categories, product, id)
@@ -638,6 +639,7 @@ export class ProductCardService {
     try {
       const good = await this.productCardRepository.findById(id)
       good.published = true
+      good.isReject = false
       await good.save()
       console.log('good', good);
 
