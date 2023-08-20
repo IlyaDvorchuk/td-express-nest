@@ -18,11 +18,11 @@ export class SheltersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('cards')
+  @Get('cards/:page/:limit')
   async getCardsShelter(
     @Req() req,
-    @Query('page') page: number = 1, // Номер страницы по умолчанию: 1
-    @Query('limit') limit: number = 10 // Количество элементов на странице по умолчанию: 10
+    @Param('page') page: number = 1, // Номер страницы по умолчанию: 1
+    @Param('limit') limit: number = 10 // Количество элементов на странице по умолчанию: 10
   ) {
     const shelterId = req.user;
     return  await this.shelterService.getCards(shelterId, page, limit);
