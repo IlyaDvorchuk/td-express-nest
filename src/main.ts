@@ -16,11 +16,12 @@ async function start() {
   //   origin: process.env.CLIENT_URL,
   //   credentials: true
   // })
+
   const app = await NestFactory.create(AppModule, {
     cors: {
-      origin: '*',
+      origin: [process.env.CLIENT_URL, 'https://www.agroprombank.com'], // Замените на актуальные адреса источников
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-      credentials: false
+      credentials: true
     }
   });
   // app.enableCors({
