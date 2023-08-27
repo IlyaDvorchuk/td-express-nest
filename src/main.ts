@@ -20,9 +20,14 @@ async function start() {
     cors: {
       origin: '*',
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-      credentials: true
+      credentials: false
     }
   });
+  // app.enableCors({
+  //   origin: '*',
+  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  //   credentials: true
+  // })
   app.use(bodyParser.json({ limit: '30mb' }));
   app.use(cookieParser());
 
