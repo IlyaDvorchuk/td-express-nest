@@ -35,6 +35,11 @@ export class SheltersController {
     return this.shelterService.findById(shelterId)
   }
 
+  @Get('/good/:id')
+  async getShelterForGood(@Param('id') id: string) {
+    return this.shelterService.findByIdForGood(id)
+  }
+
   @UseGuards(JwtAuthGuard)
   @Get('all')
   async getAllShelters(

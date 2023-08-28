@@ -84,6 +84,19 @@ export class SheltersService {
     return { shelter, unreadCount };
   }
 
+  async findByIdForGood(shelterId: string) {
+
+    const shelter = await this.shelterRepository.findById(shelterId)
+
+    return {
+      name: shelter.shop.nameMarket,
+      description: shelter.shop.description,
+      imageShop: shelter.imageShop,
+      id: shelter._id
+    }
+  }
+
+
   async getCards(shelterId: string, page: number, limit: number) {
     const shelter = await this.shelterRepository
         .findById(shelterId)
