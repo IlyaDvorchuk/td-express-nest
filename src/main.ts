@@ -6,20 +6,10 @@ import * as bodyParser from 'body-parser';
 
 async function start() {
   const PORT = process.env.PORT || 5000;
-  // const app = await NestFactory.create(AppModule, {
-  //   cors: {
-  //     origin: process.env.CLIENT_URL,
-  //     credentials: true
-  //   }
-  // });
-  // app.enableCors({
-  //   origin: process.env.CLIENT_URL,
-  //   credentials: true
-  // })
 
   const app = await NestFactory.create(AppModule, {
     cors: {
-      origin: [process.env.CLIENT_URL, 'https://www.agroprombank.com'], // Замените на актуальные адреса источников
+      origin: [process.env.CLIENT_URL, 'https://www.agroprombank.com'],
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       credentials: true
     }
