@@ -18,6 +18,7 @@ import { NotificationsModule } from "./notification/notification.module";
 import { QuestionModule } from "./questionary/questionary.module";
 import {AdminModule} from "./admin/admin.module";
 import { PaymentCallbackModule } from './payment-callback/payment-callback.module';
+import { DeliveryModule } from './delivery/delivery.module';
 
 @Module({
   controllers: [],
@@ -55,6 +56,7 @@ import { PaymentCallbackModule } from './payment-callback/payment-callback.modul
     QuestionModule,
     AdminModule,
     PaymentCallbackModule,
+    DeliveryModule,
   ]
 })
 
