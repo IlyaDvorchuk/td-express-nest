@@ -8,11 +8,14 @@ export class Order {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'ProductCard', required: true })
   productId: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'ProductCard', required: true })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'SizeQuantity', required: true })
   typeId: string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-  userId: string; 
+  userId: string;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Shelter' , required: true})
+  shelterId: string;
 
   @Prop({ required: true })
   status: string;

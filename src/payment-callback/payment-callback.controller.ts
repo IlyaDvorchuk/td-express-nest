@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Res } from "@nestjs/common";
-import { Response } from 'express';
-import fetch from 'node-fetch';
+import { Response } from "express";
+import fetch from "node-fetch";
 
 
 @Controller('payment-callback')
@@ -38,6 +38,15 @@ export class PaymentCallbackController {
       console.log('response', response);
 
       const responseData = await response.text();
+      function parseRedirectUrl(htmlCode) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlCode, 'text/html');
+
+        const redirectLink = doc.querySelector('a'); // предположим, что редирект находится в первой ссылке на странице
+        return redirectLink.href;
+      }
+      const redirectUrl = parseRedirectUrl(responseData)
+      console.log('redirectUrl', redirectUrl);
       return responseData;
     } catch (error) {
       throw new Error('Ошибка при обращении к банковскому API');

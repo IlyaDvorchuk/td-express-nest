@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Req, UseGuards } from "@nestjs/common";
 import { DeliveryService } from "./delivery.service";
 import { JwtAuthGuard } from "../middlewares/auth.middleware";
 import { CreateDeliveryDto } from "./dto/delivery.dto";
@@ -18,11 +18,11 @@ export class DeliveryController {
     return this.deliveryService.updateDelivery(shelterId, delivery);
   }
 
-  // @UseGuards(JwtAuthGuard)
-  // @Get(':idCard')
-  // async updateProductCard(
-  //   @Body() updateProductCardDto: UpdateProductCardDto
-  // ) {
-  //   return this.deliveryService.updateProductCard(updateProductCardDto, idCard);
-  // }
+  @Get(':shelterId')
+  async getDelivery(
+    @Param('shelterId') shelterId: string
+  ) {
+    console.log('shelterId', shelterId);
+    return this.deliveryService.getDeliveryCities(shelterId);
+  }
 }

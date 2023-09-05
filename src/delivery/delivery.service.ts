@@ -54,4 +54,18 @@ export class DeliveryService {
     }
     return cities
   }
+
+  async getDeliveryCities(shelterId: string) {
+    const deliveryShelter = await this.deliveryRepository.findOne({ shelterId });
+
+    if (!deliveryShelter) {
+      throw new HttpException(
+
+        'Не удалось найти доставку продавца',
+        HttpStatus.BAD_REQUEST
+      )
+    }
+
+    return deliveryShelter.cities
+  }
 }
