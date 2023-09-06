@@ -1,5 +1,42 @@
-import mongoose, { HydratedDocument } from "mongoose";
+import mongoose, { Document, HydratedDocument } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+
+@Schema()
+export class Buyer extends Document {
+  @Prop({required: true})
+  family: string
+
+  @Prop({required: true})
+  name: string
+
+  @Prop({required: true})
+  phone: string
+}
+
+export const BuyerSchema = SchemaFactory.createForClass(Buyer)
+
+@Schema()
+export class DeliveryAddress extends Document {
+  @Prop({required: true})
+  street: string
+
+  @Prop()
+  house: string
+
+  @Prop({default: ''})
+  entrance: string
+
+  @Prop({default: ''})
+  floor: string
+
+  @Prop({default: ''})
+  apartment: string
+
+  @Prop({default: ''})
+  comment: string
+}
+
+export const DeliveryAddressSchema = SchemaFactory.createForClass(DeliveryAddress)
 
 export type OrderDocument = HydratedDocument<Order>
 
@@ -22,6 +59,25 @@ export class Order {
 
   @Prop({ required: true })
   deliveryMethod: 'pickup' | 'express' | 'doorstep';
+
+  @Prop({type: BuyerSchema, required: true})
+  buyer: Buyer
+
+  @Prop({ required: true })
+  paymentMethod: 'card' | 'qr-code' | 'cash'
+
+  @Prop({type: DeliveryAddressSchema, required: false, default: null})
+  deliveryAddress: DeliveryAddress | null
+
+  @Prop({required: true})
+  price: number
+
+  @Prop({required: true})
+  count: number
+
+  @Prop({ required: false, default: '' })
+  city: string;
+
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

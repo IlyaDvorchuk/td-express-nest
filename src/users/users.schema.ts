@@ -1,6 +1,6 @@
-import { Document, HydratedDocument } from "mongoose";
+import mongoose, { Document, HydratedDocument } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Order, OrderSchema } from "src/order/order.schema";
+import { Order } from "src/order/order.schema";
 
 
 export type UserDocument = HydratedDocument<User>
@@ -25,7 +25,7 @@ export class User extends Document {
   @Prop({ default: null })
   banReason: string | null;
 
-  @Prop({ type: [OrderSchema], default: [] })
+  @Prop({ required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }], default: [] })
   orders: Order[];
 
   @Prop({ required: true, enum: ['USER', 'ADMIN'], default: 'USER' })

@@ -12,15 +12,15 @@ export class OrderService {
   ) {}
 
   async createOrder(userId: string, productId: string, orderStatus: string): Promise<Order> {
-    const order = new this.orderModel({
+    const order = await this.orderModel.create({
       product: productId,
       status: orderStatus,
       user: userId,
     });
-    await order.save();
 
     const user = await this.userModel.findById(userId).exec();
-    user.orders.push(order);
+    // @ts-ignore
+    user.orders.push(order._id);
     await user.save();
 
     return order;
