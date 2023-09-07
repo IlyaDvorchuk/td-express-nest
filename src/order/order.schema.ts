@@ -20,7 +20,7 @@ export class DeliveryAddress extends Document {
   @Prop({required: true})
   street: string
 
-  @Prop()
+  @Prop({required: true})
   house: string
 
   @Prop({default: ''})
@@ -34,6 +34,9 @@ export class DeliveryAddress extends Document {
 
   @Prop({default: ''})
   comment: string
+
+  @Prop({required: true})
+  deliveryPrice: number
 }
 
 export const DeliveryAddressSchema = SchemaFactory.createForClass(DeliveryAddress)
