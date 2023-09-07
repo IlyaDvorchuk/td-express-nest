@@ -46,6 +46,13 @@ export class OrderService {
     return user.orders;
   }
 
+  async getSellerOrders(sellerId: string): Promise<Order[]> {
+    const seller = await this.shelterModel.findById(sellerId).populate({
+      path: 'orders',
+    }).exec();
+    return seller.orders;
+  }
+
   async updateOrderStatus(orderId: string, newStatus: string): Promise<Order> {
     const order = await this.orderModel.findById(orderId).exec();
     order.status = newStatus;

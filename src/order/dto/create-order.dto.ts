@@ -46,6 +46,11 @@ class DeliveryAddress {
 }
 
 export class CreateOrderDto {
+
+  @ApiProperty({ example: '/card/product.jpg', description: 'Photo of product' })
+  @IsString()
+  goodPhoto: string
+
   @ApiProperty({ example: 'Product id', description: 'Product id' })
   @IsString()
   goodId: string

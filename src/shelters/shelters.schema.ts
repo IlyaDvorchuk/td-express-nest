@@ -1,6 +1,7 @@
 import mongoose, { HydratedDocument, Document } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { ProductCard } from "../productCard/productCard.schema";
+import { Order } from "../order/order.schema";
 
 @Schema()
 export class PersonalData extends Document {
@@ -135,6 +136,9 @@ export class Shelter extends Document {
 
   @Prop({default: null})
   isPushTelegram: string | null
+
+  @Prop({ required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }], default: [] })
+  orders: Order[];
 }
 
 export const ShelterSchema = SchemaFactory.createForClass(Shelter)

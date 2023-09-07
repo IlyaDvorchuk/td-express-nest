@@ -58,6 +58,9 @@ export class Order {
   shelterId: string;
 
   @Prop({ required: true })
+  goodPhoto: string;
+
+  @Prop({ required: true })
   status: string;
 
   @Prop({ required: true })
