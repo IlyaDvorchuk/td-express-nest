@@ -149,7 +149,7 @@ export class SheltersService {
     return await Promise.all(
         orders.map(async (order) => {
           const user = await this.userModel.findById(order.userId).exec();
-          const product = await this.productCardModel.findById(order.productId).exec();
+          const product = await this.productCardModel.findById(order.goodId).exec();
 
           return {
             user,

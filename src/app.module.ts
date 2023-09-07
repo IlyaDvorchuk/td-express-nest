@@ -19,6 +19,7 @@ import { QuestionModule } from "./questionary/questionary.module";
 import {AdminModule} from "./admin/admin.module";
 import { PaymentCallbackModule } from './payment-callback/payment-callback.module';
 import { DeliveryModule } from './delivery/delivery.module';
+import { OrderModule } from "./order/order.module";
 
 @Module({
   controllers: [],
@@ -51,12 +52,12 @@ import { DeliveryModule } from './delivery/delivery.module';
     ProductCardsModule,
     FavoriteModule,
     CartModule,
-    //ProductStatusesModule,
     NotificationsModule,
     QuestionModule,
     AdminModule,
     PaymentCallbackModule,
     DeliveryModule,
+    OrderModule
   ]
 })
 

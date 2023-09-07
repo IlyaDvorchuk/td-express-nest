@@ -4,6 +4,7 @@ import {
   PointIssue
 } from "../shelters/shelters.schema";
 import { NotificationDocument, NotificationSchema } from 'src/notification/notification.schema';
+import { Order } from "../order/order.schema";
 
 @Schema()
 export class ParentCategory extends Document {
@@ -224,6 +225,9 @@ export class ProductCard extends Document {
 
   @Prop({ type: String })
   nameShelter: string
+
+  @Prop({ required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }], default: [] })
+  orders: Order[];
 }
 export const ProductCardSchema = SchemaFactory.createForClass(ProductCard);
 

@@ -46,7 +46,7 @@ export type OrderDocument = HydratedDocument<Order>
 @Schema()
 export class Order {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'ProductCard', required: true })
-  productId: string;
+  goodId: string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'SizeQuantity', required: true })
   typeId: string;
