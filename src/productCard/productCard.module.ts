@@ -2,7 +2,14 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { Comment, CommentSchema, ProductCard, ProductCardSchema } from "./productCard.schema";
+import {
+  Comment,
+  CommentSchema,
+  ProductCard,
+  ProductCardSchema,
+  TypeQuantity,
+  TypeQuantitySchema
+} from "./productCard.schema";
 import { ProductCardController } from './productCard.controller';
 import { ProductCardService } from './productCard.service';
 import { JwtStrategy } from '../utils/jwt.strategy';
@@ -14,6 +21,7 @@ import { QuestionModule } from 'src/questionary/questionary.module';
   imports: [
     MongooseModule.forFeature([
       { name: ProductCard.name, schema: ProductCardSchema },
+      { name: TypeQuantity.name, schema: TypeQuantitySchema },
       { name: Comment.name, schema: CommentSchema },
     ]),
     PassportModule,

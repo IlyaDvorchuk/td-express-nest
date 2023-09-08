@@ -144,7 +144,7 @@ export const ProductPriceRangeSchema = SchemaFactory.createForClass(ProductPrice
 
 
 @Schema()
-export class SizeQuantity extends Document {
+export class TypeQuantity extends Document {
   @Prop({required: true})
   size: string
 
@@ -152,7 +152,7 @@ export class SizeQuantity extends Document {
   quantity: string
 }
 
-export const SizeQuantitySchema = SchemaFactory.createForClass(SizeQuantity)
+export const TypeQuantitySchema = SchemaFactory.createForClass(TypeQuantity)
 
 export type ProductCardDocument = HydratedDocument<ProductCard>
 
@@ -211,8 +211,8 @@ export class ProductCard extends Document {
   // @Prop({ type: mongoose.Schema.Types.ObjectId, required: true, ref: 'ProductStatus' })
   // status: ProductStatus;
 
-  @Prop({required: false, type: [SizeQuantitySchema]})
-  typeQuantity: SizeQuantity[]
+  @Prop({required: false, type: [TypeQuantitySchema]})
+  typeQuantity: TypeQuantity[]
 
   @Prop({ type: [ColorSchema], default: [] })
   colors: Color[];

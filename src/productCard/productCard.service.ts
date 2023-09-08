@@ -1,22 +1,23 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectModel } from "@nestjs/mongoose";
 import { isValidObjectId, Model } from "mongoose";
-import { ProductCard, Comment } from './productCard.schema';
-import { CreateProductCardDto, UpdateProductCardDto } from './dto/create-product-card.dto';
+import { Comment, ProductCard, TypeQuantity } from "./productCard.schema";
+import { CreateProductCardDto, UpdateProductCardDto } from "./dto/create-product-card.dto";
 import { SheltersService } from "../shelters/shelters.service";
 import { CategoriesService } from "../categories/categories.service";
 import moment from "moment";
 import { Question } from "src/questionary/questionary.schema";
 import { QuestionaryService } from "../questionary/questionary.service";
 import { isBase64String } from "../utils/isBase64String";
-import * as fs from 'fs';
-import * as uuid from 'uuid'
+import * as fs from "fs";
+import * as uuid from "uuid";
 import * as path from "path";
 
 @Injectable()
 export class ProductCardService {
   constructor(
     @InjectModel(ProductCard.name) private productCardRepository: Model<ProductCard>,
+    @InjectModel(TypeQuantity.name) private typeRepository: Model<TypeQuantity>,
     @InjectModel(Comment.name) private commentRepository: Model<Comment>,
     private questionService: QuestionaryService,
     private shelterService: SheltersService,
@@ -638,7 +639,6 @@ export class ProductCardService {
   async agreementGood(id: string) {
     try {
       const good = await this.productCardRepository.findById(id)
-      console.log('good', good);
 
       good.published = true
       good.isReject = false
@@ -659,6 +659,21 @@ export class ProductCardService {
       return true
     } catch (e) {
       return false
+    }
+  }
+
+  async getTypeById(productId: string, typeId: string) {
+    const product = await this.productCardRepository
+      .findById(productId)
+      .exec();
+
+    if (product && product.typeQuantity && product.typeQuantity.length > 0) {
+      const matchingType = product.typeQuantity.find(type => type._id.toString() === typeId);
+
+
+      return matchingType || null;
+    } else {
+      return null;
     }
   }
 }

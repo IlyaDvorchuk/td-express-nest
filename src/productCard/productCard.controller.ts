@@ -213,8 +213,14 @@ export class ProductCardController {
     return this.productCardService.answerQuestion(questionId, answerText);
   }
 
-
-
+  //получение товара по id
+  @Get('type/:productId/:typeId')
+  async getTypeById(
+    @Param('productId') productId: string,
+    @Param('typeId') typeId: string
+  ) {
+    return this.productCardService.getTypeById(productId, typeId);
+  }
   // @Get('all')
   // async getAllQuestions(): Promise<Question[]> {
   //   return this.productCardService.getAllQuestions();

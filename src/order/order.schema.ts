@@ -43,7 +43,7 @@ export const DeliveryAddressSchema = SchemaFactory.createForClass(DeliveryAddres
 
 export type OrderDocument = HydratedDocument<Order>
 
-@Schema()
+@Schema({ timestamps: true })
 export class Order {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'ProductCard', required: true })
   goodId: string;
@@ -56,6 +56,9 @@ export class Order {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Shelter' , required: true})
   shelterId: string;
+
+  @Prop({ required: true })
+  goodName: string;
 
   @Prop({ required: true })
   goodPhoto: string;
