@@ -50,7 +50,7 @@ export class OrderService {
     const seller = await this.shelterModel.findById(sellerId).populate({
       path: 'orders',
     }).exec();
-    return seller.orders;
+    return seller.orders.reverse();
   }
 
   async updateOrderStatus(orderId: string, newStatus: string): Promise<Order> {

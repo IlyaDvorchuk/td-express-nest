@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, Get, Patch, Delete, UseGuards, Req } from "@nestjs/common";
+import { Controller, Post, Body, Param, Get, Delete, UseGuards, Req, Put } from "@nestjs/common";
 import { OrderService } from './order.service';
 import { CreateOrderDto } from "./dto/create-order.dto";
 import { JwtAuthGuard } from "../middlewares/auth.middleware";
@@ -11,7 +11,6 @@ export class OrderController {
   async createOrder(
     @Body() order: CreateOrderDto,
   ) {
-    console.log('order', order);
     return this.orderService.createOrder(order);
   }
 
@@ -28,10 +27,10 @@ export class OrderController {
   }
 
 
-  @Patch(':orderId')
+  @Put('/:orderId/:status')
   async updateOrderStatus(
     @Param('orderId') orderId: string,
-    @Body('status') newStatus: string,
+    @Param('status') newStatus: string,
   ) {
     return this.orderService.updateOrderStatus(orderId, newStatus);
   }

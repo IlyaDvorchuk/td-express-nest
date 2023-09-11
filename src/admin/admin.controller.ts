@@ -89,10 +89,9 @@ export class AdminController {
 
   @ApiOperation({ summary: 'Подтвердить продавца' })
   @ApiResponse({ status: 200 })
-  @Roles('ADMIN')
-  @Get('/create-notification/:id/')
-    createNotification(@Param('id') id: string, @Query('text') text: string) {
-    return this.notificationsService.createNotification(id, text);
+  @Post('/create-notification/:id/')
+    createNotification(@Param('id') id: string, @Body() dto: {text: string}) {
+    return this.notificationsService.createNotification(id, dto.text);
   }
 
   @ApiOperation({ summary: '`Получить имя продавца' })
