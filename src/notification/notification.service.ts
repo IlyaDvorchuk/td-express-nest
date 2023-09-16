@@ -4,24 +4,39 @@ import { Model } from 'mongoose';
 import { Notification, NotificationDocument } from './notification.schema';
 import {SheltersService} from "../shelters/shelters.service";
 import fetch from 'node-fetch';
+import { UsersService } from "../users/users.service";
 
 @Injectable()
 export class NotificationService {
   constructor(@InjectModel(Notification.name) private notificationModel: Model<NotificationDocument>,
-              private shelterService: SheltersService,){
+              private shelterService: SheltersService,
+              private userService: UsersService,
+              ){
      }
 
-  async createNotification(userId: string, message: string): Promise<NotificationDocument> {
+  async createNotification(userId: string, message: string, isUser?: boolean): Promise<NotificationDocument> {
 
     const notification = await this.notificationModel.create({ userId, message });
-    const answer = await this.shelterService.pushNotificationRefToShelter(userId, notification._id)
-    const user = await this.shelterService.findById(userId)
-    if (user.shelter.isPushTelegram) {
-      await this.sendMessage(
-        user.shelter.isPushTelegram,
-        notification.message
+    const answer = isUser ? await this.userService.pushNotificationRefToUser(userId, notification._id)
+      : await this.shelterService.pushNotificationRefToShelter(userId, notification._id)
+    if (!isUser) {
+      const user = await this.shelterService.findById(userId)
+      if (user.shelter.isPushTelegram) {
+        await this.sendMessage(
+          user.shelter.isPushTelegram,
+          notification.message
         )
+      }
+    } else {
+      const user = await this.userService.findById(userId)
+      if (user.isPushTelegram) {
+        await this.sendMessage(
+          user.isPushTelegram,
+          notification.message
+        )
+      }
     }
+
     if (answer && notification) {
       return notification;
 

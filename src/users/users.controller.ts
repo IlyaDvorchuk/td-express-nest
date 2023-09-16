@@ -5,7 +5,6 @@ import {
   HttpException,
   HttpStatus,
   Param,
-  Patch,
   Post,
   Req,
   UseGuards,
@@ -82,24 +81,6 @@ export class UsersController {
     return this.usersService.removeFromFavorite(userId, productCardId)
   }
 
-  //создание уведомления для пользователя
-  @Post('notifications')
-  async createNotification(@Body() dto: CreateNotificationDto)/*: Promise<NotificationDocument>*/ {
-    try {
-      return await this.usersService.createNotification(dto);
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  @Patch('notifications/:id/mark-as-read')
-  async markNotificationAsRead(@Param('id') notificationId: string)/*: Promise<NotificationDocument>*/ {
-    try {
-      return await this.usersService.markNotificationAsRead(notificationId);
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
 
   @Get(':userId/notifications')
   async getUserNotifications(@Param('userId') userId: string) /*: Promise<NotificationDocument[]>*/ {
@@ -138,5 +119,21 @@ async getProductCards(
   async setCountCart(@Req() req, @Param('typeId') typeId: string, @Param('count') count: number) {
     const userId = req.user
     return this.usersService.setCountCart(userId, typeId, count)
+  }
+
+  // Уведомления юзера
+  @UseGuards(JwtAuthGuard)
+  @Get('notifications')
+  async getNotificationsByUser(@Req() req) {
+    const userId =  req.user
+    return await this.usersService.getNotificationsByUser(userId);
+  }
+
+  // Юзер прочитал уведомления
+  @UseGuards(JwtAuthGuard)
+  @Get('read-notifications')
+  async readNotificationsByShelter(@Req() req) {
+    const userId =  req.user
+    return await this.usersService.readNotificationsByUser(userId);
   }
 }

@@ -13,6 +13,9 @@ export class Notification extends Document  {
 
   @Prop({ default: false })
   isRead: boolean;
+
+  @Prop({ default: false })
+  isUser: boolean;
 }
 
 export const NotificationSchema = SchemaFactory.createForClass(Notification);

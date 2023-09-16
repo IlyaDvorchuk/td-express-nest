@@ -33,6 +33,9 @@ export class User extends Document {
 
   @Prop({default: null})
   isPushTelegram: string | null
+
+  @Prop({required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Notification" }]})
+  notifications: Notification[]
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)

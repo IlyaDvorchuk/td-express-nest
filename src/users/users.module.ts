@@ -6,8 +6,6 @@ import {AuthModule} from "../auth/auth.module";
 import { MongooseModule } from "@nestjs/mongoose";
 import {FavoriteModule} from "../favorite/favorite.module";
 import {CartModule} from "../cart/cart.module";
-import { NotificationsModule } from 'src/notification/notification.module';
-import { ProductCard } from 'src/productCard/productCard.schema';
 import { ProductCardsModule } from 'src/productCard/productCard.module';
 
 @Global()
@@ -21,7 +19,6 @@ import { ProductCardsModule } from 'src/productCard/productCard.module';
     forwardRef(() => AuthModule),
     FavoriteModule,
     CartModule,
-    NotificationsModule,
     ProductCardsModule
   ],
   exports: [

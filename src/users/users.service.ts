@@ -8,16 +8,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CreateCartDto } from 'src/cart/dto/create-cart.dto';
 import { CartService } from "../cart/cart.service";
 import { FavoriteService } from "../favorite/favorite.service";
-import { CreateNotificationDto } from 'src/notification/dto/notification.dto';
-import { NotificationService } from 'src/notification/notification.service';
 import { ProductCardService } from 'src/productCard/productCard.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userRepository: Model<UserDocument>,
-    //@InjectModel(ProductCard.name) private productCardRepository: Model<ProductCard>,
-    private notificationService: NotificationService,
     private productCardService: ProductCardService,
     private cartService: CartService,
     private favoriteService: FavoriteService,
@@ -190,18 +186,6 @@ export class UsersService {
     //   await Promise.all([productCard.save(), notification.save()]);
   // }
 
-  async createNotification(dto: CreateNotificationDto) /*: Promise<NotificationDocument>*/ {
-    return this.notificationService.createNotification(dto.userId, dto.message);
-  }
-
-  async markNotificationAsRead(notificationId: string)/* : Promise<NotificationDocument>*/ {
-    return this.notificationService.markNotificationAsRead(notificationId);
-  }
-
-  async getUserNotifications(userId: string)/*: Promise<NotificationDocument[]>*/ {
-    return this.notificationService.getUserNotifications(userId);
-  }
-
   async getProductCards(userId: string, page: number, limit: number) {
     const productCards = await this.productCardService.getAllProductCards(page, limit); // Retrieve all product cards from the database
 
@@ -244,6 +228,40 @@ export class UsersService {
         HttpStatus.BAD_REQUEST
       )
     }
+  }
 
+  async getNotificationsByUser(userId: string) {
+    const user = await this.userRepository
+      .findById(userId)
+      .populate('notifications')
+      .exec();
+    return user.notifications
+  }
+
+  async readNotificationsByUser(userId: string) {
+    const user = await this.userRepository
+      .findById(userId)
+      .populate('notifications')
+      .exec();
+
+    // Обновление поля isRead для каждого уведомления
+    for (const notification of user.notifications) {
+      // @ts-ignore
+      await notification.updateOne({isRead: true});
+    }
+
+    // Вернуть обновленный объект Shelter
+    return user;
+  }
+
+  async pushNotificationRefToUser(userId: string, notificationId) {
+    try {
+      const user = await this.userRepository.findById(userId)
+      user.notifications.push(notificationId)
+      await user.save()
+      return true
+    } catch (e) {
+      return false
+    }
   }
 }
