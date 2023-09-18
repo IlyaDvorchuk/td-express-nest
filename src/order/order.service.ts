@@ -46,11 +46,18 @@ export class OrderService {
     return user.orders;
   }
 
-  async getSellerOrders(sellerId: string): Promise<Order[]> {
+  async getSellerOrders(sellerId: string, count?: number): Promise<Order[]> {
     const seller = await this.shelterModel.findById(sellerId).populate({
       path: 'orders',
     }).exec();
-    return seller.orders.reverse();
+
+    let orders = seller.orders.reverse();
+
+    if (count !== undefined && count >= 0) {
+      orders = orders.slice(0, count);
+    }
+
+    return orders;
   }
 
   async updateOrderStatus(orderId: string, newStatus: string): Promise<Order> {
