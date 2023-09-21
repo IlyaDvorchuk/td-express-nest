@@ -20,6 +20,8 @@ import { JwtAuthGuard } from "../middlewares/auth.middleware";
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { Question } from 'src/questionary/questionary.schema';
 import { ApiResponse } from "@nestjs/swagger";
+import * as uuid from 'uuid'
+import { promises as fsPromises } from 'fs';
 
 @Controller('product-cards')
 export class ProductCardController {
@@ -111,12 +113,22 @@ export class ProductCardController {
       { name: 'additionalPhotos', maxCount: 10 }, // Максимальное количество дополнительных фотографий
     ], {
       storage: diskStorage({
-        destination: (req, file, cb) => {
-          let destination = './static/main-photos'; // Путь для сохранения основной фотографии
-          if (file.fieldname === 'additionalPhotos') {
-            destination = './static/additional-photos'; // Путь для сохранения дополнительных фотографий
+        destination: async (req, file, cb) => {
+          const productId = uuid.v4()
+          const mainPhotoDestination = `./static/${productId}/main-photos`;
+          const additionalPhotosDestination = `./static/${productId}/additional-photos`;
+
+          // Создаем папки продукта асинхронно, если они не существуют
+          await fsPromises.mkdir(mainPhotoDestination, { recursive: true });
+          await fsPromises.mkdir(additionalPhotosDestination, { recursive: true });
+
+          if (file.fieldname === 'mainPhoto') {
+            cb(null, mainPhotoDestination);
+          } else if (file.fieldname === 'additionalPhotos') {
+            cb(null, additionalPhotosDestination);
+          } else {
+            cb(new Error('Invalid fieldname'), null);
           }
-          cb(null, destination);
         },
         filename: editFileName,
       }),
@@ -132,9 +144,9 @@ export class ProductCardController {
   ) {
     const { mainPhoto, additionalPhotos } = files
     const shelterId = req.user
-
-    const mainPhotoPath = mainPhoto ? '/main-photos/' + mainPhoto[0].filename : undefined;
-    const additionalPhotosPaths = additionalPhotos.map(file => '/additional-photos/' + file.filename);
+    const productIdFolder = req.productId;
+    const mainPhotoPath = mainPhoto ? `/${productIdFolder}/main-photos/${mainPhoto[0].filename}` : undefined;
+    const additionalPhotosPaths = additionalPhotos.map(file => `/${productIdFolder}/additional-photos/${file.filename}`);
 
     return await this.productCardService.createProductCard(
       createProductCardDto,
