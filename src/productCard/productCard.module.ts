@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from "@nestjs/common";
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
@@ -15,6 +15,7 @@ import { ProductCardService } from './productCard.service';
 import { JwtStrategy } from '../utils/jwt.strategy';
 import { CategoriesModule } from "../categories/categories.module";
 import { QuestionModule } from 'src/questionary/questionary.module';
+import { ProductIdMiddleware } from "../middlewares/randonUuid.middleware";
 
 
 @Module({
@@ -38,4 +39,10 @@ import { QuestionModule } from 'src/questionary/questionary.module';
   providers: [ProductCardService, JwtStrategy],
   exports: [ProductCardService],
 })
-export class ProductCardsModule {}
+export class ProductCardsModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(ProductIdMiddleware)
+      .forRoutes('/product-cards'); // Замените 'your-route' на свой путь, к которому вы хотите применить middleware
+  }
+}

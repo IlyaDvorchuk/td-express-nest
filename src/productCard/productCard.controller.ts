@@ -104,6 +104,10 @@ export class ProductCardController {
     return this.productCardService.getProductCardById(id);
   }
 
+  async generateProductId() {
+    return uuid.v4();
+  }
+
   //создание карточки товара
   @Post()
   @UseGuards(JwtAuthGuard)
@@ -114,7 +118,8 @@ export class ProductCardController {
     ], {
       storage: diskStorage({
         destination: async (req, file, cb) => {
-          const productId = uuid.v4()
+          // @ts-ignore
+          const productId = req.productId;
           const mainPhotoDestination = `./static/${productId}/main-photos`;
           const additionalPhotosDestination = `./static/${productId}/additional-photos`;
 
@@ -136,7 +141,6 @@ export class ProductCardController {
     })
   )
 
-  // Создание карточки товара
   async createProductCard(
     @Req() req,
     @Body() createProductCardDto: CreateProductCardDto,
