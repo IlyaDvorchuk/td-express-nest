@@ -156,7 +156,8 @@ export class ProductCardController {
       createProductCardDto,
       shelterId,
       mainPhotoPath,
-      additionalPhotosPaths
+      additionalPhotosPaths,
+      productIdFolder
     );
   }
 

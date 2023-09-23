@@ -24,6 +24,43 @@ export class ProductCardService {
     private categoriesService: CategoriesService,
   ) { }
 
+  private staticDir() {
+    return path.join(__dirname, "..", "..", "static");
+  }
+
+  async processColors(dto, productIdFolder) {
+    const staticDir = this.staticDir();
+
+    for (const color of dto.colors) {
+      if (isBase64String(color?.image)) {
+        const photo = color?.image;
+        const base64Data = photo.replace(/^data:image\/[a-z]+;base64,/, '');
+        const fileName = `${uuid.v4()}.jpg`;
+        const folderPath = path.resolve(staticDir, productIdFolder, 'color-photos');
+        const targetPath = path.join(folderPath, fileName);
+        const buffer = Buffer.from(base64Data, 'base64');
+
+        try {
+          await fs.promises.mkdir(folderPath, { recursive: true }); // Создаем папку рекурсивно
+          await fs.promises.writeFile(targetPath, buffer);
+          console.log('Изображение успешно загрузилось');
+
+          for (const type of dto.typeQuantity) {
+            if (type?.color.name === color.name) {
+              type.color.image = `/${productIdFolder}/color-photos/${fileName}`;
+            }
+          }
+        } catch (err) {
+          console.error('Ошибка при записи файла:', err);
+          throw new HttpException(
+            'Не удалось сохранить изображения цветов',
+            HttpStatus.INTERNAL_SERVER_ERROR
+          );
+        }
+      }
+    }
+  }
+
   async getProductCardById(id: string): Promise<ProductCard> {
     const query = this.productCardRepository.findOne({ _id: id, published: true });
     return query.exec();
@@ -44,9 +81,9 @@ export class ProductCardService {
     dto: CreateProductCardDto,
     shelterId: string,
     mainPhoto: string,
-    additionalPhotos: string[]
+    additionalPhotos: string[],
+    productIdFolder: string
   ) {
-    // console.log('CreateProductCardDto', dto);
 
     for (let field of Object.keys(dto)) {
       if (typeof dto[field] === 'string' && field !== 'nameShelter') {
@@ -71,18 +108,22 @@ export class ProductCardService {
       }
     }
 
+    await this.processColors(dto, productIdFolder);
+
+    if ('colors' in dto) {
+      delete dto.colors;
+    }
+
     const product = await this.productCardRepository.create({
       ...dto,
       shelterId,
       mainPhoto,
       additionalPhotos,
       viewsCount: 0,
-      // pricesAndQuantity: new PricesAndQuantity(), // Инициализируем поле pricesAndQuantity новым экземпляром класса PricesAndQuantity
     });
     const isAddInShelter = await this.shelterService.addProductCard(shelterId, product._id);
 
     const isAddInCategories = await this.categoriesService.addProductCard(dto.categories, product._id);
-    console.log('product', product);
 
     if (isAddInShelter && isAddInCategories) {
       return product;
@@ -97,7 +138,7 @@ export class ProductCardService {
   async updateProductCard(dto: UpdateProductCardDto, id: string) {
     const product = await this.productCardRepository.findById(id);
     if (typeof dto.mainPhoto === 'string') {
-      const staticDir = path.join(__dirname, '..', '..', 'static');
+      const staticDir = this.staticDir();
       if (isBase64String(dto.mainPhoto)) {
         const base64Data = dto.mainPhoto.replace(/^data:image\/[a-z]+;base64,/, '');
         // Используем значение из product.mainPhoto для пути к файлу

@@ -91,6 +91,20 @@ class DeliveryPoints {
   readonly address: string;
 }
 
+class Color {
+  @ApiProperty({ example: 'Красный', description: 'Название цвета' })
+  @IsString()
+  readonly name: string;
+
+  @ApiProperty({ example: '#FFF', description: 'Описание цвета' })
+  @IsString()
+  readonly color: string;
+
+  @ApiProperty({ example: 'Беспорядочный набор символов', description: 'Фотография' })
+  @IsString()
+  image?: string | undefined;
+}
+
 class SizeQuantity {
   @ApiProperty({ example: 'XXL', description: 'Размер' })
   @IsString()
@@ -99,7 +113,22 @@ class SizeQuantity {
   @ApiProperty({ example: '45', description: 'Количество' })
   @IsString()
   readonly quantity: string
+
+  @ApiProperty({ type: Color, description: 'Product colors' })
+  @ValidateNested()
+  readonly color?: Color | undefined
 }
+
+class Colors {
+  @ApiProperty({ example: 'XXL', description: 'Размер' })
+  @IsString()
+  readonly name: string;
+
+  @ApiProperty({ example: 'Беспорядочный набор символов', description: 'Фотография' })
+  @IsString()
+   readonly image: string
+}
+
 
 export class CreateProductCardDto {
   @ApiProperty({ type: CategoriesDto, description: 'Product categories' })
@@ -150,8 +179,13 @@ export class CreateProductCardDto {
   @IsNumber()
   readonly purchaseCount: number;
 
+  @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
   @ValidateNested()
-  readonly sizeQuantity?: SizeQuantity[]
+  readonly typeQuantity?: SizeQuantity[]
+
+  @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
+  @ValidateNested()
+  colors?: Colors[]
 }
 
 export class UpdateProductCardDto extends CreateProductCardDto {

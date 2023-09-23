@@ -36,7 +36,7 @@ export class Information extends Document {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   description: string;
 }
 
@@ -118,6 +118,12 @@ export const CommentSchema = SchemaFactory.createForClass(Comment);
 export class Color extends Document {
   @Prop({ required: true })
   name: string;
+
+  @Prop({ required: true })
+  color: string;
+
+  @Prop({ required: false })
+  image: string;
 }
 
 export const ColorSchema = SchemaFactory.createForClass(Color);
@@ -150,6 +156,10 @@ export class TypeQuantity extends Document {
 
   @Prop({required: true})
   quantity: string
+
+  @Prop({type: ColorSchema,required: false})
+  color: Color | undefined
+
 }
 
 export const TypeQuantitySchema = SchemaFactory.createForClass(TypeQuantity)
@@ -213,12 +223,6 @@ export class ProductCard extends Document {
 
   @Prop({required: false, type: [TypeQuantitySchema]})
   typeQuantity: TypeQuantity[]
-
-  @Prop({ type: [ColorSchema], default: [] })
-  colors: Color[];
-
-  @Prop({ type: [SizeSchema], default: [] })
-  sizes: Size[];
 
   @Prop({ type: ProductPriceRangeSchema, required: false })
   priceRange: ProductPriceRange;
