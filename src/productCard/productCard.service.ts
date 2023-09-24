@@ -28,6 +28,11 @@ export class ProductCardService {
     return path.join(__dirname, "..", "..", "static");
   }
 
+  private getParentFolder(inputString: string): string {
+    const parts = inputString.split('/');
+    return `/${parts[1]}`;
+  }
+
   async processColors(dto, productIdFolder) {
     const staticDir = this.staticDir();
 
@@ -137,18 +142,22 @@ export class ProductCardService {
 
   async updateProductCard(dto: UpdateProductCardDto, id: string) {
     const product = await this.productCardRepository.findById(id);
+    const parentFolder = this.getParentFolder(product.mainPhoto)
+    const staticDir = this.staticDir();
+
     if (typeof dto.mainPhoto === 'string') {
-      const staticDir = this.staticDir();
       if (isBase64String(dto.mainPhoto)) {
         const base64Data = dto.mainPhoto.replace(/^data:image\/[a-z]+;base64,/, '');
         // Используем значение из product.mainPhoto для пути к файлу
         const filePath = product.mainPhoto;
 
 
-        const targetPath = path.resolve(staticDir, 'main-photos', path.basename(filePath));
+        const targetPath = path.join(staticDir, `${parentFolder}/main-photos`, path.basename(filePath));
         // Создаем буфер из строки base64
         const buffer = Buffer.from(base64Data, 'base64');
         // Записываем буфер в файл (асинхронно)
+
+
         fs.writeFile(targetPath, buffer, (err) => {
           if (err) {
             console.error('Ошибка при записи файла:', err);
@@ -164,16 +173,20 @@ export class ProductCardService {
         const photo = dto.additionalPhotos[i];
         if (typeof photo === 'string') {
           if (isBase64String(photo)) {
-            console.log('Элемент массива является base64:', photo);
+            console.log('Элемент массива является base64:');
             // Преобразование base64 в файл и обновление элемента в product.additionalPhotos
             const base64Data = photo.replace(/^data:image\/[a-z]+;base64,/, '');
             const buffer = Buffer.from(base64Data, 'base64');
 
             // Проверка индекса и добавление нового элемента, если он не существует
             if (i >= product.additionalPhotos.length) {
-              const newFilePath = `./static/additional-photos/${uuid.v4()}.jpg`;
+              const newFilePath = `/${parentFolder}/additional-photos/${uuid.v4()}.jpg`;
               product.additionalPhotos.push(newFilePath);
-              const targetPath = path.resolve(staticDir, 'additional-photos', path.basename(newFilePath))
+              const targetPath = path.join(staticDir, `${parentFolder}/additional-photos`, path.basename(newFilePath))
+              console.log('staticDir', staticDir);
+              console.log('`${parentFolder}/main-photos`', `${parentFolder}/additional-photos`);
+              console.log('path.basename(filePath)', path.basename(newFilePath));
+              console.log('targetPath', targetPath);
               // Сохранение файла по новому пути (асинхронно)
               fs.writeFile(targetPath, buffer, (err) => {
                 if (err) {
@@ -186,7 +199,7 @@ export class ProductCardService {
               // Используйте product.additionalPhotos[i] для пути к файлу
               const filePath = product.additionalPhotos[i];
               // Замена файла по указанному пути (асинхронно)
-              const targetPath = path.resolve(staticDir, 'additional-photos', path.basename(filePath))
+              const targetPath = path.join(staticDir, `${parentFolder}/additional-photos`, path.basename(filePath))
               fs.writeFile(targetPath, buffer, (err) => {
                 if (err) {
                   console.error('Ошибка при записи файла:', err);
@@ -201,6 +214,35 @@ export class ProductCardService {
         }
       }
     }
+    for (let i = 0; i < dto.colors.length; i++) {
+      const colorItem = dto.colors[i];
+      if (isBase64String(colorItem.image)) {
+        for (const type of dto.typeQuantity) {
+          const filePath = type.color.image;
+          if (type?.color.name === colorItem.name && filePath) {
+            const base64Data = colorItem.image.replace(/^data:image\/[a-z]+;base64,/, '');
+            // Используем значение из product.mainPhoto для пути к файлу
+            const filePath = type.color.image;
+            const targetPath = path.join(staticDir, `${parentFolder}/color-photos`, path.basename(filePath));
+            // Создаем буфер из строки base64
+            const buffer = Buffer.from(base64Data, 'base64');
+            // Записываем буфер в файл (асинхронно)
+
+
+            fs.writeFile(targetPath, buffer, (err) => {
+              if (err) {
+                console.error('Ошибка при записи файла:', err);
+              } else {
+                console.log('Изображение успешно заменено');
+              }
+            });
+          } else {
+            await this.processColors(dto, parentFolder);
+          }
+        }
+      }
+    }
+    console.log('dto.colors', dto.colors);
     const modifiedDto = {
       ...dto,
       mainPhoto: product.mainPhoto,
@@ -210,7 +252,10 @@ export class ProductCardService {
 
     const answer = await this.categoriesService.updateCategories(dto.categories, product.categories, product, id)
     if (!answer) {
-      return
+      throw new HttpException(
+        'Не удалось обновить категории',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
     }
     return await this.productCardRepository.findOneAndUpdate(
       { _id: id },
