@@ -214,15 +214,21 @@ export class ProductCardService {
         }
       }
     }
+    // console.log('dto.colors', dto.colors.length);
+
     for (let i = 0; i < dto.colors.length; i++) {
       const colorItem = dto.colors[i];
       if (isBase64String(colorItem.image)) {
         for (const type of dto.typeQuantity) {
           const filePath = type.color.image;
+          console.log('type?.color.name', type?.color.name);
+          console.log('colorItem.name', type?.color.name);
+          console.log('filePath', filePath);
+
           if (type?.color.name === colorItem.name && filePath) {
+
             const base64Data = colorItem.image.replace(/^data:image\/[a-z]+;base64,/, '');
             // Используем значение из product.mainPhoto для пути к файлу
-            const filePath = type.color.image;
             const targetPath = path.join(staticDir, `${parentFolder}/color-photos`, path.basename(filePath));
             // Создаем буфер из строки base64
             const buffer = Buffer.from(base64Data, 'base64');
@@ -237,12 +243,13 @@ export class ProductCardService {
               }
             });
           } else {
-            await this.processColors(dto, parentFolder);
+            // console.log('this.processColors(dto, parentFolder) 241');
+            // await this.processColors(dto, parentFolder);
           }
         }
       }
     }
-    console.log('dto.colors', dto.colors);
+    // console.log('dto.typeQuantity', dto.typeQuantity);
     const modifiedDto = {
       ...dto,
       mainPhoto: product.mainPhoto,
