@@ -183,10 +183,10 @@ export class ProductCardService {
               const newFilePath = `/${parentFolder}/additional-photos/${uuid.v4()}.jpg`;
               product.additionalPhotos.push(newFilePath);
               const targetPath = path.join(staticDir, `${parentFolder}/additional-photos`, path.basename(newFilePath))
-              console.log('staticDir', staticDir);
-              console.log('`${parentFolder}/main-photos`', `${parentFolder}/additional-photos`);
-              console.log('path.basename(filePath)', path.basename(newFilePath));
-              console.log('targetPath', targetPath);
+              // console.log('staticDir', staticDir);
+              // console.log('`${parentFolder}/main-photos`', `${parentFolder}/additional-photos`);
+              // console.log('path.basename(filePath)', path.basename(newFilePath));
+              // console.log('targetPath', targetPath);
               // Сохранение файла по новому пути (асинхронно)
               fs.writeFile(targetPath, buffer, (err) => {
                 if (err) {
@@ -218,14 +218,15 @@ export class ProductCardService {
 
     for (let i = 0; i < dto.colors.length; i++) {
       const colorItem = dto.colors[i];
+      console.log('isBase64String(colorItem.image', isBase64String(colorItem.image));
       if (isBase64String(colorItem.image)) {
         for (const type of dto.typeQuantity) {
           const filePath = type.color.image;
-          console.log('type?.color.name', type?.color.name);
-          console.log('colorItem.name', type?.color.name);
-          console.log('filePath', filePath);
+          // console.log('type?.color.name', type?.color.name);
+          // console.log('colorItem.name', type?.color.name);
+          // console.log('filePath', filePath);
 
-          if (type?.color.name === colorItem.name && filePath) {
+          if (type?.color.name === colorItem.name && !isBase64String(filePath)) {
 
             const base64Data = colorItem.image.replace(/^data:image\/[a-z]+;base64,/, '');
             // Используем значение из product.mainPhoto для пути к файлу
@@ -243,8 +244,8 @@ export class ProductCardService {
               }
             });
           } else {
-            // console.log('this.processColors(dto, parentFolder) 241');
-            // await this.processColors(dto, parentFolder);
+            console.log('this.processColors(dto, parentFolder) 241');
+            await this.processColors(dto, parentFolder);
           }
         }
       }
