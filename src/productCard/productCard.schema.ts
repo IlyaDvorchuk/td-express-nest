@@ -121,9 +121,6 @@ export class Color extends Document {
 
   @Prop({ required: true })
   color: string;
-
-  @Prop({ required: false })
-  image: string;
 }
 
 export const ColorSchema = SchemaFactory.createForClass(Color);
@@ -163,6 +160,20 @@ export class TypeQuantity extends Document {
 }
 
 export const TypeQuantitySchema = SchemaFactory.createForClass(TypeQuantity)
+
+@Schema()
+export class ColorImage extends Document {
+  @Prop({ required: true })
+  name: string;
+
+  @Prop({ required: true })
+  color: string;
+
+  @Prop({ required: true })
+  image: string;
+}
+
+export const ColorImageSchema = SchemaFactory.createForClass(ColorImage)
 
 export type ProductCardDocument = HydratedDocument<ProductCard>
 
@@ -232,6 +243,9 @@ export class ProductCard extends Document {
 
   @Prop({ required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }], default: [] })
   orders: Order[];
+
+  @Prop({required: false, type: [ColorImageSchema]})
+  colors: ColorImage[] | undefined
 }
 export const ProductCardSchema = SchemaFactory.createForClass(ProductCard);
 

@@ -42,21 +42,22 @@ export class ProductCardService {
         const photo = color?.image;
         const base64Data = photo.replace(/^data:image\/[a-z]+;base64,/, '');
         const fileName = `${uuid.v4()}.jpg`;
-        const folderPath = path.resolve(staticDir, productIdFolder, 'color-photos');
+        const folderPath = path.join(staticDir, productIdFolder, 'color-photos');
         const targetPath = path.join(folderPath, fileName);
         const buffer = Buffer.from(base64Data, 'base64');
 
         try {
           console.log('targetPath 50', targetPath);
+          console.log('folderPath 50', folderPath);
           await fs.promises.mkdir(folderPath, { recursive: true }); // Создаем папку рекурсивно
           await fs.promises.writeFile(targetPath, buffer);
           console.log('Изображение успешно загрузилось');
-
-          for (const type of dto.typeQuantity) {
-            if (type?.color.name === color.name) {
-              type.color.image = `/${productIdFolder}/color-photos/${fileName}`;
-            }
-          }
+          color.image = `${productIdFolder}/color-photos/${fileName}`
+          // for (const type of dto.typeQuantity) {
+          //   if (type?.color.name === color.name) {
+          //     type.color.image = `/${productIdFolder}/color-photos/${fileName}`;
+          //   }
+          // }
         } catch (err) {
           console.error('Ошибка при записи файла:', err);
           throw new HttpException(
@@ -117,9 +118,9 @@ export class ProductCardService {
 
     await this.processColors(dto, productIdFolder);
 
-    if ('colors' in dto) {
-      delete dto.colors;
-    }
+    // if ('colors' in dto) {
+    //   delete dto.colors;
+    // }
 
     const product = await this.productCardRepository.create({
       ...dto,
@@ -219,50 +220,41 @@ export class ProductCardService {
     // console.log('dto.colors', dto.colors.length);
 
     for (let i = 0; i < dto.colors.length; i++) {
-      const colorItem = dto.colors[i];
-      console.log('isBase64String(colorItem.image', isBase64String(colorItem.image));
-      if (!colorItem.image) {
-        for (const type of dto.typeQuantity) {
-          if (type?.color.name === colorItem.name) {
-            const filePath = type.color.image;
-            const targetPath = path.join(staticDir, `${parentFolder}/color-photos`, path.basename(filePath));
+        const colorItem = dto.colors[i];
+        const existingImage = product.colors.find(colorProduct => colorProduct.name === colorItem.name)
 
-            if (fs.existsSync(targetPath)) {
-              // Удаляем файл асинхронно
-              fs.unlink(targetPath, (err) => {
-                if (err) {
-                  console.error(`Ошибка при удалении файла: ${err}`);
+        if (!colorItem?.image) {
+          const filePath = existingImage?.image;
+          if (!filePath) continue
+          const targetPath = path.join(staticDir, `${parentFolder}/color-photos`, path.basename(filePath));
+
+          fs.access(targetPath, fs.constants.F_OK, (err) => {
+            if (!err) {
+              // Файл существует, удаляем его асинхронно
+              fs.unlink(targetPath, (unlinkErr) => {
+                if (unlinkErr) {
+                  console.error(`Ошибка при удалении файла: ${unlinkErr}`);
                 } else {
                   console.log(`Файл по пути ${targetPath} успешно удален.`);
                 }
               });
-
             } else {
-              console.log(`Файл по пути ${targetPath} не существует.`);
+              console.error(`Файл по пути ${targetPath} не существует или произошла ошибка: ${err}`);
             }
-            delete type.color.image;
-            console.log('type.color', type.color);
+          });
 
-          }
-        }
-      } else if (isBase64String(colorItem.image)) {
-        for (const type of dto.typeQuantity) {
-          const filePath = type.color.image;
-          console.log('filePath 251', filePath);
-          // console.log('type?.color.name', type?.color.name);
-          // console.log('colorItem.name', type?.color.name);
-          // console.log('filePath', filePath);
-
-          if (type?.color.name === colorItem.name && !isBase64String(filePath)) {
-
+          dto.colors.splice(i, 1)
+        } else if (colorItem.image && isBase64String(colorItem.image) && !existingImage) {
+          await this.processColors(dto, parentFolder)
+        } else if (colorItem.image && isBase64String(colorItem.image) && existingImage) {
             const base64Data = colorItem.image.replace(/^data:image\/[a-z]+;base64,/, '');
+            const filePath = existingImage?.image;
             // Используем значение из product.mainPhoto для пути к файлу
             const targetPath = path.join(staticDir, `${parentFolder}/color-photos`, path.basename(filePath));
             // Создаем буфер из строки base64
             const buffer = Buffer.from(base64Data, 'base64');
             // Записываем буфер в файл (асинхронно)
-
-
+          dto.colors[i].image = existingImage.image
             fs.writeFile(targetPath, buffer, (err) => {
               if (err) {
                 console.error('Ошибка при записи файла:', err);
@@ -270,13 +262,67 @@ export class ProductCardService {
                 console.log('Изображение успешно заменено');
               }
             });
-          } else {
-            console.log('this.processColors(dto, parentFolder) 241');
-            await this.processColors(dto, parentFolder);
-          }
+
         }
-      }
     }
+    //   const colorItem = dto.colors[i];
+    //   console.log('isBase64String(colorItem.image', isBase64String(colorItem.image));
+    //   if (!colorItem.image) {
+    //     for (const type of dto.typeQuantity) {
+    //       if (type?.color.name === colorItem.name) {
+    //         const filePath = type.color.image;
+    //         const targetPath = path.join(staticDir, `${parentFolder}/color-photos`, path.basename(filePath));
+    //
+    //         if (fs.existsSync(targetPath)) {
+    //           // Удаляем файл асинхронно
+    //           fs.unlink(targetPath, (err) => {
+    //             if (err) {
+    //               console.error(`Ошибка при удалении файла: ${err}`);
+    //             } else {
+    //               console.log(`Файл по пути ${targetPath} успешно удален.`);
+    //             }
+    //           });
+    //
+    //         } else {
+    //           console.log(`Файл по пути ${targetPath} не существует.`);
+    //         }
+    //         delete type.color.image;
+    //         console.log('type.color', type.color);
+    //
+    //       }
+    //     }
+    //   } else if (isBase64String(colorItem.image)) {
+    //     for (const type of dto.typeQuantity) {
+    //       const filePath = type.color.image;
+    //       console.log('filePath 251', filePath);
+    //       // console.log('type?.color.name', type?.color.name);
+    //       // console.log('colorItem.name', type?.color.name);
+    //       // console.log('filePath', filePath);
+    //
+    //       if (type?.color.name === colorItem.name && !isBase64String(filePath)) {
+    //
+    //         const base64Data = colorItem.image.replace(/^data:image\/[a-z]+;base64,/, '');
+    //         // Используем значение из product.mainPhoto для пути к файлу
+    //         const targetPath = path.join(staticDir, `${parentFolder}/color-photos`, path.basename(filePath));
+    //         // Создаем буфер из строки base64
+    //         const buffer = Buffer.from(base64Data, 'base64');
+    //         // Записываем буфер в файл (асинхронно)
+    //
+    //
+    //         fs.writeFile(targetPath, buffer, (err) => {
+    //           if (err) {
+    //             console.error('Ошибка при записи файла:', err);
+    //           } else {
+    //             console.log('Изображение успешно заменено');
+    //           }
+    //         });
+    //       } else {
+    //         console.log('this.processColors(dto, parentFolder) 241');
+    //         await this.processColors(dto, parentFolder);
+    //       }
+    //     }
+    //   }
+    // }
     // console.log('dto.typeQuantity', dto.typeQuantity);
     const modifiedDto = {
       ...dto,

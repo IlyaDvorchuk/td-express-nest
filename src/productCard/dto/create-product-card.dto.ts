@@ -100,9 +100,6 @@ class Color {
   @IsString()
   readonly color: string;
 
-  @ApiProperty({ example: 'Беспорядочный набор символов', description: 'Фотография' })
-  @IsString()
-  image?: string | undefined;
 }
 
 class SizeQuantity {
@@ -126,7 +123,7 @@ class Colors {
 
   @ApiProperty({ example: 'Беспорядочный набор символов', description: 'Фотография' })
   @IsString()
-   readonly image: string
+  image: string
 }
 
 
