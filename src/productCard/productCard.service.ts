@@ -37,6 +37,7 @@ export class ProductCardService {
     const staticDir = this.staticDir();
 
     for (const color of dto.colors) {
+      console.log('color 40', color.name);
       if (isBase64String(color?.image)) {
         const photo = color?.image;
         const base64Data = photo.replace(/^data:image\/[a-z]+;base64,/, '');
@@ -46,6 +47,7 @@ export class ProductCardService {
         const buffer = Buffer.from(base64Data, 'base64');
 
         try {
+          console.log('targetPath 50', targetPath);
           await fs.promises.mkdir(folderPath, { recursive: true }); // Создаем папку рекурсивно
           await fs.promises.writeFile(targetPath, buffer);
           console.log('Изображение успешно загрузилось');
@@ -219,9 +221,34 @@ export class ProductCardService {
     for (let i = 0; i < dto.colors.length; i++) {
       const colorItem = dto.colors[i];
       console.log('isBase64String(colorItem.image', isBase64String(colorItem.image));
-      if (isBase64String(colorItem.image)) {
+      if (!colorItem.image) {
+        for (const type of dto.typeQuantity) {
+          if (type?.color.name === colorItem.name) {
+            const filePath = type.color.image;
+            const targetPath = path.join(staticDir, `${parentFolder}/color-photos`, path.basename(filePath));
+
+            if (fs.existsSync(targetPath)) {
+              // Удаляем файл асинхронно
+              fs.unlink(targetPath, (err) => {
+                if (err) {
+                  console.error(`Ошибка при удалении файла: ${err}`);
+                } else {
+                  console.log(`Файл по пути ${targetPath} успешно удален.`);
+                }
+              });
+
+            } else {
+              console.log(`Файл по пути ${targetPath} не существует.`);
+            }
+            delete type.color.image;
+            console.log('type.color', type.color);
+
+          }
+        }
+      } else if (isBase64String(colorItem.image)) {
         for (const type of dto.typeQuantity) {
           const filePath = type.color.image;
+          console.log('filePath 251', filePath);
           // console.log('type?.color.name', type?.color.name);
           // console.log('colorItem.name', type?.color.name);
           // console.log('filePath', filePath);

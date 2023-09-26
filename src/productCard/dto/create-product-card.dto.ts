@@ -185,7 +185,7 @@ export class CreateProductCardDto {
 
   @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
   @ValidateNested()
-  colors?: Colors[]
+  colors?: (Colors | undefined)[]
 }
 
 export class UpdateProductCardDto extends CreateProductCardDto {
