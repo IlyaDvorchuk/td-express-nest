@@ -119,6 +119,13 @@ export class AdminController {
     return this.productCardService.rejectGood(id)
   }
 
+  @ApiOperation({ summary: 'Тест сервера' })
+  @ApiResponse({ status: 200 })
+  @Get('/test-server')
+  testServer() {
+    return true
+  }
+
   // @ApiOperation({ summary: 'Отклонить товар' })
   // @ApiResponse({ status: 200 })
   // @Roles('ADMIN')
