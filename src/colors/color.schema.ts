@@ -14,6 +14,9 @@ export class Color {
   @Prop({type: mongoose.Schema.Types.ObjectId, ref: "Color", required: false})
   parent: Color | undefined
 
+  @Prop()
+  parentName: string | undefined
+
   @Prop({type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Color" }], default: [], required: false})
   children: Color[] | undefined
 }

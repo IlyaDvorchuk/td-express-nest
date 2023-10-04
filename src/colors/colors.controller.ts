@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post } from "@nestjs/common";
 import { ColorsService } from "./colors.service";
-import { ColorsDto } from "./dro/colors.dto";
+import { ChildrenColorsDto, ColorsDto } from "./dto/colors.dto";
 
 @Controller('colors')
 export class ColorsController {
@@ -11,6 +11,11 @@ export class ColorsController {
   @Post()
   async createColors(@Body() colors: ColorsDto[]) {
     return this.colorsService.createColors(colors)
+  }
+
+  @Post('/children')
+  async getChildrenColors(@Body() colors: ChildrenColorsDto[]) {
+    return this.colorsService.createChildrenColors(colors)
   }
 
   @Get()
