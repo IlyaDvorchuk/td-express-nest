@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Injectable, UnauthorizedException } from "@nestjs/common";
-import { CheckShelterDto } from "./dto/check-shelter.dto";
 import { CreateShelterDto } from "../shelters/dto/create-shelter.dto";
 import { SheltersService } from "../shelters/shelters.service";
 import * as bcrypt from "bcryptjs";
@@ -15,12 +14,12 @@ export class AuthShelterService {
   }
 
 
-  async checkEmail(userDto: CheckShelterDto) {
-    return Promise.resolve(userDto);
+  async checkShelter(email: string) {
+    return await this.shelterService.getShelterByEmail(email)
   }
 
   async createNewPassword(passwordDto: NewPasswordDto) {
-    const shelter = await this.shelterService.getUserByEmail(passwordDto.email)
+    const shelter = await this.shelterService.getShelterByEmail(passwordDto.email)
     if (!shelter) {
       throw new HttpException(
         'Продавца с таким email не существует',
@@ -32,11 +31,9 @@ export class AuthShelterService {
     return true;
   }
 
-  async registration(shelterDto: CreateShelterDto, photoPath: string, photoShopPath: string) {
-    const candidate = await this.shelterService.getUserByEmail(shelterDto.email)
+  async registration(shelterDto: CreateShelterDto, photoShopPath: string) {
+    const candidate = await this.shelterService.getShelterByEmail(shelterDto.email)
     if (candidate) {
-      console.log('candidate', candidate);
-
       throw new HttpException(
         'Продавец с таким email существует',
         HttpStatus.BAD_REQUEST
@@ -50,7 +47,7 @@ export class AuthShelterService {
         shelterDto[field] = JSON.parse(shelterDto[field])
       }
     }
-    return await this.shelterService.createShelter({...shelterDto, password: hashPassword}, photoPath, photoShopPath)
+    return await this.shelterService.createShelter({...shelterDto, password: hashPassword}, photoShopPath)
   }
 
   async login(shelterDto: EnterUserDto) {
@@ -58,7 +55,7 @@ export class AuthShelterService {
   }
 
   private async validateShelter(userDto: EnterUserDto) {
-    const shelter = await this.shelterService.getUserByEmail(userDto.email)
+    const shelter = await this.shelterService.getShelterByEmail(userDto.email)
     if (!shelter) {
       throw new UnauthorizedException({message: 'Некорректный емайл или пароль'})
     }
@@ -66,17 +63,23 @@ export class AuthShelterService {
     if (shelter && passwordEquals) {
       return shelter
     }
-    console.log('aloha 59');
     throw new UnauthorizedException({message: 'Некорректный емайл или пароль'})
   }
 
   createAccessToken(shelter) {
-    const payload = { sub: shelter.id, email: shelter.email };
+    const payload = { sub: shelter.id, email: shelter.email, user: 'shelter' };
+    // console.log('payload', payload)
     return this.jwtService.signAsync(payload);
   }
 
   async getUserById(id: string) {
     return await this.shelterService.findById(id);
+  }
+
+  async addTelegramShelter(dto: EnterUserDto) {
+    const validationShelter = await this.validateShelter(dto)
+
+    return await this.shelterService.addTelegramPush(validationShelter, dto.chatId)
   }
 }
 

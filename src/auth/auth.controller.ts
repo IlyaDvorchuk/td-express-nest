@@ -17,23 +17,25 @@ export class AuthController {
   @UsePipes(ValidationPipe)
   @Post('/login')
   async login(@Body() userDto: EnterUserDto,
-        @Res() response: Response) {
-    const userData = await this.authService.login(userDto)
+        @Res({passthrough: true}) response: Response) {
+    const user = await this.authService.login(userDto)
+    const token = await this.authService.createAccessToken(user);
     response.cookie('access_token_user',
-      userData,
+        token,
       {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure: Boolean(process.env.HTTPS_BOOLEAN)})
-    return response.json(userData)
+    return {user, token}
   }
 
   @UsePipes(ValidationPipe)
   @Post('/registration')
   async registration(@Body() userDto: CreateUserDto,
-               @Res() response: Response) {
-    const userData = await this.authService.registration(userDto)
+               @Res({passthrough: true}) response: Response) {
+    const user = await this.authService.registration(userDto)
+    const token = await this.authService.createAccessToken(user);
     response.cookie('access_token_user',
-      userData,
+        token,
       {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure: Boolean(process.env.HTTPS_BOOLEAN)})
-    return response.json(userData)
+    return {user, token}
   }
 
   @UsePipes(ValidationPipe)
@@ -65,4 +67,10 @@ export class AuthController {
   //     {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, secure: Boolean(process.env.HTTPS_BOOLEAN)})
   //   return response.json(userData)
   // }
+
+  // Проверка на существование
+  @Post('check-user')
+  async checkShelterTelegram(@Body() dto: EnterUserDto) {
+    return await this.authService.addTelegramShelter(dto);
+  }
 }

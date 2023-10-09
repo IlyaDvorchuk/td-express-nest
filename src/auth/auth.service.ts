@@ -5,19 +5,18 @@ import * as bcrypt from 'bcryptjs'
 import { EnterUserDto } from "../users/dto/enter-user.dto";
 import { TokensService } from "../tokens/tokens.service";
 import { SheltersService } from "../shelters/shelters.service";
+import {JwtService} from "@nestjs/jwt";
 
 @Injectable()
 export class AuthService {
   constructor(private userService: UsersService,
               private tokensService: TokensService,
-              private shelterService: SheltersService) {
+              private shelterService: SheltersService,
+              private jwtService: JwtService) {
   }
 
   async login(userDto: EnterUserDto) {
-    const user = await this.validateUser(userDto)
-    const tokens = await this.tokensService.generateTokens({email: user.email, userId: user._id})
-    await this.tokensService.saveToken(user._id, tokens.refreshToken)
-    return {...tokens, user}
+    return await this.validateUser(userDto)
   }
 
   async registration(userDto: CreateUserDto) {
@@ -29,10 +28,7 @@ export class AuthService {
         )
     }
     const hashPassword = await bcrypt.hash(userDto.password, 5)
-    const user = await this.userService.createUser({...userDto, password: hashPassword})
-    const tokens = await this.tokensService.generateTokens({email: user.email, userId: user._id})
-    await this.tokensService.saveToken(user._id, tokens.refreshToken)
-    return {...tokens, user}
+    return await this.userService.createUser({...userDto, password: hashPassword})
   }
 
 
@@ -45,7 +41,7 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException({message: 'Некорректный емайл или пароль'})
     }
-    const passwordEquals = await bcrypt.compare(userDto?.password, user?.passwordHash)
+    const passwordEquals = await bcrypt.compare(userDto?.password, user?.password)
     if (user && passwordEquals) {
       return user
     }
@@ -57,7 +53,8 @@ export class AuthService {
   }
 
   async checkEmail(userDto: { email: string }) {
-    return Boolean(this.userService.getUserByEmail(userDto.email))
+    const check = await this.userService.getUserByEmail(userDto.email)
+    return Boolean(check)
   }
 
   async refresh(refreshToken: string, param?: unknown) {
@@ -75,10 +72,22 @@ export class AuthService {
       user = await this.userService.getUserByEmail(userData.email)
       tokens = await this.tokensService.generateTokens({email: user.email, userId: user._id})
     } else {
-      user = await this.shelterService.getUserByEmail(userData.email)
+      user = await this.shelterService.getShelterByEmail(userData.email)
       tokens = await this.tokensService.generateTokens({email: user.email, userId: user._id})
     }
     await this.tokensService.saveToken(user._id, tokens.refreshToken)
     return {...tokens, user}
   }
+
+  createAccessToken(user) {
+    const payload = { sub: user.id, email: user.email, user: 'user' };
+    return this.jwtService.signAsync(payload);
+  }
+
+  async addTelegramShelter(dto: EnterUserDto) {
+    const validationUser = await this.validateUser(dto)
+
+    return await this.userService.addTelegramPush(validationUser, dto.chatId)
+  }
 }
+

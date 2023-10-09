@@ -1,20 +1,27 @@
-import { Module } from '@nestjs/common';
+import {Global, Module} from '@nestjs/common';
 import { SheltersController } from './shelters.controller';
 import { SheltersService } from './shelters.service';
 import { MongooseModule } from "@nestjs/mongoose";
 import { Shelter, ShelterSchema } from "./shelters.schema";
-import { PassportModule } from "@nestjs/passport";
 import { JwtModule } from "@nestjs/jwt";
 import { JwtStrategy } from "../utils/jwt.strategy";
+import { ProductCard, ProductCardSchema } from 'src/productCard/productCard.schema';
+import { Order, OrderSchema } from 'src/order/order.schema';
+import { User, UserSchema } from 'src/users/users.schema';
+import {NotificationSchema, Notification} from "../notification/notification.schema";
 
+@Global()
 @Module({
   controllers: [SheltersController],
   providers: [SheltersService, JwtStrategy],
   imports: [
     MongooseModule.forFeature([
-      {name: Shelter.name, schema: ShelterSchema}
+      {name: Shelter.name, schema: ShelterSchema},
+      { name: ProductCard.name, schema: ProductCardSchema },
+      { name: Order.name, schema: OrderSchema },
+      { name: User.name, schema: UserSchema },
+      { name: Notification.name, schema: NotificationSchema },
     ]),
-    PassportModule,
     JwtModule.register({
       secret: process.env.PRIVATE_KEY || 'SECRET',
       signOptions: {

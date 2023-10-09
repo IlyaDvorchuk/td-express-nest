@@ -1,11 +1,10 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
-import { SheltersService } from "../shelters/shelters.service";
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly shelterService: SheltersService) {
+  constructor() {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -14,9 +13,19 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload) {
-    const user = this.shelterService.findById(payload.sub);
+
+    let user
+    // console.log('payload', payload);
+    if (payload.user === 'user') {
+      return payload.sub
+      // user = await this.userService.findById(payload.sub);
+
+    } else if (payload.user === 'shelter') {
+      return payload.sub
+      // user =  await this.shelterService.findById(payload.sub);
+    }
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Не существует такого пользователя');
     }
     return user;
   }

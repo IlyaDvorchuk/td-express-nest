@@ -1,5 +1,7 @@
-import { HydratedDocument, Document } from "mongoose";
+import mongoose, { HydratedDocument, Document } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { ProductCard } from "../productCard/productCard.schema";
+import { Order } from "../order/order.schema";
 
 @Schema()
 export class PersonalData extends Document {
@@ -18,7 +20,7 @@ export class PersonalData extends Document {
 
 export const PersonalDataSchema = SchemaFactory.createForClass(PersonalData)
 
-@Schema()
+@Schema({_id: false})
 export class ClosePerson extends Document {
   @Prop({required: true})
   name: string
@@ -29,8 +31,8 @@ export class ClosePerson extends Document {
   @Prop({required: true})
   patronymic: string
 
-  @Prop({required: true, unique: true})
-  phone: string
+  @Prop({required: true})
+  phoneClose: string
 }
 
 export const ClosePersonSchema = SchemaFactory.createForClass(ClosePerson)
@@ -67,7 +69,7 @@ export class ShelterData extends Document {
 export const ShelterDataSchema = SchemaFactory.createForClass(ShelterData)
 
 @Schema()
-class PointIssue {
+export class PointIssue {
   @Prop({ required: true })
   city: string;
 
@@ -95,8 +97,6 @@ export class Shop extends Document {
 
 export const ShopSchema = SchemaFactory.createForClass(Shop)
 
-
-
 export type ShelterDocument = HydratedDocument<Shelter>
 
 @Schema({timestamps: true})
@@ -110,14 +110,14 @@ export class Shelter extends Document {
   @Prop({required: true})
   password: string
 
-  @Prop({required: true})
-  name: string
-
-  @Prop({required: true})
-  fileScan: string
+  // @Prop({required: true})
+  // fileScan: string
 
   @Prop({required: true})
   imageShop: string
+
+  @Prop({required: true, default: false})
+  isVerified: boolean
 
   @Prop({type: ShelterDataSchema, required: true})
   shelterData: ShelterData
@@ -127,6 +127,18 @@ export class Shelter extends Document {
 
   @Prop({ required: true, type: [PointIssueSchema] })
   deliveryPoints: PointIssue[];
+
+  @Prop({required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: "ProductCard" }]})
+  productCards: ProductCard[]
+
+  @Prop({required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Notification" }]})
+  notifications: Notification[]
+
+  @Prop({default: null})
+  isPushTelegram: string | null
+
+  @Prop({ required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }], default: [] })
+  orders: Order[];
 }
 
 export const ShelterSchema = SchemaFactory.createForClass(Shelter)

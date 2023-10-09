@@ -4,6 +4,7 @@ import { MailController } from './mail.controller';
 import { MailerModule } from "@nestjs-modules/mailer";
 import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
 import { UsersModule } from "../users/users.module";
+import {SheltersModule} from "../shelters/shelters.module";
 
 @Global()
 @Module({
@@ -34,6 +35,7 @@ import { UsersModule } from "../users/users.module";
       }),
     }),
     UsersModule,
+      SheltersModule
   ]
 })
 export class MailModule {}

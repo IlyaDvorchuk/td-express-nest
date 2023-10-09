@@ -1,16 +1,44 @@
-import { Body, Controller, Get, Post, UsePipes } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+  UsePipes
+} from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import {Roles} from "../auth/roles-auth.decorator";
-import {AddRoleDto} from "./dto/add-role.dto";
-import {BanUserDto} from "./dto/ban-user.dto";
 import { ValidationPipe } from "../pipes/validation.pipe";
+import {JwtAuthGuard} from "../middlewares/auth.middleware";
+import { CreateNotificationDto } from "src/notification/dto/notification.dto";
+import { CreateCartDto } from "src/cart/dto/create-cart.dto";
 
 @ApiTags('Пользователи')
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {
+  }
+
+  //добавить в корзину
+  @UseGuards(JwtAuthGuard)
+  @Post('/addToCart')
+  addItemToCart(@Req() req, @Body() dto: CreateCartDto) {
+    const userId = req.user
+    return this.usersService.addToCart(userId, dto)
+  }
+
+  //удалить из корзины
+  @UseGuards(JwtAuthGuard)
+  @Post('/deleteCart')
+  deleteItemToCart(@Req() req, @Body() dto: {idsCart: string[]}) {
+    const userId = req.user
+    console.log('dto: {idsCart: string[]}', dto);
+    return this.usersService.removeFromCart(userId, dto.idsCart);
   }
 
   @ApiOperation({summary: 'Создание пользователя'})
@@ -21,27 +49,91 @@ export class UsersController {
     return this.usersService.createUser(userDto)
   }
 
-  @ApiOperation({summary: 'Получение всех пользователей'})
-  @ApiResponse({status: 200})
-  @Roles('ADMIN')
-  @Get()
-  getAll() {
-    return this.usersService.getAllUsers()
+  //удалить из корзины
+  @UseGuards(JwtAuthGuard)
+  @Post('/removeFromCart')
+  removeFromCart(@Req() req, @Body() productCardIds: string[]) {
+    const userId = req.user
+    return this.usersService.removeFromCart(userId, productCardIds)
   }
 
-  @ApiOperation({summary: 'Выдать роль'})
-  @ApiResponse({status: 200})
-  @Roles('ADMIN')
-  @Post('/role')
-  addRole(@Body() dto: AddRoleDto) {
-    return this.usersService.addRole(dto)
+  //показать избранное
+  @UseGuards(JwtAuthGuard)
+  @Get('/getFavorites')
+  getFavorites(@Req() req) {
+    const userId = req.user
+    return this.usersService.getFavorites(userId)
   }
 
-  @ApiOperation({summary: 'Забанить пользователя'})
-  @ApiResponse({status: 200})
-  @Roles('ADMIN')
-  @Post('/ban')
-  ban(@Body() dto: BanUserDto) {
-    return this.usersService.ban(dto)
+  //добавить в избранное
+  @UseGuards(JwtAuthGuard)
+  @Get('/addToFavorite/:goodId')
+  addToFavorite(@Req() req, @Param('goodId') goodId: string) {
+    const userId = req.user
+    return this.usersService.addToFavorites(userId, goodId)
+  }
+
+  //удалить из избранного
+  @UseGuards(JwtAuthGuard)
+  @Get('/removeFromFavorite')
+  removeFromFavorite(@Req() req, @Body() productCardId: string,) {
+    const userId = req.user
+    return this.usersService.removeFromFavorite(userId, productCardId)
+  }
+
+
+  @Get(':userId/notifications')
+  async getUserNotifications(@Param('userId') userId: string) /*: Promise<NotificationDocument[]>*/ {
+    try {
+      //return await this.usersService.getUserNotifications(userId);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Get('/user/:userId')
+async getProductCards(
+  @Param('userId') userId: string,
+  @Body('page') page: number,
+  @Body('limit') limit: number,
+) {
+  return this.usersService.getProductCards(userId, page, limit);
+}
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/get-user')
+  async getUser(@Req() req) {
+    const shelterId = req.user
+    return this.usersService.findById(shelterId)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/get-cart')
+  async getCart(@Req() req) {
+    const shelterId = req.user
+    return this.usersService.getCartProducts(shelterId)
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/set-count-cart/:typeId/:count')
+  async setCountCart(@Req() req, @Param('typeId') typeId: string, @Param('count') count: number) {
+    const userId = req.user
+    return this.usersService.setCountCart(userId, typeId, count)
+  }
+
+  // Уведомления юзера
+  @UseGuards(JwtAuthGuard)
+  @Get('notifications')
+  async getNotificationsByUser(@Req() req) {
+    const userId =  req.user
+    return await this.usersService.getNotificationsByUser(userId);
+  }
+
+  // Юзер прочитал уведомления
+  @UseGuards(JwtAuthGuard)
+  @Get('read-notifications')
+  async readNotificationsByShelter(@Req() req) {
+    const userId =  req.user
+    return await this.usersService.readNotificationsByUser(userId);
   }
 }

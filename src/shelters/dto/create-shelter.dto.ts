@@ -21,7 +21,7 @@ export class ClosePerson {
   @ApiProperty({example: '77546548', description: 'Номер близкого человека'})
   @IsString({message: 'Должно быть строкой'})
   @Length(7, 16, {message: 'Не меньше 7 и не больше 16'})
-  readonly phone: string
+  readonly phoneClose: string
 }
 
 export class PersonalData {
@@ -67,7 +67,7 @@ export class Entity {
   readonly check: string
 }
 
-export class ShelterData {
+export class ShelterDataDto {
   @ValidateNested()
   readonly closePerson: ClosePerson
 
@@ -92,19 +92,19 @@ export class DeliveryPoint {
   @ApiProperty({example: 'У Витька', description: 'Название торговой точки'})
   @IsString({message: 'Должно быть строкой'})
   @Length(1, 40, {message: 'Не меньше 1 и не больше 5000'})
-  readonly shopName?: string
+  readonly shopName: string
 
   @ApiProperty({example: 'В подвале кожвена', description: 'Примечания'})
   @IsString({message: 'Должно быть строкой'})
   @Length(1, 5000, {message: 'Не меньше 1 и не больше 5000'})
-  readonly notes?: string
+  readonly notes: string
 }
 
 export class ShelterShop {
   @ApiProperty({example: 'Пятёрочка', description: 'Название магазина'})
   @IsString({message: 'Должно быть строкой'})
   @Length(1, 16, {message: 'Не меньше 1 и не больше 16'})
-  readonly name: string
+  readonly nameMarket: string
 
   @ApiProperty({example: 'Лучший магазин', description: 'Описание магазина'})
   @IsString({message: 'Должно быть строкой'})
@@ -123,21 +123,16 @@ export class CreateShelterDto {
   @Length(4, 16, {message: 'Не меньше 4 и не больше 16'})
   readonly password: string
 
-  @ApiProperty({example: 'Борис', description: 'Имя или наименование продавца'})
-  @IsString({message: 'Должно быть строкой'})
-  @Length(1, 16, {message: 'Не меньше 1 и не больше 16'})
-  readonly name: string
-
   @ApiProperty({example: '77546548', description: 'Номер продавца'})
   @IsString({message: 'Должно быть строкой'})
   @Length(7, 16, {message: 'Не меньше 1 и не больше 16'})
   readonly phone: string
 
-  @ApiProperty({example: 'Фото(скан)', description: 'Фото ИП или юр.лица продавцп'})
-  @IsFile()
-  @MaxFileSize ( 1e6 )
-  @HasMimeType ( [ 'image / jpeg' , ' image/png ' ] )
-  readonly fileScan: MemoryStoredFile
+  // @ApiProperty({example: 'Фото(скан)', description: 'Фото ИП или юр.лица продавцп'})
+  // @IsFile()
+  // @MaxFileSize ( 1e6 )
+  // @HasMimeType ( [ 'image / jpeg' , ' image/png ' ] )
+  // readonly fileScan: MemoryStoredFile
 
   @ApiProperty({example: 'Логотип магазина', description: 'Логотип магазина'})
   @IsFile()
@@ -146,11 +141,26 @@ export class CreateShelterDto {
   readonly imageShop: MemoryStoredFile
 
   @ValidateNested()
-  readonly shelterData: ShelterData
+  readonly shelterData: ShelterDataDto
 
   @ValidateNested()
   readonly shop: ShelterShop
 
   @ValidateNested()
   readonly deliveryPoints: DeliveryPoint[]
+}
+
+export class UpdateShelterShopDto {
+  @ValidateNested()
+  readonly shelterShop: ShelterShop
+
+  @ValidateNested()
+  readonly deliveryPoints: DeliveryPoint[]
+
+  @ApiProperty({example: 'Логотип магазина', description: 'Логотип магазина'})
+  @IsFile()
+  @MaxFileSize ( 1e6 )
+  @HasMimeType ( [ 'image / jpeg' , ' image/png ' ] )
+  readonly imageShop: MemoryStoredFile | string
+
 }
