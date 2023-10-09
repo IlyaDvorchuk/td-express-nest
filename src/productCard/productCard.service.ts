@@ -468,6 +468,7 @@ export class ProductCardService {
   ) {
     const regexQuery = new RegExp(query, 'i');
     // Добавьте фильтрацию по ценовому диапазону, цвету, размеру и количеству больше 0
+    console.log('regexQuery', regexQuery);
     const filter = {
       $and: [
         {
@@ -481,35 +482,14 @@ export class ProductCardService {
         },
         { published: true },
         { 'pricesAndQuantity.price': { $gte: minPrice || 0, $lte: maxPrice || Number.MAX_SAFE_INTEGER } },
-        // Добавляем фильтр только если size не пустая строка
-        ...(size !== "" ? [
-          {
-            typeQuantity: {
-              $elemMatch: { size: size },
-            },
-          },
-        ] : []),
         {
-          // Фильтр для суммы quantity больше 0
-          $expr: {
-            $gt: [
-              {
-                $sum: {
-                  $map: {
-                    input: '$typeQuantity',
-                    as: 'item',
-                    in: '$$item.quantity',
-                  },
-                },
-              },
-              0,
-            ],
+          typeQuantity: {
+            $elemMatch: { quantity: { $gt: 0 } }, // Убрано преобразование в число
           },
         },
       ],
     };
 
-// { 'pricesAndQuantity.quantity': { $gt: 0 } }, // Фильтр для количества больше 0
 
     const totalCount = await this.productCardRepository.countDocuments(filter);
 
@@ -520,6 +500,7 @@ export class ProductCardService {
       .skip((page - 1) * limit)
       .limit(limit)
       .exec();
+
     return {
       productCards,
       totalPages,
