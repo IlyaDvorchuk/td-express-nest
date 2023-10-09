@@ -108,7 +108,6 @@ export class SheltersService {
           }
         })
         .exec();
-    console.log('shelter.productCards', shelter.productCards);
     return shelter.productCards;
   }
 

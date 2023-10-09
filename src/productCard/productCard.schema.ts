@@ -49,6 +49,9 @@ export class AdditionalInformation extends Document {
 
   @Prop({ default: '' })
   recommendations: string;
+
+  @Prop({ default: [] })
+  seasons: string[];
 }
 
 export const AdditionalInformationSchema = SchemaFactory.createForClass(AdditionalInformation);

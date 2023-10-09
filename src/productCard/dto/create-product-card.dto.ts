@@ -74,11 +74,15 @@ class PricesAndQuantity {
 class AdditionalInformation {
   @ApiProperty({ example: 'Material', description: 'Product material' })
   @IsString()
-  readonly material: string;
+  readonly material?: string;
 
   @ApiProperty({ example: 'Recommendations', description: 'Product recommendations' })
   @IsString()
-  readonly recommendations: string;
+  readonly recommendations?: string;
+
+  @ApiProperty({ example: 'Лето, Осень', description: 'Сезоны товара' })
+  @IsArray()
+  readonly seasons?: string[];
 }
 
 class DeliveryPoints {

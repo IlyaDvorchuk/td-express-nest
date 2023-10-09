@@ -150,6 +150,7 @@ export class ProductCardService {
 
     if (typeof dto.mainPhoto === 'string') {
       if (isBase64String(dto.mainPhoto)) {
+        console.log('isBase64String(dto.mainPhoto) 153');
         const base64Data = dto.mainPhoto.replace(/^data:image\/[a-z]+;base64,/, '');
         // Используем значение из product.mainPhoto для пути к файлу
         const filePath = product.mainPhoto;
