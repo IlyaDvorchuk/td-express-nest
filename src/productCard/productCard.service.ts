@@ -450,10 +450,26 @@ export class ProductCardService {
       query = query.find({ 'typeQuantity.size': size });
     }
 
-    return query
+    const productCards = await query
       .skip((page - 1) * limit)
       .limit(limit)
       .exec();
+
+    const minPriceRange = productCards.reduce((min, product) => {
+      const price = product.pricesAndQuantity?.price || product.pricesAndQuantity?.priceBeforeDiscount;
+      return price < min ? price : min;
+    }, Infinity);
+
+    const maxPriceRange = productCards.reduce((max, product) => {
+      const price = product.pricesAndQuantity?.price || product.pricesAndQuantity.priceBeforeDiscount;
+      return price > max ? price : max;
+    }, 0);
+
+    return {
+      productCards,
+      minPriceRange,
+      maxPriceRange
+    }
   }
 
 
@@ -500,6 +516,17 @@ export class ProductCardService {
       .skip((page - 1) * limit)
       .limit(limit)
       .exec();
+
+    const minPriceRange = productCards.reduce((min, product) => {
+      const price = product.pricesAndQuantity?.priceBeforeDiscount || product.pricesAndQuantity?.price;
+      return price < min ? price : min;
+    }, Infinity);
+
+    const maxPriceRange = productCards.reduce((max, product) => {
+      const price = product.pricesAndQuantity.priceBeforeDiscount || product.pricesAndQuantity?.price;
+      return price > max ? price : max;
+    }, 0);
+
 
     return {
       productCards,
