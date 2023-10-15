@@ -418,14 +418,17 @@ export class ProductCardService {
     limit?: number,
     minPrice?: number,
     maxPrice?: number,
-    color?: string,
+    colors?: string[],
     size?: string,
   ) {
-
     let query = this.productCardRepository.find({
       published: true,
-      // 'pricesAndQuantity.quantity': { $gt: 0 }
+      'pricesAndQuantity.price': {
+        $gte: minPrice || 0,
+        $lte: maxPrice || Number.MAX_SAFE_INTEGER
+      }
     });
+
     if (category && category.trim() !== '') {
       query = query.or([
         { 'categories.category.id': category },
@@ -434,26 +437,21 @@ export class ProductCardService {
       ]);
     }
 
-    if (minPrice !== undefined && minPrice !== null) {
-      query = query.find({ 'pricesAndQuantity.price': { $gte: minPrice } });
+    query = query.elemMatch('typeQuantity', {
+      quantity: { $gt: 0 },
+    });
+
+    if (colors && colors.length > 0) {
+      query = query.elemMatch('typeQuantity', {
+        $or: colors.map(color => ({ 'color.name': color }))
+      });
     }
 
-    if (maxPrice !== undefined && maxPrice !== null) {
-      query = query.find({ 'pricesAndQuantity.price': { $lte: maxPrice } });
-    }
-
-    if (color && color.trim() !== '') {
-      query = query.find({ colors: color });
-    }
-
-    if (size && size.trim() !== '') {
-      query = query.find({ 'typeQuantity.size': size });
-    }
-
-    const productCards = await query
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .exec();
+    const productCards = await this.productCardRepository
+        .find(query)
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .exec();
 
     const minPriceRange = productCards.reduce((min, product) => {
       const price = product.pricesAndQuantity?.price || product.pricesAndQuantity?.priceBeforeDiscount;
@@ -464,6 +462,7 @@ export class ProductCardService {
       const price = product.pricesAndQuantity?.price || product.pricesAndQuantity.priceBeforeDiscount;
       return price > max ? price : max;
     }, 0);
+
 
     return {
       productCards,
@@ -479,12 +478,9 @@ export class ProductCardService {
     limit?: number,
     minPrice?: number,
     maxPrice?: number,
-    color?: string,
-    size?: string,
   ) {
     const regexQuery = new RegExp(query, 'i');
     // Добавьте фильтрацию по ценовому диапазону, цвету, размеру и количеству больше 0
-    console.log('regexQuery', regexQuery);
     const filter = {
       $and: [
         {
