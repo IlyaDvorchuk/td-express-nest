@@ -66,8 +66,6 @@ export class ProductCardController {
       limit,
       minPrice,
       maxPrice,
-      color,
-      size,
     );
   }
 
