@@ -57,7 +57,7 @@ export class ProductCardController {
     @Query('limit') limit: number = 10,
     @Query('minPrice') minPrice: number = 0,
     @Query('maxPrice') maxPrice: number = Number.MAX_SAFE_INTEGER,
-    @Query('color') color: string = '',
+    @Query('colors') colors: string[] = [],
     @Query('size') size: string = '',
   ) {
     return this.productCardService.searchProductCards(
@@ -66,6 +66,7 @@ export class ProductCardController {
       limit,
       minPrice,
       maxPrice,
+        colors
     );
   }
 

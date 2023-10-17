@@ -478,30 +478,37 @@ export class ProductCardService {
     limit?: number,
     minPrice?: number,
     maxPrice?: number,
+    colors?: string[],
   ) {
     const regexQuery = new RegExp(query, 'i');
-    // Добавьте фильтрацию по ценовому диапазону, цвету, размеру и количеству больше 0
-    const filter = {
-      $and: [
-        {
-          $or: [
-            { 'categories.category': regexQuery },
-            { 'categories.subcategory': regexQuery },
-            { 'categories.section': regexQuery },
-            { 'information.name': regexQuery },
-            { 'information.description': regexQuery },
-          ],
-        },
-        { published: true },
-        { 'pricesAndQuantity.price': { $gte: minPrice || 0, $lte: maxPrice || Number.MAX_SAFE_INTEGER } },
-        {
-          typeQuantity: {
-            $elemMatch: { quantity: { $gt: 0 } }, // Убрано преобразование в число
-          },
-        },
-      ],
-    };
 
+    let filter = this.productCardRepository.find({
+      published: true,
+      'pricesAndQuantity.price': {
+        $gte: minPrice || 0,
+        $lte: maxPrice || Number.MAX_SAFE_INTEGER
+      }
+    });
+
+    if (query && query.trim() !== '') {
+      filter = filter.or([
+        { 'categories.category': regexQuery },
+        { 'categories.subcategory': regexQuery },
+        { 'categories.section': regexQuery },
+        { 'information.name': regexQuery },
+        { 'information.description': regexQuery },
+      ]);
+    }
+
+    filter = filter.elemMatch('typeQuantity', {
+      quantity: { $gt: 0 },
+    });
+
+    if (colors && colors.length > 0) {
+      filter = filter.elemMatch('typeQuantity', {
+        $or: colors.map(color => ({ 'color.name': color }))
+      });
+    }
 
     const totalCount = await this.productCardRepository.countDocuments(filter);
 
@@ -528,6 +535,8 @@ export class ProductCardService {
       productCards,
       totalPages,
       currentPage: page,
+      minPriceRange,
+      maxPriceRange
     };
   }
 
