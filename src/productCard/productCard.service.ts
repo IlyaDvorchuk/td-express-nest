@@ -453,6 +453,9 @@ export class ProductCardService {
         .limit(limit)
         .exec();
 
+    const totalCount = productCards.length;
+    const totalPages = Math.ceil(totalCount / limit);
+
     const minPriceRange = productCards.reduce((min, product) => {
       const price = product.pricesAndQuantity?.price || product.pricesAndQuantity?.priceBeforeDiscount;
       return price < min ? price : min;
@@ -466,6 +469,25 @@ export class ProductCardService {
 
     return {
       productCards,
+      minPriceRange,
+      maxPriceRange,
+      totalPages,
+      currentPage: page,
+    }
+  }
+
+  private getRangePrices(productCards) {
+    const minPriceRange = productCards.reduce((min, product) => {
+      const price = product.pricesAndQuantity?.priceBeforeDiscount || product.pricesAndQuantity?.price;
+      return price < min ? price : min;
+    }, Infinity);
+
+    const maxPriceRange = productCards.reduce((max, product) => {
+      const price = product.pricesAndQuantity.priceBeforeDiscount || product.pricesAndQuantity?.price;
+      return price > max ? price : max;
+    }, 0);
+
+    return {
       minPriceRange,
       maxPriceRange
     }
@@ -520,16 +542,7 @@ export class ProductCardService {
       .limit(limit)
       .exec();
 
-    const minPriceRange = productCards.reduce((min, product) => {
-      const price = product.pricesAndQuantity?.priceBeforeDiscount || product.pricesAndQuantity?.price;
-      return price < min ? price : min;
-    }, Infinity);
-
-    const maxPriceRange = productCards.reduce((max, product) => {
-      const price = product.pricesAndQuantity.priceBeforeDiscount || product.pricesAndQuantity?.price;
-      return price > max ? price : max;
-    }, 0);
-
+    const {minPriceRange, maxPriceRange} = this.getRangePrices(productCards)
 
     return {
       productCards,
@@ -583,9 +596,13 @@ export class ProductCardService {
       .limit(limit)
       .exec();
 
+    const {minPriceRange, maxPriceRange} = this.getRangePrices(productCards)
+
     return {
       productCards,
       totalPages,
+      minPriceRange,
+      maxPriceRange,
       currentPage: page,
     };
   }
