@@ -18,7 +18,10 @@ export class CartItem {
   // totalPrice: number;
 
   @Prop()
-  size: string
+  size: string | undefined
+
+  @Prop()
+  color: string | undefined
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'SizeQuantity' })
   typeId: string

@@ -19,7 +19,6 @@ export class CartService {
     //добавить в корзину юзера товар
     async addToCart(userId: string, dto: CreateCartDto) {
         const cart = await this.findCartById(userId);
-        console.log('dto', dto);
 
         if (cart) {
             const existingItem = cart.items.find((item) => {
@@ -28,7 +27,6 @@ export class CartService {
                 }
                 return false;
             });
-
             if (existingItem) {
                 throw new HttpException('Продукт уже находится в корзине', HttpStatus.BAD_REQUEST);
             } else {
@@ -36,9 +34,12 @@ export class CartService {
                     productId: dto.productId,
                     quantity: dto.quantity,
                     size: dto?.size,
-                    typeId: dto.typeId
+                    typeId: dto.typeId,
+                    color: dto?.color
                 });
+
                 await cart.save();
+
             }
         } else {
             const newCart = new this.cartRepository({
@@ -92,10 +93,11 @@ export class CartService {
 
     async getCartProductsWithPrices(userId: string) {
         const cart = await this.findCartById(userId);
+        // console.log('cart', cart)
         if (!cart) {
             return []; // Return an empty array if no cart found
         }
-
+        console.log('cart', cart)
         const cartItemsWithPrices = await Promise.all(cart.items.map(async (item) => {
             const productCard = await this.productCardService.getProductCardById(item.productId);
 
@@ -111,12 +113,13 @@ export class CartService {
                 price: productCard.pricesAndQuantity,
                 mainPhoto: productCard.mainPhoto,
                 size: undefined,
+                color: undefined,
                 nameShelter: productCard?.nameShelter
             }
             if (item.size) answer.size = item.size
+            if (item.color) answer.color = item.color
             return answer;
         }));
-
 
         return cartItemsWithPrices.filter(item => item !== null);
     }

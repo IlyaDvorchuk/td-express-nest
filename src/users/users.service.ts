@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import { User, UserDocument } from './users.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { AddRoleDto } from './dto/add-role.dto';
@@ -112,7 +112,7 @@ export class UsersService {
       //product.isCart = true;
       //await this.productCardService.updateProductCard(dto.productId, product);
     } catch (e) {
-      return false
+      throw new HttpException('Не удалось добавить товар в корзину', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
   }
