@@ -37,9 +37,11 @@ export class ProductCardService {
     const staticDir = this.staticDir();
 
     for (const color of dto.colors) {
-      console.log('color 40', color.name);
-      if (isBase64String(color?.image)) {
+      console.log('color?.image', color?.image)
+      console.log('isBase64String(color?.image)', isBase64String(color?.image))
+      if (color?.image && isBase64String(color?.image)) {
         const photo = color?.image;
+
         const base64Data = photo.replace(/^data:image\/[a-z]+;base64,/, '');
         const fileName = `${uuid.v4()}.jpg`;
         const folderPath = path.join(staticDir, productIdFolder, 'color-photos');

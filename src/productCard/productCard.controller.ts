@@ -119,6 +119,7 @@ export class ProductCardController {
         destination: async (req, file, cb) => {
           // @ts-ignore
           const productId = req.productId;
+          console.log('destination productId', productId)
           const mainPhotoDestination = `./static/${productId}/main-photos`;
           const additionalPhotosDestination = `./static/${productId}/additional-photos`;
 
@@ -143,21 +144,27 @@ export class ProductCardController {
   async createProductCard(
     @Req() req,
     @Body() createProductCardDto: CreateProductCardDto,
-    @UploadedFiles() files: { mainPhoto: Express.Multer.File, additionalPhotos: Express.Multer.File[] },
+    // @UploadedFiles() files: { mainPhoto: Express.Multer.File, additionalPhotos: Express.Multer.File[] },
   ) {
-    const { mainPhoto, additionalPhotos } = files
+    // const { mainPhoto, additionalPhotos } = files
     const shelterId = req.user
     const productIdFolder = req.productId;
-    const mainPhotoPath = mainPhoto ? `/${productIdFolder}/main-photos/${mainPhoto[0].filename}` : undefined;
-    const additionalPhotosPaths = additionalPhotos.map(file => `/${productIdFolder}/additional-photos/${file.filename}`);
+    // const mainPhotoPath = mainPhoto ? `/${productIdFolder}/main-photos/${mainPhoto[0].filename}` : undefined;
+    // const additionalPhotosPaths = additionalPhotos.map(file => `/${productIdFolder}/additional-photos/${file.filename}`);
 
-    return await this.productCardService.createProductCard(
-      createProductCardDto,
-      shelterId,
-      mainPhotoPath,
-      additionalPhotosPaths,
-      productIdFolder
-    );
+    console.log('createProductCardDto', createProductCardDto)
+    // console.log('files', files)
+    console.log('shelterId', shelterId)
+    // console.log('mainPhotoPath', mainPhotoPath)
+    // console.log('additionalPhotosPaths', additionalPhotosPaths)
+    console.log('productIdFolder', productIdFolder)
+    // return await this.productCardService.createProductCard(
+    //   createProductCardDto,
+    //   shelterId,
+    //   mainPhotoPath,
+    //   additionalPhotosPaths,
+    //   productIdFolder
+    // );
   }
 
   //обновление карточки

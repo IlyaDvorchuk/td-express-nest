@@ -19,7 +19,7 @@ async function start() {
   //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   //   credentials: true
   // })
-  app.use(bodyParser.json({ limit: '30mb' }));
+  app.use(bodyParser.json({ limit: '100024mb' }));
   app.use(cookieParser());
 
   const config = new DocumentBuilder()

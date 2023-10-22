@@ -172,8 +172,8 @@ export class ColorImage extends Document {
   @Prop({ required: true })
   color: string;
 
-  @Prop({ required: true })
-  image: string;
+  @Prop({ required: false })
+  image?: string | undefined;
 }
 
 export const ColorImageSchema = SchemaFactory.createForClass(ColorImage)
