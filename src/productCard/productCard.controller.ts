@@ -22,6 +22,7 @@ import { Question } from 'src/questionary/questionary.schema';
 import { ApiResponse } from "@nestjs/swagger";
 import * as uuid from 'uuid'
 import { promises as fsPromises } from 'fs';
+import {AddColorDto} from "./dto/add-color.dto";
 
 @Controller('product-cards')
 export class ProductCardController {
@@ -119,6 +120,7 @@ export class ProductCardController {
         destination: async (req, file, cb) => {
           // @ts-ignore
           const productId = req.productId;
+          console.log('productFolder', req.params.productFolder)
           console.log('destination productId', productId)
           const mainPhotoDestination = `./static/${productId}/main-photos`;
           const additionalPhotosDestination = `./static/${productId}/additional-photos`;
@@ -140,31 +142,69 @@ export class ProductCardController {
       fileFilter: imageFileFilter,
     })
   )
-
   async createProductCard(
     @Req() req,
     @Body() createProductCardDto: CreateProductCardDto,
-    // @UploadedFiles() files: { mainPhoto: Express.Multer.File, additionalPhotos: Express.Multer.File[] },
+    @UploadedFiles() files: { mainPhoto: Express.Multer.File, additionalPhotos: Express.Multer.File[] },
   ) {
-    // const { mainPhoto, additionalPhotos } = files
+    const { mainPhoto, additionalPhotos } = files
     const shelterId = req.user
     const productIdFolder = req.productId;
-    // const mainPhotoPath = mainPhoto ? `/${productIdFolder}/main-photos/${mainPhoto[0].filename}` : undefined;
-    // const additionalPhotosPaths = additionalPhotos.map(file => `/${productIdFolder}/additional-photos/${file.filename}`);
+    const mainPhotoPath = mainPhoto ? `/${productIdFolder}/main-photos/${mainPhoto[0].filename}` : undefined;
+    const additionalPhotosPaths = additionalPhotos.map(file => `/${productIdFolder}/additional-photos/${file.filename}`);
 
-    console.log('createProductCardDto', createProductCardDto)
+    // console.log('createProductCardDto', createProductCardDto)
     // console.log('files', files)
     console.log('shelterId', shelterId)
-    // console.log('mainPhotoPath', mainPhotoPath)
-    // console.log('additionalPhotosPaths', additionalPhotosPaths)
-    console.log('productIdFolder', productIdFolder)
-    // return await this.productCardService.createProductCard(
-    //   createProductCardDto,
-    //   shelterId,
-    //   mainPhotoPath,
-    //   additionalPhotosPaths,
-    //   productIdFolder
-    // );
+    console.log('mainPhotoPath', mainPhotoPath)
+    console.log('additionalPhotosPaths', additionalPhotosPaths)
+    // console.log('productIdFolder', productIdFolder)
+    const product = await this.productCardService.createProductCard(
+      createProductCardDto,
+      shelterId,
+      mainPhotoPath,
+      additionalPhotosPaths,
+      productIdFolder
+    );
+    return {
+      product,
+      productIdFolder
+    }
+  }
+
+  @Post('upload/:productFolder')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(
+      FileFieldsInterceptor([
+        { name: 'colorPhotos', maxCount: 50 }, // Максимальное количество дополнительных фотографий
+      ], {
+        storage: diskStorage({
+          destination: async (req, file, cb) => {
+            // @ts-ignore
+            const productId = req.params.productFolder;
+            const additionalPhotosDestination = `./static/${productId}/color-photos`;
+
+            // Создаем папки продукта асинхронно, если они не существуют
+            await fsPromises.mkdir(additionalPhotosDestination, { recursive: true });
+
+            if (file.fieldname === 'colorPhotos') {
+              cb(null, additionalPhotosDestination);
+            } else {
+              cb(new Error('Invalid fieldname'), null);
+            }
+          },
+          filename: editFileName,
+        }),
+        fileFilter: imageFileFilter,
+      })
+  )
+  async addColorImage(
+      @Req() req,
+      @Body() createProductCardDto: AddColorDto,
+      @UploadedFiles() files: { colorPhotos: Express.Multer.File[] },
+  ) {
+    console.log('createProductCardDto', createProductCardDto)
+    console.log('files', files)
   }
 
   //обновление карточки

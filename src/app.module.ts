@@ -21,6 +21,7 @@ import { PaymentCallbackModule } from './payment-callback/payment-callback.modul
 import { DeliveryModule } from './delivery/delivery.module';
 import { OrderModule } from "./order/order.module";
 import { ColorsModule } from './colors/colors.module';
+import { SuccessPaymentModule } from './success-payment/success-payment.module';
 
 @Module({
   controllers: [],
@@ -59,7 +60,8 @@ import { ColorsModule } from './colors/colors.module';
     PaymentCallbackModule,
     DeliveryModule,
     OrderModule,
-    ColorsModule
+    ColorsModule,
+    SuccessPaymentModule
   ]
 })
 

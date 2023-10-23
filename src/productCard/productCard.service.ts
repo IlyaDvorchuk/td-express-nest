@@ -221,53 +221,53 @@ export class ProductCardService {
       }
     }
     // console.log('dto.colors', dto.colors.length);
-
-    for (let i = 0; i < dto.colors.length; i++) {
-        const colorItem = dto.colors[i];
-        const existingImage = product.colors.find(colorProduct => colorProduct.name === colorItem.name)
-
-        if (!colorItem?.image) {
-          const filePath = existingImage?.image;
-          if (!filePath) continue
-          const targetPath = path.join(staticDir, `${parentFolder}/color-photos`, path.basename(filePath));
-
-          fs.access(targetPath, fs.constants.F_OK, (err) => {
-            if (!err) {
-              // Файл существует, удаляем его асинхронно
-              fs.unlink(targetPath, (unlinkErr) => {
-                if (unlinkErr) {
-                  console.error(`Ошибка при удалении файла: ${unlinkErr}`);
-                } else {
-                  console.log(`Файл по пути ${targetPath} успешно удален.`);
-                }
-              });
-            } else {
-              console.error(`Файл по пути ${targetPath} не существует или произошла ошибка: ${err}`);
-            }
-          });
-
-          dto.colors.splice(i, 1)
-        } else if (colorItem.image && isBase64String(colorItem.image) && !existingImage) {
-          await this.processColors(dto, parentFolder)
-        } else if (colorItem.image && isBase64String(colorItem.image) && existingImage) {
-            const base64Data = colorItem.image.replace(/^data:image\/[a-z]+;base64,/, '');
-            const filePath = existingImage?.image;
-            // Используем значение из product.mainPhoto для пути к файлу
-            const targetPath = path.join(staticDir, `${parentFolder}/color-photos`, path.basename(filePath));
-            // Создаем буфер из строки base64
-            const buffer = Buffer.from(base64Data, 'base64');
-            // Записываем буфер в файл (асинхронно)
-          dto.colors[i].image = existingImage.image
-            fs.writeFile(targetPath, buffer, (err) => {
-              if (err) {
-                console.error('Ошибка при записи файла:', err);
-              } else {
-                console.log('Изображение успешно заменено');
-              }
-            });
-
-        }
-    }
+    // TODO: переделать цвета
+    // for (let i = 0; i < dto.colors.length; i++) {
+    //     const colorItem = dto.colors[i];
+    //     const existingImage = product.colors.find(colorProduct => colorProduct.name === colorItem.name)
+    //
+    //     if (!colorItem?.image) {
+    //       const filePath = existingImage?.image;
+    //       if (!filePath) continue
+    //       const targetPath = path.join(staticDir, `${parentFolder}/color-photos`, path.basename(filePath));
+    //
+    //       fs.access(targetPath, fs.constants.F_OK, (err) => {
+    //         if (!err) {
+    //           // Файл существует, удаляем его асинхронно
+    //           fs.unlink(targetPath, (unlinkErr) => {
+    //             if (unlinkErr) {
+    //               console.error(`Ошибка при удалении файла: ${unlinkErr}`);
+    //             } else {
+    //               console.log(`Файл по пути ${targetPath} успешно удален.`);
+    //             }
+    //           });
+    //         } else {
+    //           console.error(`Файл по пути ${targetPath} не существует или произошла ошибка: ${err}`);
+    //         }
+    //       });
+    //
+    //       dto.colors.splice(i, 1)
+    //     } else if (colorItem.image && isBase64String(colorItem.image) && !existingImage) {
+    //       await this.processColors(dto, parentFolder)
+    //     } else if (colorItem.image && isBase64String(colorItem.image) && existingImage) {
+    //         const base64Data = colorItem.image.replace(/^data:image\/[a-z]+;base64,/, '');
+    //         const filePath = existingImage?.image;
+    //         // Используем значение из product.mainPhoto для пути к файлу
+    //         const targetPath = path.join(staticDir, `${parentFolder}/color-photos`, path.basename(filePath));
+    //         // Создаем буфер из строки base64
+    //         const buffer = Buffer.from(base64Data, 'base64');
+    //         // Записываем буфер в файл (асинхронно)
+    //       dto.colors[i].image = existingImage.image
+    //         fs.writeFile(targetPath, buffer, (err) => {
+    //           if (err) {
+    //             console.error('Ошибка при записи файла:', err);
+    //           } else {
+    //             console.log('Изображение успешно заменено');
+    //           }
+    //         });
+    //
+    //     }
+    // }
     //   const colorItem = dto.colors[i];
     //   console.log('isBase64String(colorItem.image', isBase64String(colorItem.image));
     //   if (!colorItem.image) {

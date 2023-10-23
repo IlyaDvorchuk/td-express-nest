@@ -184,9 +184,9 @@ export class CreateProductCardDto {
   @ValidateNested()
   readonly typeQuantity?: SizeQuantity[]
 
-  @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
-  @ValidateNested()
-  colors?: (Colors | undefined)[]
+  // @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
+  // @ValidateNested()
+  // colors?: (Colors | undefined)[]
 }
 
 export class UpdateProductCardDto extends CreateProductCardDto {
