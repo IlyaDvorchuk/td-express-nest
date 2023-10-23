@@ -1,4 +1,11 @@
-import { Controller } from '@nestjs/common';
+import {Body, Controller, Post} from '@nestjs/common';
 
-@Controller('success-payment')
-export class SuccessPaymentController {}
+@Controller('success')
+export class SuccessPaymentController {
+
+    @Post()
+    async successPayment(@Body() dto: any) {
+        console.log('dto successPayment', dto)
+    }
+
+}
