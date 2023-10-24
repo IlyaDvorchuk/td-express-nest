@@ -151,7 +151,7 @@ export class ProductCardController {
     const shelterId = req.user
     const productIdFolder = req.productId;
     const mainPhotoPath = mainPhoto ? `/${productIdFolder}/main-photos/${mainPhoto[0].filename}` : undefined;
-    const additionalPhotosPaths = additionalPhotos.map(file => `/${productIdFolder}/additional-photos/${file.filename}`);
+    const additionalPhotosPaths = additionalPhotos ? additionalPhotos?.map(file => `/${productIdFolder}/additional-photos/${file.filename}`) : [];
 
     const card = await this.productCardService.createProductCard(
       createProductCardDto,
