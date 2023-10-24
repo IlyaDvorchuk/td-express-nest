@@ -120,8 +120,8 @@ export class ProductCardController {
         destination: async (req, file, cb) => {
           // @ts-ignore
           const productId = req.productId;
-          console.log('productFolder', req.params.productFolder)
-          console.log('destination productId', productId)
+          // console.log('productFolder', req.params.productFolder)
+          // console.log('destination productId', productId)
           const mainPhotoDestination = `./static/${productId}/main-photos`;
           const additionalPhotosDestination = `./static/${productId}/additional-photos`;
 
@@ -153,13 +153,7 @@ export class ProductCardController {
     const mainPhotoPath = mainPhoto ? `/${productIdFolder}/main-photos/${mainPhoto[0].filename}` : undefined;
     const additionalPhotosPaths = additionalPhotos.map(file => `/${productIdFolder}/additional-photos/${file.filename}`);
 
-    // console.log('createProductCardDto', createProductCardDto)
-    // console.log('files', files)
-    console.log('shelterId', shelterId)
-    console.log('mainPhotoPath', mainPhotoPath)
-    console.log('additionalPhotosPaths', additionalPhotosPaths)
-    // console.log('productIdFolder', productIdFolder)
-    const product = await this.productCardService.createProductCard(
+    const card = await this.productCardService.createProductCard(
       createProductCardDto,
       shelterId,
       mainPhotoPath,
@@ -167,44 +161,21 @@ export class ProductCardController {
       productIdFolder
     );
     return {
-      product,
+      card,
       productIdFolder
     }
   }
 
-  @Post('upload/:productFolder')
+  @Post('upload/:productFolder/:productId')
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(
-      FileFieldsInterceptor([
-        { name: 'colorPhotos', maxCount: 50 }, // Максимальное количество дополнительных фотографий
-      ], {
-        storage: diskStorage({
-          destination: async (req, file, cb) => {
-            // @ts-ignore
-            const productId = req.params.productFolder;
-            const additionalPhotosDestination = `./static/${productId}/color-photos`;
-
-            // Создаем папки продукта асинхронно, если они не существуют
-            await fsPromises.mkdir(additionalPhotosDestination, { recursive: true });
-
-            if (file.fieldname === 'colorPhotos') {
-              cb(null, additionalPhotosDestination);
-            } else {
-              cb(new Error('Invalid fieldname'), null);
-            }
-          },
-          filename: editFileName,
-        }),
-        fileFilter: imageFileFilter,
-      })
-  )
   async addColorImage(
       @Req() req,
       @Body() createProductCardDto: AddColorDto,
-      @UploadedFiles() files: { colorPhotos: Express.Multer.File[] },
+      @Param('productFolder') productFolder: string,
+      @Param('productId') productId: string
+      // @UploadedFiles() files: { colorPhotos: Express.Multer.File[] },
   ) {
-    console.log('createProductCardDto', createProductCardDto)
-    console.log('files', files)
+    return await this.productCardService.addColor(createProductCardDto, productFolder, productId)
   }
 
   //обновление карточки

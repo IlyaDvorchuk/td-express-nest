@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { isValidObjectId, Model } from "mongoose";
-import { Comment, ProductCard, TypeQuantity } from "./productCard.schema";
+import {ColorImage, Comment, ProductCard, TypeQuantity} from "./productCard.schema";
 import { CreateProductCardDto, UpdateProductCardDto } from "./dto/create-product-card.dto";
 import { SheltersService } from "../shelters/shelters.service";
 import { CategoriesService } from "../categories/categories.service";
@@ -12,6 +12,7 @@ import { isBase64String } from "../utils/isBase64String";
 import * as fs from "fs";
 import * as uuid from "uuid";
 import * as path from "path";
+import {AddColorDto} from "./dto/add-color.dto";
 
 @Injectable()
 export class ProductCardService {
@@ -87,6 +88,50 @@ export class ProductCardService {
     return query.exec();
   }
 
+  async addColor(color: AddColorDto, productIdFolder: string, productId) {
+    const staticDir = this.staticDir();
+
+      // console.log('color', color)
+      // console.log('isBase64String(color?.image)', isBase64String(color?.image))
+      if (color?.image && isBase64String(color?.image)) {
+        const photo = color?.image;
+
+        const base64Data = photo.replace(/^data:image\/[a-z]+;base64,/, '');
+        const fileName = `${uuid.v4()}.jpg`;
+        const folderPath = path.join(staticDir, productIdFolder, 'color-photos');
+        const targetPath = path.join(folderPath, fileName);
+        const buffer = Buffer.from(base64Data, 'base64');
+
+        try {
+          await fs.promises.mkdir(folderPath, { recursive: true }); // Создаем папку рекурсивно
+          await fs.promises.writeFile(targetPath, buffer);
+          console.log('Изображение успешно загрузилось');
+          color.image = `${productIdFolder}/color-photos/${fileName}`
+          const product = await this.productCardRepository.findById(productId)
+          if (!product) {
+            throw new HttpException(
+                'Не удалось найти товар',
+                HttpStatus.NOT_FOUND
+            );
+          }
+          product.colors.push(color as ColorImage)
+          await product.save()
+          // for (const type of dto.typeQuantity) {
+          //   if (type?.color.name === color.name) {
+          //     type.color.image = `/${productIdFolder}/color-photos/${fileName}`;
+          //   }
+          // }
+        } catch (err) {
+          console.error('Ошибка при записи файла:', err);
+          throw new HttpException(
+              'Не удалось сохранить изображения цветов',
+              HttpStatus.INTERNAL_SERVER_ERROR
+          );
+        }
+      }
+    return true
+  }
+
   async createProductCard(
     dto: CreateProductCardDto,
     shelterId: string,
@@ -118,7 +163,7 @@ export class ProductCardService {
       }
     }
 
-    await this.processColors(dto, productIdFolder);
+    // await this.processColors(dto, productIdFolder);
 
     // if ('colors' in dto) {
     //   delete dto.colors;
