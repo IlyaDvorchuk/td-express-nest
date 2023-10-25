@@ -8,7 +8,7 @@ import { Order, OrderDocument } from 'src/order/order.schema';
 import { User, UserDocument } from 'src/users/users.schema';
 import * as path from "path";
 import {isBase64String} from "../utils/isBase64String";
-import fs from "fs";
+import * as fs from "fs";
 import {NotificationDocument, Notification} from "../notification/notification.schema";
 
 @Injectable()
@@ -199,23 +199,52 @@ export class SheltersService {
 
     try {
       const shelter = await this.shelterRepository.findById(shelterId)
+
       if (typeof shelterShopDto.imageShop === 'string') {
         const staticDir = path.join(__dirname, '..', '..', 'static');
+        console.log('staticDir 202', staticDir);
         if (isBase64String(shelterShopDto.imageShop)) {
           const base64Data = shelter.imageShop.replace(/^data:image\/[a-z]+;base64,/, '');
-          // Используем значение из product.mainPhoto для пути к файлу
+          // Используйте значение из product.mainPhoto для пути к файлу
           const filePath = shelter.imageShop;
 
-
           const targetPath = path.resolve(staticDir, 'shelter-shops', path.basename(filePath));
-          // Создаем буфер из строки base64
-          const buffer = Buffer.from(base64Data, 'base64');
-          // Записываем буфер в файл (асинхронно)
-          fs.writeFile(targetPath, buffer, (err) => {
+
+          // Проверяем, существует ли директория, и если нет, то создаем ее
+          const targetDir = path.dirname(targetPath);
+
+          fs.access(targetDir, (err) => {
             if (err) {
-              console.error('Ошибка при записи файла:', err);
+              // Директория не существует, создаем ее
+              fs.mkdir(targetDir, { recursive: true }, (err) => {
+                if (err) {
+                  console.error('Ошибка при создании директории:', err);
+                } else {
+                  // Создаем буфер из строки base64
+                  const buffer = Buffer.from(base64Data, 'base64');
+
+                  // Записываем буфер в файл (асинхронно)
+                  fs.writeFile(targetPath, buffer, (err) => {
+                    if (err) {
+                      console.error('Ошибка при записи файла:', err);
+                    } else {
+                      console.log('Изображение успешно заменено');
+                    }
+                  });
+                }
+              });
             } else {
-              console.log('Изображение успешно заменено');
+              // Директория уже существует, создаем буфер из строки base64
+              const buffer = Buffer.from(base64Data, 'base64');
+
+              // Записываем буфер в файл (асинхронно)
+              fs.writeFile(targetPath, buffer, (err) => {
+                if (err) {
+                  console.error('Ошибка при записи файла:', err);
+                } else {
+                  console.log('Изображение успешно заменено');
+                }
+              });
             }
           });
         } else {
@@ -230,6 +259,7 @@ export class SheltersService {
       await shelter.save()
       return shelter
     } catch (e) {
+      console.log('e', e)
       throw new HttpException(
           'Не удается обновить: ' + e.message,
           HttpStatus.BAD_REQUEST
