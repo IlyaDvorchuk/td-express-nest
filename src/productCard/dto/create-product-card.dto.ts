@@ -183,14 +183,14 @@ export class CreateProductCardDto {
   @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
   @ValidateNested()
   readonly typeQuantity?: SizeQuantity[]
-
-  // @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
-  // @ValidateNested()
-  // colors?: (Colors | undefined)[]
 }
 
 export class UpdateProductCardDto extends CreateProductCardDto {
   @ApiProperty({ example: 'fgd08fdg8gfddfg', description: 'id товара' })
   @IsString()
   readonly _id: string
+
+  @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
+  @ValidateNested()
+  colors?: (Colors | undefined)[]
 }
