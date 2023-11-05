@@ -7,6 +7,7 @@ import { BanUserDto } from "src/users/dto/ban-user.dto";
 import { ProductCardService } from "src/productCard/productCard.service";
 import {SheltersService} from "../shelters/shelters.service";
 import {NotificationService} from "../notification/notification.service";
+import {PromocodeService} from "./admin.service";
 // import fetch from 'node-fetch';
 
 @ApiTags('Админ')
@@ -15,7 +16,8 @@ export class AdminController {
   constructor(private usersService: UsersService,
     private productCardService: ProductCardService,
               private sheltersService: SheltersService,
-              private notificationsService: NotificationService
+              private notificationsService: NotificationService,
+              private promocodeService: PromocodeService
               ) {
   }
 
@@ -124,6 +126,14 @@ export class AdminController {
   @Get('/test-server')
   testServer() {
     return true
+  }
+
+  @ApiOperation({ summary: 'Добавить товар' })
+  @ApiResponse({ status: 200 })
+  @Roles('ADMIN')
+  @Get('/promocode/:code')
+  addPromocode(@Param('code') code: string) {
+    return this.promocodeService.addPromocode(code)
   }
 
   // @ApiOperation({ summary: 'Отклонить товар' })
