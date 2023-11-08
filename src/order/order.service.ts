@@ -38,6 +38,10 @@ export class OrderService {
     return order;
   }
 
+  async getOrder(orderId: string): Promise<Order> {
+    return this.orderModel.findById(orderId).exec();
+  }
+
   async getUserOrders(userId: string): Promise<Order[]> {
     const user = await this.userModel.findById(userId).populate({
       path: 'orders',

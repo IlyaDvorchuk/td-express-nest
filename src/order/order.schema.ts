@@ -87,6 +87,8 @@ export class Order {
   @Prop({ required: false, default: '' })
   city: string;
 
+  @Prop({required: true})
+  orderId: number
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);
