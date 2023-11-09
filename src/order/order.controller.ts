@@ -14,16 +14,6 @@ export class OrderController {
     return this.orderService.createOrder(order);
   }
 
-  @Get(':orderId')
-  async getOrders(@Param('orderId') orderId: string) {
-    return this.orderService.getOrder(orderId);
-  }
-
-  @Get('/user/:userId')
-  async getUserOrders(@Param('userId') userId: string) {
-    return this.orderService.getUserOrders(userId);
-  }
-
   @UseGuards(JwtAuthGuard)
   @Get('/seller')
   async getSellerOrders(@Req() req, @Query('count') count?: number) {
@@ -31,6 +21,15 @@ export class OrderController {
     return this.orderService.getSellerOrders(sellerId, count);
   }
 
+  @Get('/user/:userId')
+  async getUserOrders(@Param('userId') userId: string) {
+    return this.orderService.getUserOrders(userId);
+  }
+
+  @Get(':orderId')
+  async getOrders(@Param('orderId') orderId: string) {
+    return this.orderService.getOrder(orderId);
+  }
 
   @Put('/:orderId/:status')
   async updateOrderStatus(
