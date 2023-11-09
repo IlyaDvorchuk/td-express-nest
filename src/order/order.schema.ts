@@ -88,7 +88,7 @@ export class Order {
   city: string;
 
   @Prop({required: true})
-  orderId: number
+  orderId: string
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

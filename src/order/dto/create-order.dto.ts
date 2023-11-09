@@ -98,6 +98,10 @@ export class CreateOrderDto {
   @IsString()
   city: string
 
+  @ApiProperty({ example: '6767_887', description: 'order unequal id' })
+  @IsString()
+  orderId: string
+
   @ApiProperty({ type: DeliveryAddress, description: 'Delivery address' })
   @ValidateNested()
   deliveryAddress?: DeliveryAddress | undefined
