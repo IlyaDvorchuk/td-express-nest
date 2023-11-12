@@ -111,6 +111,62 @@ export class SheltersService {
     return shelter.productCards;
   }
 
+  async getCardsByName(
+      name: string,
+      page: number,
+      limit: number,
+      minPrice?: number,
+      maxPrice?: number,
+      colors?: string[],
+  ) {
+    const shelter = await this.shelterRepository
+        .findOne({ 'shop.nameMarket': name })
+        .populate({
+          path: 'productCards',
+          options: {
+            skip: (page - 1) * limit, // Пропустить элементы предыдущих страниц
+            limit: limit // Ограничить количество элементов на странице
+          }
+        })
+        .exec();
+
+    let productCards = shelter.productCards
+
+    if (minPrice > 0) {
+      productCards = productCards.filter(card => card.pricesAndQuantity.price >= minPrice)
+    }
+
+    if (maxPrice < Infinity || maxPrice !== 0) {
+      productCards = productCards.filter(card => card.pricesAndQuantity.price <= maxPrice)
+    }
+
+    if (colors && colors.length > 0) {
+      productCards = productCards.filter(card => {
+        if (card?.colors && card.colors.length > 0) {
+          return card.colors.some(color => colors.includes(color.name));
+        }
+        return false;
+      });
+    }
+
+    const minPriceRange = productCards.reduce((min, product) => {
+      const price = product.pricesAndQuantity?.price || product.pricesAndQuantity?.priceBeforeDiscount;
+      return price < min ? price : min;
+    }, Infinity);
+
+    const maxPriceRange = productCards.reduce((max, product) => {
+      const price = product.pricesAndQuantity?.price || product.pricesAndQuantity.priceBeforeDiscount;
+      return price > max ? price : max;
+    }, 0);
+
+
+    return {
+      productCards,
+      minPriceRange,
+      maxPriceRange
+    };
+  }
+
   async addProductCard(shelterId: string, productCard: ProductCard) {
     try {
       const shelter = await this.shelterRepository.findById(shelterId)
@@ -359,5 +415,22 @@ export class SheltersService {
       )
     }
 
+  }
+
+  async getSellerForUser(name: string) {
+    const seller = await this.shelterRepository.findOne({ 'shop.nameMarket': name }).exec();
+
+    if (seller) {
+      return {
+        shop: seller.shop,
+        imageShop: seller.imageShop,
+        countGoods: seller.productCards.length
+      }
+    } else {
+      throw new HttpException(
+          'Не найден продавец',
+          HttpStatus.NOT_FOUND
+      )
+    }
   }
 }

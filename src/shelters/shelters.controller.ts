@@ -28,12 +28,18 @@ export class SheltersController {
     return  await this.shelterService.getCards(shelterId, page, limit);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get()
-  async getShelter(@Req() req) {
-    const shelterId = req.user
-    return this.shelterService.findById(shelterId)
+  @Get('seller-cards/:name')
+  async getCardsShelterByName(
+      @Param('name') name: string, // Номер страницы по умолчанию: 1
+      @Query('page') page: number = 1, // Номер страницы по умолчанию: 1
+      @Query('limit') limit: number = 32, // Количество элементов на странице по умолчанию: 10
+      @Query('minPrice') minPrice: number,
+      @Query('maxPrice') maxPrice: number,
+      @Query('colors') colors: string[] = [],
+  ) {
+    return  await this.shelterService.getCardsByName(name, page, limit, minPrice, maxPrice, colors);
   }
+
 
   @Get('/good/:id')
   async getShelterForGood(@Param('id') id: string) {
@@ -110,5 +116,18 @@ export class SheltersController {
   async readNotificationsByShelter(@Req() req) {
     const shelterId =  req.user
     return await this.shelterService.readNotificationsByShelter(shelterId);
+  }
+
+  @Get('user/:name')
+  async getSellerForUser(@Param('name',) name: string,) {
+    console.log('name', name)
+    return await this.shelterService.getSellerForUser(name);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  async getShelter(@Req() req) {
+    const shelterId = req.user
+    return this.shelterService.findById(shelterId)
   }
 }
