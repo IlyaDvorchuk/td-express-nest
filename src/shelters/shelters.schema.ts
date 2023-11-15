@@ -137,6 +137,9 @@ export class Shelter extends Document {
   @Prop({default: null})
   isPushTelegram: string | null
 
+  @Prop({default: false})
+  isDeliveryMarket: boolean
+
   @Prop({ required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }], default: [] })
   orders: Order[];
 }

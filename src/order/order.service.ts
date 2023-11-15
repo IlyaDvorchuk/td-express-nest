@@ -32,6 +32,31 @@ export class OrderService {
       // @ts-ignore
       shelter.orders.push(order._id);
       await shelter.save();
+      if (shelter?.isDeliveryMarket) {
+        const apiUrl = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT}/sendMessage`;
+        const message = `
+          У продавца ${shelter.shop.nameMarket} заказали товар ${order.goodName} в количестве ${order.count} ценой ${order.price}
+          
+          Данные о покупателе:
+          ${order.buyer.name}
+          ${order.buyer.family}
+          ${order.buyer.phone}
+        `
+        const payload = {
+          chat_id: '6016281493:AAEIcbTY5adYAHn2rA6j2Kl8_KzTMD3iTdw',
+          text: message,
+          parse_mode: 'MarkdownV2',
+        };
+        try {
+          await fetch(apiUrl, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: { 'Content-Type': 'application/json' },
+          });
+        } catch (error) {
+          console.error('Error sending message to Telegram:', error);
+        }
+      }
 
     }
 

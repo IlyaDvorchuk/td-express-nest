@@ -15,9 +15,6 @@ export class NotificationService {
      }
 
   async createNotification(userId: string, message: string, isUser?: boolean): Promise<NotificationDocument> {
-    console.log('userId', userId);
-    console.log('message', message);
-    console.log('isUser', isUser);
     const notification = await this.notificationModel.create({ userId, message });
     const answer = isUser ? await this.userService.pushNotificationRefToUser(userId, notification._id)
       : await this.shelterService.pushNotificationRefToShelter(userId, notification._id)
