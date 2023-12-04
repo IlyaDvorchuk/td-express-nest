@@ -414,7 +414,21 @@ export class SheltersService {
         HttpStatus.BAD_REQUEST
       )
     }
+  }
 
+  async updateRate(sellerId: string ,rate: 'td-delivery' | 'self-delivery') {
+    const seller = await this.shelterRepository.findById(sellerId).exec();
+
+    if (seller) {
+      seller.rate = rate
+      await seller.save()
+      return true
+    } else {
+      throw new HttpException(
+          'Не найден продавец',
+          HttpStatus.NOT_FOUND
+      )
+    }
   }
 
   async getSellerForUser(name: string) {

@@ -118,6 +118,16 @@ export class SheltersController {
     return await this.shelterService.readNotificationsByShelter(shelterId);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Put('update-rate/:sellerId/:rate')
+  async updateRate(
+      @Param('sellerId',) sellerId: string,
+      @Param('rate',) rate: 'td-delivery' | 'self-delivery',
+  ) {
+    return await this.shelterService.updateRate(sellerId, rate);
+  }
+
+
   @Get('user/:name')
   async getSellerForUser(@Param('name',) name: string,) {
     console.log('name', name)
