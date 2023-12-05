@@ -15,32 +15,63 @@ export class MailService {
   async activateMail(dto: ActivateMailDto) {
     console.log('ActivateMailDto', dto);
     if (!dto?.isNotExamination) {
-      let candidate
+      let candidate;
       if (dto.isShelter) {
 
       } else {
-        candidate = await this.shelterService.getShelterByEmail(dto.email)
+        candidate = await this.shelterService.getShelterByEmail(dto.email);
       }
       if (candidate) {
-
         throw new HttpException(
             'Пользователь с таким email существет',
             HttpStatus.BAD_REQUEST
-        )
+        );
       }
     }
 
-    const randomCode = Math.random().toString().slice(-6)
+    const randomCode = Math.random().toString().slice(-6);
+    const htmlTemplate = `
+<!DOCTYPE html>
+<html lang="ru">
+    <body style="background-color: #AE52DA; color: #fff; font-family: 'Courier New', Courier, monospace;">
+        <header style="margin-bottom: 40px;">
+            <h1 style="text-align: center; color: #fff;">
+                <img src="/logo-market.svg" alt="logo" style="margin: auto;">
+            </h1>
+            <h2 style="text-align: center; color: #fff; font-family: 'Courier New', Courier, monospace;">Подтверждение аккаунта td-market</h2>
+        </header>
+        
+        <p style="text-align: center; color: #fff; font-family: 'Courier New', Courier, monospace; font-size: larger;">
+            Ваш код авторизации: <span style="font-weight: 900;">${randomCode}</span>
+        </p>
+        
+        <p style="text-align: center; color: #fff; font-family: 'Courier New', Courier, monospace;">
+            Введите данный код для подтверждения вашего аккаунта и постарайтесь никому его не сообщать)
+        </p>
+        
+        <div style="font-family: 'Courier New', Courier, monospace; color: #fff; font-size: 10px;">
+            Можете распространять код, это ваше право. Выбор между подчинением инструкциям и защитой принципов — ваш. Ваши решения — ваше право, и никто не имеет право указывать вами, что делать. Это ваш выбор, и ваше право на него неоспоримо.🦧
+        </div>
+        
+        <div style="font-family: 'Courier New', Courier, monospace; color: #fff;">
+            Цитата:<span style="font-weight: 900;">Chat gpt4</span>
+        </div>
+        
+        <p style="text-align: center; color: #fff; font-family: 'Courier New', Courier, monospace;">
+            Удачных покупок на td-market
+        </p>
+    </body>
+</html>
+    `;
+
     await this.mailerService.sendMail({
       from: process.env.SMTP_USER,
       to: dto.email,
       subject: 'Активация аккаунта на TD-Market',
-      text: '',
-      template: './confirmation',
-      context: {
-        randomCode
-      }
-    })
-    return randomCode
+      text: '',  // Укажите пустую строку, так как мы используем HTML
+      html: htmlTemplate,  // Передаем HTML-код шаблона
+    });
+
+    return randomCode;
   }
 }
