@@ -5,6 +5,7 @@ import {
 } from "../shelters/shelters.schema";
 import { NotificationDocument, NotificationSchema } from 'src/notification/notification.schema';
 import { Order } from "../order/order.schema";
+import {Review} from "../reviews/reviews.schema";
 
 @Schema()
 export class ParentCategory extends Document {
@@ -212,8 +213,10 @@ export class ProductCard extends Document {
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'PointIssue' }] })
   deliveryPoints: PointIssue[];
 
-  @Prop({ type: [CommentSchema], default: [] })
-  comments: Comment[];
+  // @Prop({ type: [CommentSchema], default: [] })
+  // comments: Comment[];
+  @Prop({default: [], type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }]})
+  comments: Review[]
 
   @Prop({ type: Boolean, default: false })
   published: boolean;

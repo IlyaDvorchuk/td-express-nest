@@ -712,76 +712,76 @@ export class ProductCardService {
     };
   }
 
-  async addCommentToProduct(productId: string, userId: string, content: string): Promise<Comment> {
-    const product = await this.productCardRepository.findById(productId);
+  // async addCommentToProduct(productId: string, userId: string, content: string): Promise<Comment> {
+  //   const product = await this.productCardRepository.findById(productId);
+  //
+  //   if (!product) {
+  //     throw new Error('Product not found');
+  //   }
+  //
+  //   const comment = new this.commentRepository({ productId, userId, content });
+  //   await comment.save();
+  //
+  //
+  //   product.comments.push(comment._id);
+  //   await product.save();
+  //
+  //   return comment;
+  // }
 
-    if (!product) {
-      throw new Error('Product not found');
-    }
+  // async deleteComment(productId: string, commentId: string): Promise<void> {
+  //   const product = await this.productCardRepository.findById(productId);
+  //   if (!product) {
+  //     throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+  //   }
+  //
+  //   const comment = await this.commentRepository.findById(commentId);
+  //   if (!comment) {
+  //     throw new HttpException('Comment not found', HttpStatus.NOT_FOUND);
+  //   }
+  //
+  //   // Удаление комментария из списка комментариев товара
+  //   const commentIndex = product.comments.findIndex((id) => id.toString() === commentId);
+  //   if (commentIndex === -1) {
+  //     throw new HttpException('Comment not found in product', HttpStatus.NOT_FOUND);
+  //   }
+  //   product.comments.splice(commentIndex, 1);
+  //
+  //   await Promise.all([product.save(), comment.deleteOne()]);
+  // }
 
-    const comment = new this.commentRepository({ productId, userId, content });
-    await comment.save();
+  // async updateComment(
+  //   productId: string,
+  //   commentId: string,
+  //   content: string
+  // ): Promise<Comment> {
+  //   const product = await this.productCardRepository.findById(productId);
+  //   if (!product) {
+  //     throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+  //   }
+  //
+  //   const comment = await this.commentRepository.findById(commentId);
+  //   if (!comment) {
+  //     throw new HttpException('Comment not found', HttpStatus.NOT_FOUND);
+  //   }
+  //
+  //   comment.content = content;
+  //   await comment.save();
+  //
+  //   return comment;
+  // }
+  //
+  // async getCommentsByProduct(productId: string): Promise<Comment[]> {
+  //   const product = await this.productCardRepository
+  //     .findById(productId)
+  //     .populate('comments')
+  //     .exec();
+  //   if (!product) {
+  //     throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+  //   }
 
-
-    product.comments.push(comment._id);
-    await product.save();
-
-    return comment;
-  }
-
-  async deleteComment(productId: string, commentId: string): Promise<void> {
-    const product = await this.productCardRepository.findById(productId);
-    if (!product) {
-      throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
-    }
-
-    const comment = await this.commentRepository.findById(commentId);
-    if (!comment) {
-      throw new HttpException('Comment not found', HttpStatus.NOT_FOUND);
-    }
-
-    // Удаление комментария из списка комментариев товара
-    const commentIndex = product.comments.findIndex((id) => id.toString() === commentId);
-    if (commentIndex === -1) {
-      throw new HttpException('Comment not found in product', HttpStatus.NOT_FOUND);
-    }
-    product.comments.splice(commentIndex, 1);
-
-    await Promise.all([product.save(), comment.deleteOne()]);
-  }
-
-  async updateComment(
-    productId: string,
-    commentId: string,
-    content: string
-  ): Promise<Comment> {
-    const product = await this.productCardRepository.findById(productId);
-    if (!product) {
-      throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
-    }
-
-    const comment = await this.commentRepository.findById(commentId);
-    if (!comment) {
-      throw new HttpException('Comment not found', HttpStatus.NOT_FOUND);
-    }
-
-    comment.content = content;
-    await comment.save();
-
-    return comment;
-  }
-
-  async getCommentsByProduct(productId: string): Promise<Comment[]> {
-    const product = await this.productCardRepository
-      .findById(productId)
-      .populate('comments')
-      .exec();
-    if (!product) {
-      throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
-    }
-
-    return product.comments;
-  }
+  //   return product.comments;
+  // }
 
 
 

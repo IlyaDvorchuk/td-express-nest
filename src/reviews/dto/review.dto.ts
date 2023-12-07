@@ -16,7 +16,4 @@ export class ReviewDto {
 
     @IsString({message: 'Должно быть строкой'})
     productId: string;
-
-    @IsString({message: 'Должно быть строкой'})
-    userId: string;
 }

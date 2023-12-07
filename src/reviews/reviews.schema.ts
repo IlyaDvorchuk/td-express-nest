@@ -1,10 +1,10 @@
 import mongoose, {HydratedDocument} from "mongoose";
 import {Prop, Schema, SchemaFactory} from "@nestjs/mongoose";
-import {ProductCard} from "./productCard.schema";
+import {ProductCard} from "../productCard/productCard.schema";
 
 export type ReviewDocument = HydratedDocument<Review>
 
-@Schema()
+@Schema({timestamps: true})
 export class Review {
   @Prop({required: true})
   text: string

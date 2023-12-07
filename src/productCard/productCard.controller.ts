@@ -17,7 +17,6 @@ import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import { editFileName, imageFileFilter } from "../utils/file-upload.utils";
 import { JwtAuthGuard } from "../middlewares/auth.middleware";
-import { CreateCommentDto } from './dto/create-comment.dto';
 import { Question } from 'src/questionary/questionary.schema';
 import { ApiResponse } from "@nestjs/swagger";
 import * as uuid from 'uuid'
@@ -200,32 +199,32 @@ export class ProductCardController {
 
 
   //добавление коммента к товару
-  @Post(':id/comments')
-  async createComment(
-    @Param('id') id: string,
-    @Body() createCommentDto: CreateCommentDto,
-  ) {
-    return this.productCardService.addCommentToProduct(id, createCommentDto.userId, createCommentDto.content);
-  }
-
-  //обновление/изменение коммента
-  @Put(':id/comments/:commentId')
-  async updateComment(
-    @Param('id') id: string,
-    @Param('commentId') commentId: string,
-    @Body() updateCommentDto: CreateCommentDto,
-  ) {
-    return this.productCardService.updateComment(id, commentId, updateCommentDto.content);
-  }
-
-  //удаление коммента
-  @Delete(':id/comments/:commentId')
-  async deleteComment(
-    @Param('id') id: string,
-    @Param('commentId') commentId: string,
-  ) {
-    return this.productCardService.deleteComment(id, commentId);
-  }
+  // @Post(':id/comments')
+  // async createComment(
+  //   @Param('id') id: string,
+  //   @Body() createCommentDto: CreateCommentDto,
+  // ) {
+  //   return this.productCardService.addCommentToProduct(id, createCommentDto.userId, createCommentDto.content);
+  // }
+  //
+  // //обновление/изменение коммента
+  // @Put(':id/comments/:commentId')
+  // async updateComment(
+  //   @Param('id') id: string,
+  //   @Param('commentId') commentId: string,
+  //   @Body() updateCommentDto: CreateCommentDto,
+  // ) {
+  //   return this.productCardService.updateComment(id, commentId, updateCommentDto.content);
+  // }
+  //
+  // //удаление коммента
+  // @Delete(':id/comments/:commentId')
+  // async deleteComment(
+  //   @Param('id') id: string,
+  //   @Param('commentId') commentId: string,
+  // ) {
+  //   return this.productCardService.deleteComment(id, commentId);
+  // }
 
 
   //создание вопроса
