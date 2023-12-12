@@ -26,4 +26,15 @@ export class ReviewsService {
           await product.save();
           return comment
     }
+
+    async getReviewsByProduct(productId: string) {
+      const product = await this.productCardRepository
+        .findById(productId)
+        .populate('comments')
+        .exec();
+      if (!product) {
+        throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+      }
+        return product.comments;
+    }
 }

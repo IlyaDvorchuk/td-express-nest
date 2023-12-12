@@ -15,6 +15,9 @@ export class Review {
   @Prop({ type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' })
   userId: string;
 
+  @Prop({ required: true  })
+  userName: string;
+
   @Prop({ type: mongoose.Schema.Types.ObjectId, required: true, ref: 'ProductCard' })
   productId: string;
 
