@@ -265,7 +265,7 @@ export class ProductCardService {
         }
       }
     }
-    for (let i = 0; i < dto.colors.length; i++) {
+    for (let i = 0; i < dto?.colors?.length || 0; i++) {
         const colorItem = dto.colors[i];
         const existingImage = product.colors.find(colorProduct => colorProduct.name === colorItem.name)
 
