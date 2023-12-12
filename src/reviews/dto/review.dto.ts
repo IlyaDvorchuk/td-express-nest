@@ -16,4 +16,8 @@ export class ReviewDto {
 
     @IsString({message: 'Должно быть строкой'})
     productId: string;
+
+    @ApiProperty({example: 'Вадим Попов', description: 'Имя пользователя'})
+    @IsString({message: 'Должно быть строкой'})
+    userName: string;
 }

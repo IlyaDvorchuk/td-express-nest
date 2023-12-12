@@ -12,11 +12,11 @@ export class Review {
   @Prop({required: false})
   rate: number
 
+  @Prop({ required: true })
+  userName: string;
+
   @Prop({ type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' })
   userId: string;
-
-  @Prop({ required: true  })
-  userName: string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, required: true, ref: 'ProductCard' })
   productId: string;

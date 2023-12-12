@@ -108,7 +108,7 @@ export class SheltersService {
           }
         })
         .exec();
-    return shelter.productCards;
+    return shelter.productCards.reverse();
   }
 
   async getCardsByName(
