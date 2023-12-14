@@ -163,7 +163,7 @@ export class ProductCardService {
       }
     }
 
-    // await this.processColors(dto, productIdFolder);
+    await this.processColors(dto, productIdFolder);
 
     // if ('colors' in dto) {
     //   delete dto.colors;
