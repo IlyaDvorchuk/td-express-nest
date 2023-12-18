@@ -92,6 +92,7 @@ export class SheltersService {
       name: shelter.shop.nameMarket,
       description: shelter.shop.description,
       imageShop: shelter.imageShop,
+      marketDelivery: shelter.rate,
       id: shelter._id
     }
   }

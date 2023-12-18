@@ -37,6 +37,9 @@ export class DeliveryAddress extends Document {
 
   @Prop({required: true})
   deliveryPrice: number
+
+  @Prop({default: true})
+  isTdMarket: boolean
 }
 
 export const DeliveryAddressSchema = SchemaFactory.createForClass(DeliveryAddress)

@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsString, ValidateNested } from "class-validator";
+import {IsBoolean, IsNumber, IsString, ValidateNested} from "class-validator";
 
 class Buyer {
   @ApiProperty({ example: 'Иванов', description: 'Recipient\'s family' })
@@ -105,4 +105,8 @@ export class CreateOrderDto {
   @ApiProperty({ type: DeliveryAddress, description: 'Delivery address' })
   @ValidateNested()
   deliveryAddress?: DeliveryAddress | undefined
+
+  @ApiProperty({ example: true, description: 'order td market delivery' })
+  @IsBoolean()
+  isTdMarket: boolean
 }
