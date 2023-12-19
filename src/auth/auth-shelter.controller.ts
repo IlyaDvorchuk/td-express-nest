@@ -7,7 +7,7 @@ import {
   Res,
   UploadedFiles,
   UseInterceptors,
-  UsePipes
+  // UsePipes
 } from "@nestjs/common";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ValidationPipe } from "../pipes/validation.pipe";
@@ -70,7 +70,7 @@ export class AuthShelterController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({summary: 'Логин продавца'})
   @ApiResponse({status: 200, type: 'sddsf'})
-  @UsePipes(ValidationPipe)
+  // @UsePipes(ValidationPipe)
   @Post('/login')
   async login(@Body() userDto: EnterUserDto,
               @Res({passthrough: true}) response: Response) {
