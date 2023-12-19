@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Order, OrderDocument } from './order.schema';
-import { User, UserDocument } from 'src/users/users.schema';
-import { CreateOrderDto } from "./dto/create-order.dto";
-import { Shelter, ShelterDocument } from "../shelters/shelters.schema";
+import {Injectable} from '@nestjs/common';
+import {InjectModel} from '@nestjs/mongoose';
+import {Model} from 'mongoose';
+import {Order, OrderDocument} from './order.schema';
+import {User, UserDocument} from 'src/users/users.schema';
+import {CreateOrderDto} from "./dto/create-order.dto";
+import {Shelter, ShelterDocument} from "../shelters/shelters.schema";
 
 @Injectable()
 export class OrderService {
@@ -65,6 +65,20 @@ export class OrderService {
 
   async getOrder(orderId: string): Promise<Order> {
     return this.orderModel.findById(orderId).exec();
+  }
+
+  async getOrdersMarketDelivery(): Promise<Order[]> {
+    return this.orderModel.find({
+      deliveryAddress: {$ne: null},
+      isTdMarket: true,
+    });
+  }
+
+  async getOrdersSelfDelivery(): Promise<Order[]> {
+    return this.orderModel.find({
+      deliveryAddress: {$ne: null},
+      isTdMarket: false,
+    });
   }
 
   async getUserOrders(userId: string): Promise<Order[]> {

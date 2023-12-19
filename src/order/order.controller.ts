@@ -26,10 +26,22 @@ export class OrderController {
     return this.orderService.getUserOrders(userId);
   }
 
+  @Get('/market')
+  async getOrderMarketDelivery() {
+    return this.orderService.getOrdersMarketDelivery();
+  }
+
+  @Get('/self-delivery')
+  async getOrderSelfDelivery() {
+    return this.orderService.getOrdersSelfDelivery();
+  }
+
   @Get(':orderId')
-  async getOrders(@Param('orderId') orderId: string) {
+  async getOrder(@Param('orderId') orderId: string) {
     return this.orderService.getOrder(orderId);
   }
+
+
 
   @Put('/:orderId/:status')
   async updateOrderStatus(

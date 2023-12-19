@@ -38,8 +38,6 @@ export class DeliveryAddress extends Document {
   @Prop({required: true})
   deliveryPrice: number
 
-  @Prop({default: true})
-  isTdMarket: boolean
 }
 
 export const DeliveryAddressSchema = SchemaFactory.createForClass(DeliveryAddress)
@@ -92,6 +90,9 @@ export class Order {
 
   @Prop({required: true})
   orderId: string
+
+  @Prop({default: true})
+  isTdMarket: boolean
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);
