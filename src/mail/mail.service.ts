@@ -33,7 +33,7 @@ export class MailService {
     const htmlTemplate = `
 <!DOCTYPE html>
 <html lang="ru">
-    <body style="background-color: #AE52DA; color: #fff; font-family: 'Courier New', Courier, monospace;">
+    <body style="background-color: #AE52DA; color: black; font-family: 'Courier New', Courier, monospace;">
         <header style="margin-bottom: 40px;">
             <h1 style="text-align: center; color: #fff;">
                 <img src="/logo-market.svg" alt="logo" style="margin: auto;">
