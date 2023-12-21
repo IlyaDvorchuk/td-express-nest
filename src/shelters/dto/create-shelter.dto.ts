@@ -48,18 +48,18 @@ export class PersonalData {
 
 export class Entity {
   @ApiProperty({example: 'true', description: 'ИП/Юр.лицо'})
-  @IsBoolean({message: 'Должно быть булевым значением'})
-  readonly isIndividual: boolean
+  @IsString({message: 'Должно быть строкой'})
+  readonly isIndividual: 'individual' | 'IE' | 'company'
 
   @ApiProperty({example: '586568956', description: 'Регистрационный номер/фискальный код'})
   @IsString({message: 'Должно быть строкой'})
   @Length(1, 16, {message: 'Не меньше 1 и не больше 16'})
-  readonly code: string
+  readonly code?: string
 
   @ApiProperty({example: '34343', description: 'БИК банка'})
   @IsString({message: 'Должно быть строкой'})
   @Length(1, 16, {message: 'Не меньше 1 и не больше 16'})
-  readonly bic: string
+  readonly bic?: string
 
   @ApiProperty({example: '45454545455445', description: 'Номёр расчётного счёта'})
   @IsString({message: 'Должно быть строкой'})

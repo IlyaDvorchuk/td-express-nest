@@ -33,12 +33,9 @@ export class MailService {
     const htmlTemplate = `
 <!DOCTYPE html>
 <html lang="ru">
-    <body style="background-color: #AE52DA; color: black; font-family: 'Courier New', Courier, monospace;">
+    <body style="color: black; font-family: 'Courier New', Courier, monospace;">
         <header style="margin-bottom: 40px;">
-            <h1 style="text-align: center; color: #fff;">
-                <img src="/logo-market.svg" alt="logo" style="margin: auto;">
-            </h1>
-            <h2 style="text-align: center; color: #fff; font-family: 'Courier New', Courier, monospace;">Подтверждение аккаунта td-market</h2>
+            <h1 style="text-align: center; color: #fff; font-family: 'Courier New', Courier, monospace;">Подтверждение аккаунта td-market</h1>
         </header>
         
         <p style="text-align: center; color: #fff; font-family: 'Courier New', Courier, monospace; font-size: larger;">
@@ -49,7 +46,7 @@ export class MailService {
             Введите данный код для подтверждения вашего аккаунта и постарайтесь никому его не сообщать)
         </p>
         
-        <div style="font-family: 'Courier New', Courier, monospace; color: #fff; font-size: 10px;">
+        <div style="font-family: 'Courier New', Courier, monospace; color: #fff; font-size: 14px; padding-left: 10px">
             Можете распространять код, это ваше право. Выбор между подчинением инструкциям и защитой принципов — ваш. Ваши решения — ваше право, и никто не имеет право указывать вами, что делать. Это ваш выбор, и ваше право на него неоспоримо.🦧
         </div>
         
