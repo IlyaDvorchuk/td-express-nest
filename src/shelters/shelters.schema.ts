@@ -11,10 +11,10 @@ export class PersonalData extends Document {
   @Prop({required: true})
   family: string
 
-  @Prop({required: true})
+  @Prop({required: false})
   patronymic: string
 
-  @Prop({required: true})
+  @Prop({required: false})
   birthday: string
 }
 
@@ -22,16 +22,16 @@ export const PersonalDataSchema = SchemaFactory.createForClass(PersonalData)
 
 @Schema({_id: false})
 export class ClosePerson extends Document {
-  @Prop({required: true})
+  @Prop({required: false})
   name: string
 
-  @Prop({required: true})
+  @Prop({required: false})
   family: string
 
-  @Prop({required: true})
+  @Prop({required: false})
   patronymic: string
 
-  @Prop({required: true})
+  @Prop({required: false})
   phoneClose: string
 }
 
@@ -39,13 +39,13 @@ export const ClosePersonSchema = SchemaFactory.createForClass(ClosePerson)
 
 @Schema()
 export class Entity extends Document {
-  @Prop({required: true})
-  isIndividual: boolean
+  @Prop({required: true, default: 'individual'})
+  isIndividual: 'individual' | 'IE' | 'company'
 
-  @Prop({required: true})
+  @Prop({required: false, default: ''})
   code: string
 
-  @Prop({required: true})
+  @Prop({required: false, default: ''})
   bic: string
 
   @Prop({required: true})

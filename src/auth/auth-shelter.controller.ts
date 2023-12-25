@@ -51,6 +51,7 @@ export class AuthShelterController {
     @Res({passthrough: true}) response: Response
   ) {
     const {imageShop} = images
+    console.log('imageShop', imageShop)
     // const photoPath = `/shelter-scans/${fileScan[0].filename}`;
     const photoShopPath = `/shelter-shops/${imageShop[0].filename}`;
     const shelter = await this.authService.registration(
@@ -58,6 +59,22 @@ export class AuthShelterController {
       // photoPath,
       photoShopPath
     )
+    const apiUrl = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT}/sendMessage`;
+    const message = `Продавец ${shelterDto.shop.nameMarket} зарегистрировался`
+    const payload = {
+      chat_id: '6016281493:AAEIcbTY5adYAHn2rA6j2Kl8_KzTMD3iTdw',
+      text: message,
+      parse_mode: 'MarkdownV2',
+    };
+    try {
+      await fetch(apiUrl, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'application/json' },
+      });
+    } catch (error) {
+      console.error('Error sending message to Telegram:', error);
+    }
     const token = await this.authService.createAccessToken(shelter);
     response.cookie('access_token_shelter', token, {
       maxAge: 30 * 24 * 60 * 60 * 1000,
