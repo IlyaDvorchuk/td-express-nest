@@ -127,7 +127,7 @@ export class ProductCardController {
           // Создаем папки продукта асинхронно, если они не существуют
           await fsPromises.mkdir(mainPhotoDestination, { recursive: true });
           await fsPromises.mkdir(additionalPhotosDestination, { recursive: true });
-
+          console.log('productId', productId)
           if (file.fieldname === 'mainPhoto') {
             cb(null, mainPhotoDestination);
           } else if (file.fieldname === 'additionalPhotos') {
@@ -137,7 +137,11 @@ export class ProductCardController {
           }
         },
         filename: editFileName,
+
       }),
+      limits: {
+        fileSize: 1024 * 1024 * 1024 * 1000,
+      },
       fileFilter: imageFileFilter,
     })
   )
@@ -146,6 +150,7 @@ export class ProductCardController {
     @Body() createProductCardDto: CreateProductCardDto,
     @UploadedFiles() files: { mainPhoto: Express.Multer.File, additionalPhotos: Express.Multer.File[] },
   ) {
+    console.log('req', req)
     const { mainPhoto, additionalPhotos } = files
     const shelterId = req.user
     const productIdFolder = req.productId;

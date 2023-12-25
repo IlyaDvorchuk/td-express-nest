@@ -6,6 +6,7 @@ import { EnterUserDto } from "../users/dto/enter-user.dto";
 import { TokensService } from "../tokens/tokens.service";
 import { SheltersService } from "../shelters/shelters.service";
 import {JwtService} from "@nestjs/jwt";
+import {NewPasswordDto} from "./dto/new-password.dto";
 
 @Injectable()
 export class AuthService {
@@ -88,6 +89,19 @@ export class AuthService {
     const validationUser = await this.validateUser(dto)
 
     return await this.userService.addTelegramPush(validationUser, dto.chatId)
+  }
+
+  async createNewPassword(passwordDto: NewPasswordDto) {
+    const user = await this.userService.getUserByEmail(passwordDto.email)
+    if (!user) {
+      throw new HttpException(
+          'Юзера с таким email не существует',
+          HttpStatus.BAD_REQUEST
+      )
+    }
+    user.password = await bcrypt.hash(passwordDto.password, 5)
+    await user.save()
+    return true;
   }
 }
 

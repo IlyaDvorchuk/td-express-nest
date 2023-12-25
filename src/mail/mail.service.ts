@@ -40,7 +40,7 @@ export class MailService {
             </h1>
             <h2 style="text-align: center; color: #fff; font-family: 'Courier New', Courier, monospace;">Подтверждение аккаунта td-market</h2>
         </header>
-        
+        \\\\\\\\\\\\\\\\\\\\\\\\ен
         <p style="text-align: center; color: #fff; font-family: 'Courier New', Courier, monospace; font-size: larger;">
             Ваш код авторизации: <span style="font-weight: 900;">${randomCode}</span>
         </p>

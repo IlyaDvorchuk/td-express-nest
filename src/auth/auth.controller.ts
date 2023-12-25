@@ -5,6 +5,7 @@ import { AuthService } from "./auth.service";
 import { Request, Response } from "express";
 import { EnterUserDto } from "../users/dto/enter-user.dto";
 import { ValidationPipe } from "../pipes/validation.pipe";
+import {NewPasswordDto} from "./dto/new-password.dto";
 
 @ApiTags('Авторизация')
 @Controller('auth')
@@ -72,5 +73,10 @@ export class AuthController {
   @Post('check-user')
   async checkShelterTelegram(@Body() dto: EnterUserDto) {
     return await this.authService.addTelegramShelter(dto);
+  }
+
+  @Post('/create-password')
+  async createNewPassword(@Body() passwordDto: NewPasswordDto) {
+    return await this.authService.createNewPassword(passwordDto)
   }
 }
