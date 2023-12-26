@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from "@nestjs/common";
+import {MiddlewareConsumer, Module} from "@nestjs/common";
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';

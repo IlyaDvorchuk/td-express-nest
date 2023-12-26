@@ -42,7 +42,8 @@ import {ReviewsModule} from "./reviews/reviews.module";
     MulterModule.register({
       dest: './static',
       limits: {
-        fileSize: 1024 * 1024 * 1024 * 1000
+        fileSize: 1024 * 1024 * 1024 * 1000,
+        fieldSize: 1024 * 1024 * 1024 * 1000,
       }
     }),
     UsersModule,

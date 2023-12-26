@@ -22,6 +22,7 @@ import { ApiResponse } from "@nestjs/swagger";
 import * as uuid from 'uuid'
 import { promises as fsPromises } from 'fs';
 import {AddColorDto} from "./dto/add-color.dto";
+import sharp from 'sharp';
 
 @Controller('product-cards')
 export class ProductCardController {
@@ -141,6 +142,7 @@ export class ProductCardController {
       }),
       limits: {
         fileSize: 1024 * 1024 * 1024 * 1000,
+        fieldSize: 1024 * 1024 * 1024 * 1000,
       },
       fileFilter: imageFileFilter,
     })
@@ -156,6 +158,21 @@ export class ProductCardController {
     const productIdFolder = req.productId;
     const mainPhotoPath = mainPhoto ? `/${productIdFolder}/main-photos/${mainPhoto[0].filename}` : undefined;
     const additionalPhotosPaths = additionalPhotos ? additionalPhotos?.map(file => `/${productIdFolder}/additional-photos/${file.filename}`) : [];
+
+    if (mainPhoto) {
+      await sharp(mainPhoto[0].path)
+          .resize({ width: 800, height: 800, fit: 'inside' }) // Укажите необходимые параметры сжатия
+          .toFile(mainPhotoPath);
+    }
+
+    if (additionalPhotos) {
+      await Promise.all(additionalPhotos.map(async (file, index) => {
+        const outputPath = additionalPhotosPaths[index];
+        await sharp(file.path)
+            .resize({ width: 800, height: 800, fit: 'inside' }) // Укажите необходимые параметры сжатия
+            .toFile(outputPath);
+      }));
+    }
 
     const card = await this.productCardService.createProductCard(
       createProductCardDto,
