@@ -33,11 +33,11 @@ export class MailService {
     const htmlTemplate = `
 <!DOCTYPE html>
 <html lang="ru">
-    <body style="color: black; font-family: 'Courier New', Courier, monospace;">
+    <body style="color: black; font-family: 'Roboto', sans-serif;">
         <header style="margin-bottom: 40px;">
             <h1 style="text-align: center; color: #fff; font-family: 'Courier New', Courier, monospace;">Подтверждение аккаунта td-market</h1>
         </header>
-        \\\\\\\\\\\\\\\\\\\\\\\\ен
+        
         <p style="text-align: center; color: #fff; font-family: 'Courier New', Courier, monospace; font-size: larger;">
             Ваш код авторизации: <span style="font-weight: 900;">${randomCode}</span>
         </p>
