@@ -13,7 +13,6 @@ export class MailService {
   }
 
   async activateMail(dto: ActivateMailDto) {
-    console.log('ActivateMailDto', dto);
     if (!dto?.isNotExamination) {
       let candidate;
       if (dto.isShelter) {
@@ -33,28 +32,28 @@ export class MailService {
     const htmlTemplate = `
 <!DOCTYPE html>
 <html lang="ru">
-    <body style="color: black; font-family: 'Roboto', sans-serif;">
+    <body style="color: #8c8484; font-family: 'Roboto', sans-serif;">
         <header style="margin-bottom: 40px;">
-            <h1 style="text-align: center; color: #fff; font-family: 'Courier New', Courier, monospace;">Подтверждение аккаунта td-market</h1>
+            <h1 style="text-align: center; color: #8c8484; font-family: 'Courier New', Courier, monospace;">Подтверждение аккаунта td-market</h1>
         </header>
         
-        <p style="text-align: center; color: #fff; font-family: 'Courier New', Courier, monospace; font-size: larger;">
-            Ваш код авторизации: <span style="font-weight: 900;">${randomCode}</span>
+        <p style="text-align: center; color: #8c8484; font-family: 'Courier New', Courier, monospace; font-size: larger;">
+            Ваш код авторизации: <span style="font-weight: 900; color: #ad2a2a">${randomCode}</span>
         </p>
         
-        <p style="text-align: center; color: #fff; font-family: 'Courier New', Courier, monospace;">
+        <p style="text-align: center; color: #8c8484; font-family: 'Courier New', Courier, monospace;">
             Введите данный код для подтверждения вашего аккаунта и постарайтесь никому его не сообщать)
         </p>
         
-        <div style="font-family: 'Courier New', Courier, monospace; color: #fff; font-size: 14px; padding-left: 10px">
+        <div style="font-family: 'Courier New', Courier, monospace; color: #8c8484; font-size: 14px; padding-left: 10px">
             Можете распространять код, это ваше право. Выбор между подчинением инструкциям и защитой принципов — ваш. Ваши решения — ваше право, и никто не имеет право указывать вами, что делать. Это ваш выбор, и ваше право на него неоспоримо.🦧
         </div>
         
-        <div style="font-family: 'Courier New', Courier, monospace; color: #fff;">
+        <div style="font-family: 'Courier New', Courier, monospace; color: #8c8484;">
             Цитата:<span style="font-weight: 900;">Chat gpt4</span>
         </div>
         
-        <p style="text-align: center; color: #fff; font-family: 'Courier New', Courier, monospace;">
+        <p style="text-align: center; color: #8c8484; font-family: 'Courier New', Courier, monospace;">
             Удачных покупок на td-market
         </p>
     </body>
