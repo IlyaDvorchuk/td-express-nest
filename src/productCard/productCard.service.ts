@@ -268,7 +268,7 @@ export class ProductCardService {
     for (let i = 0; i < dto.colors.length || 0; i++) {
         const colorItem = dto.colors[i];
         const existingImage = product.colors.find(colorProduct => colorProduct.name === colorItem.name)
-
+        // Удаление фотографии цвета
         if (!colorItem?.image) {
           const filePath = existingImage?.image;
           if (!filePath) continue
@@ -290,9 +290,9 @@ export class ProductCardService {
           });
 
           dto.colors.splice(i, 1)
-        } else if (colorItem.image && isBase64String(colorItem.image) && !existingImage) {
+        } else if (colorItem.image && isBase64String(colorItem.image) ) {
           await this.processColors(dto, parentFolder)
-        } else if (colorItem.image && isBase64String(colorItem.image) && existingImage) {
+        } else if (colorItem.image && isBase64String(colorItem.image) ) {
             const base64Data = colorItem.image.replace(/^data:image\/[a-z]+;base64,/, '');
             const filePath = existingImage?.image;
             // Используем значение из product.mainPhoto для пути к файлу
