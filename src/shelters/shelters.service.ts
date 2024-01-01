@@ -448,4 +448,23 @@ export class SheltersService {
       )
     }
   }
+
+  async getSellerForAdmin(id: string) {
+    const seller = await this.shelterRepository.findById(id).exec();
+
+    if (seller) {
+      return {
+        nameShop: seller.shop.nameMarket,
+        email: seller.email,
+        phone: seller.phone,
+        closePhone: seller.shelterData?.closePerson?.phoneClose || '',
+        name: seller.shelterData.personalData.name + ' ' + seller.shelterData.personalData.family + ' ' + seller.shelterData.personalData?.patronymic,
+      }
+    } else {
+      throw new HttpException(
+          'Не найден продавец',
+          HttpStatus.NOT_FOUND
+      )
+    }
+  }
 }

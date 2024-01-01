@@ -134,6 +134,11 @@ export class SheltersController {
     return await this.shelterService.getSellerForUser(name);
   }
 
+  @Get('admin/:id')
+  async getSellerForAdmin(@Param('id',) id: string,) {
+    return await this.shelterService.getSellerForAdmin(id);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Get()
   async getShelter(@Req() req) {
