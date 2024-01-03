@@ -22,7 +22,8 @@ import { ApiResponse } from "@nestjs/swagger";
 import * as uuid from 'uuid'
 import { promises as fsPromises } from 'fs';
 import {AddColorDto} from "./dto/add-color.dto";
-// import sharp from 'sharp';
+
+// @ts-ignore
 
 @Controller('product-cards')
 export class ProductCardController {
@@ -128,7 +129,6 @@ export class ProductCardController {
           // Создаем папки продукта асинхронно, если они не существуют
           await fsPromises.mkdir(mainPhotoDestination, { recursive: true });
           await fsPromises.mkdir(additionalPhotosDestination, { recursive: true });
-          console.log('productId', productId)
           if (file.fieldname === 'mainPhoto') {
             cb(null, mainPhotoDestination);
           } else if (file.fieldname === 'additionalPhotos') {
@@ -152,34 +152,22 @@ export class ProductCardController {
     @Body() createProductCardDto: CreateProductCardDto,
     @UploadedFiles() files: { mainPhoto: Express.Multer.File, additionalPhotos: Express.Multer.File[] },
   ) {
-    console.log('req', req)
     const { mainPhoto, additionalPhotos } = files
     const shelterId = req.user
     const productIdFolder = req.productId;
     const mainPhotoPath = mainPhoto ? `/${productIdFolder}/main-photos/${mainPhoto[0].filename}` : undefined;
     const additionalPhotosPaths = additionalPhotos ? additionalPhotos?.map(file => `/${productIdFolder}/additional-photos/${file.filename}`) : [];
 
-    // if (mainPhoto) {
-    //   await sharp(mainPhoto[0].path)
-    //       .resize({ width: 800, height: 800, fit: 'inside' }) // Укажите необходимые параметры сжатия
-    //       .toFile(mainPhotoPath);
-    // }
-    //
-    // if (additionalPhotos) {
-    //   await Promise.all(additionalPhotos.map(async (file, index) => {
-    //     const outputPath = additionalPhotosPaths[index];
-    //     await sharp(file.path)
-    //         .resize({ width: 800, height: 800, fit: 'inside' }) // Укажите необходимые параметры сжатия
-    //         .toFile(outputPath);
-    //   }));
-    // }
+
+
 
     const card = await this.productCardService.createProductCard(
       createProductCardDto,
       shelterId,
       mainPhotoPath,
       additionalPhotosPaths,
-      productIdFolder
+      productIdFolder,
+
     );
     return {
       card,

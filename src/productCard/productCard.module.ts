@@ -16,6 +16,7 @@ import { JwtStrategy } from '../utils/jwt.strategy';
 import { CategoriesModule } from "../categories/categories.module";
 import { QuestionModule } from 'src/questionary/questionary.module';
 import { ProductIdMiddleware } from "../middlewares/randonUuid.middleware";
+import {MulterModule} from "@nestjs/platform-express";
 
 
 @Module({
@@ -34,6 +35,10 @@ import { ProductIdMiddleware } from "../middlewares/randonUuid.middleware";
         expiresIn: '24d',
       },
     }),
+    MulterModule.register({
+      dest: './static', // указываете папку для сохранения загруженных файлов
+    }),
+
   ],
   controllers: [ProductCardController],
   providers: [ProductCardService, JwtStrategy],

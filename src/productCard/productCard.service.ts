@@ -13,6 +13,7 @@ import * as fs from "fs";
 import * as uuid from "uuid";
 import * as path from "path";
 import {AddColorDto} from "./dto/add-color.dto";
+import * as sharp from "sharp";
 
 @Injectable()
 export class ProductCardService {
@@ -25,7 +26,7 @@ export class ProductCardService {
     private categoriesService: CategoriesService,
   ) { }
 
-  private staticDir() {
+  staticDir() {
     return path.join(__dirname, "..", "..", "static");
   }
 
@@ -132,13 +133,52 @@ export class ProductCardService {
     return true
   }
 
+  async changeImageCompression (pathSharp: string, newFileName: string) {
+    const newPath = path.join(path.dirname(pathSharp), newFileName)
+    await sharp(pathSharp)
+        .resize({ width: 1200, height: 1200, fit: 'inside' }) // Укажите необходимые параметры сжатия
+        .toFile(newPath)
+
+    sharp.cache(false);
+    fs.unlink(pathSharp, (unlinkErr) => {
+      if (unlinkErr) {
+        console.error(`Ошибка при удалении файла: ${unlinkErr}`);
+      } else {
+        console.log(`Файл по пути ${pathSharp} успешно удален.`);
+      }
+    });
+    return newPath.replace(/^static/, '');
+  }
+
   async createProductCard(
     dto: CreateProductCardDto,
     shelterId: string,
     mainPhoto: string,
     additionalPhotos: string[],
-    productIdFolder: string
+    productIdFolder: string,
   ) {
+
+      // Извлекаем расширение файла
+      const pathSharp = path.join('./static', mainPhoto);
+
+      const fileExtension = path.extname(pathSharp);
+
+      // Формируем новое имя файла с добавлением строки "1"
+      const newFileName = path.basename(pathSharp, fileExtension) + '1' + fileExtension;
+
+      // Сжимаем оригинальный файл и сохраняем с новым именем в той же папке
+      const updateMainPhoto = await this.changeImageCompression(pathSharp, newFileName)
+
+      const updateAdditionalPhotos = await Promise.all(additionalPhotos.map(async (file, index) => {
+        const outputPath = additionalPhotos[index];
+        const pathSharp = path.join('./static', outputPath);
+        const fileExtension = path.extname(pathSharp);
+
+        const newFileName = path.basename(pathSharp, fileExtension) + '1' + fileExtension;
+        return await this.changeImageCompression(pathSharp, newFileName)
+
+      }));
+
 
     for (let field of Object.keys(dto)) {
       if (typeof dto[field] === 'string' && field !== 'nameShelter') {
@@ -172,8 +212,8 @@ export class ProductCardService {
     const product = await this.productCardRepository.create({
       ...dto,
       shelterId,
-      mainPhoto,
-      additionalPhotos,
+      mainPhoto: updateMainPhoto,
+      additionalPhotos: updateAdditionalPhotos,
       viewsCount: 0,
     });
     const isAddInShelter = await this.shelterService.addProductCard(shelterId, product._id);
