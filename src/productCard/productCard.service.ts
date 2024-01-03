@@ -135,8 +135,11 @@ export class ProductCardService {
 
   async changeImageCompression (pathSharp: string, newFileName: string) {
     const newPath = path.join(path.dirname(pathSharp), newFileName)
+
+
     await sharp(pathSharp)
-        .resize({ width: 1200, height: 1200, fit: 'inside' }) // Укажите необходимые параметры сжатия
+        .resize({ width: 1200, height: 1200, fit: 'inside' })
+        .withMetadata()
         .toFile(newPath)
 
     sharp.cache(false);
