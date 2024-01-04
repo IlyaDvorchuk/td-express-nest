@@ -140,6 +140,12 @@ export class SheltersController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('view-goods/:id')
+  async getSellerViewGood(@Param('id',) id: string,) {
+    return await this.shelterService.getSellerCountGoods(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get()
   async getShelter(@Req() req) {
     const shelterId = req.user

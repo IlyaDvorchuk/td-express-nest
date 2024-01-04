@@ -19,7 +19,6 @@ import { editFileName, imageFileFilter } from "../utils/file-upload.utils";
 import { JwtAuthGuard } from "../middlewares/auth.middleware";
 import { Question } from 'src/questionary/questionary.schema';
 import { ApiResponse } from "@nestjs/swagger";
-import * as uuid from 'uuid'
 import { promises as fsPromises } from 'fs';
 import {AddColorDto} from "./dto/add-color.dto";
 
@@ -103,10 +102,6 @@ export class ProductCardController {
   @Get(':id')
   async getProductCardById(@Param('id') id: string) {
     return this.productCardService.getProductCardById(id);
-  }
-
-  async generateProductId() {
-    return uuid.v4();
   }
 
   //создание карточки товара

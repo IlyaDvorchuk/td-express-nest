@@ -1,15 +1,15 @@
 import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
-import { Shelter, ShelterDocument } from "./shelters.schema";
+import {InjectModel} from "@nestjs/mongoose";
+import {Model} from "mongoose";
+import {Shelter, ShelterDocument} from "./shelters.schema";
 import {CreateShelterDto, ShelterDataDto, UpdateShelterShopDto} from "./dto/create-shelter.dto";
-import { ProductCard, ProductCardDocument } from 'src/productCard/productCard.schema';
-import { Order, OrderDocument } from 'src/order/order.schema';
-import { User, UserDocument } from 'src/users/users.schema';
+import {ProductCard, ProductCardDocument} from 'src/productCard/productCard.schema';
+import {Order, OrderDocument} from 'src/order/order.schema';
+import {User, UserDocument} from 'src/users/users.schema';
 import * as path from "path";
 import {isBase64String} from "../utils/isBase64String";
 import * as fs from "fs";
-import {NotificationDocument, Notification} from "../notification/notification.schema";
+import {Notification, NotificationDocument} from "../notification/notification.schema";
 
 @Injectable()
 export class SheltersService {
@@ -467,4 +467,24 @@ export class SheltersService {
       )
     }
   }
+
+  async getSellerCountGoods(id: string) {
+    try {
+      const seller = await this.shelterRepository
+          .findById(id)
+          .populate('productCards')
+          .exec();
+
+      if (seller && seller.productCards && seller.productCards.length > 0) {
+        // Рассчитываем сумму viewsCount
+        return seller.productCards.reduce((sum, productCard) => sum + (productCard.viewsCount || 0), 0);
+      } else {
+        return 0; // или любое другое значение по умолчанию
+      }
+    } catch (error) {
+      console.error('Ошибка при получении данных:', error);
+      throw error; // или обработайте ошибку по вашему усмотрению
+    }
+  }
+
 }
