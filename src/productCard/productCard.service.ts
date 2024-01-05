@@ -460,6 +460,21 @@ export class ProductCardService {
       });
     });
 
+    const colorImages = productCard?.colors as ColorImage[]
+    if (colorImages) {
+      colorImages.forEach((color) => {
+        if (color?.image) {
+          const filePath = `./static/${color?.image}`;
+          fs.unlink(filePath, (error) => {
+            if (error) {
+              console.error('Ошибка при удалении файла additionalPhoto:', error);
+            }
+          });
+        }
+
+      });
+    }
+
     const isCategoryRemovalSuccessful = await this.categoriesService.removeProductCardFromCategories(productId);
 
     const isShelterRemovalSuccessful = await this.shelterService.removeProductCardFromShelter(shelterId, productId);
