@@ -3,12 +3,15 @@ import { CreateDeliveryDto, DeliveryItemDto } from "./dto/delivery.dto";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { City, CityDocument, Delivery, DeliveryDocument } from "./delivery.schema";
+import {Shelter, ShelterDocument} from "../shelters/shelters.schema";
 
 @Injectable()
 export class DeliveryService {
   constructor(
     @InjectModel(Delivery.name) private deliveryRepository: Model<DeliveryDocument>,
     @InjectModel(City.name) private cityRepository: Model<CityDocument>,
+    @InjectModel(Shelter.name) private shelterRepository: Model<ShelterDocument>,
+
   ) {
   }
 
@@ -58,13 +61,24 @@ export class DeliveryService {
   async getDeliveryCities(shelterId: string) {
     const deliveryShelter = await this.deliveryRepository.findOne({ shelterId });
 
-    if (!deliveryShelter) {
-      throw new HttpException(
-
-        'Не удалось найти доставку продавца',
-        HttpStatus.BAD_REQUEST
-      )
+    const seller = await this.shelterRepository.findById(shelterId)
+    if (!deliveryShelter || seller?.rate === 'td-delivery') {
+      return [
+        {
+          city: 'Тирасполь',
+          price: 35,
+        },
+        {
+          city: 'Бендеры',
+          price: 40,
+        },
+        {
+          city: 'Слободзея',
+          price: 40,
+        }
+      ]
     }
+
 
     return deliveryShelter.cities
   }
