@@ -206,11 +206,15 @@ export class SheltersService {
     return await Promise.all(
         orders.map(async (order) => {
           const user = await this.userModel.findById(order.userId).exec();
-          const product = await this.productCardModel.findById(order.goodId).exec();
+          const products = await Promise.all(
+              order.orderTypes.map(async (orderType) => {
+                return await this.productCardModel.findById(orderType.goodId).exec();
+              })
+          );
 
           return {
             user,
-            product,
+            products,
             status: order.status,
             order: order
           };

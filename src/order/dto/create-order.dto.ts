@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import {IsBoolean, IsNumber, IsString, ValidateNested} from "class-validator";
+import {IsArray, IsBoolean, IsNumber, IsString, ValidateNested} from "class-validator";
 
 class Buyer {
   @ApiProperty({ example: 'Иванов', description: 'Recipient\'s family' })
@@ -45,11 +45,10 @@ class DeliveryAddress {
   readonly deliveryPrice?: number;
 }
 
-export class CreateOrderDto {
+export class OrderType {
   @ApiProperty({ example: 'Футболка зелёная', description: 'Name of product' })
   @IsString()
   goodName: string
-
 
   @ApiProperty({ example: '/card/product.jpg', description: 'Photo of product' })
   @IsString()
@@ -63,12 +62,26 @@ export class CreateOrderDto {
   @IsString()
   typeId: string
 
+  @ApiProperty({ example: 'Shelter id', description: 'Shelter id' })
+  @IsString()
+  shelterId: string
+
+  @ApiProperty({ example: 3, description: 'Good\'s count' })
+  @IsNumber()
+  count: number
+}
+
+
+export class CreateOrderDto {
+  @ValidateNested()
+  orderTypes: OrderType[]
+
   @ApiProperty({ example: 'User id', description: 'User id' })
   userId: string | null
 
   @ApiProperty({ example: 'Shelter id', description: 'Shelter id' })
-  @IsString()
-  shelterId: string
+  @IsArray()
+  shelterIds: string[]
 
   @ApiProperty({ example: 'Доставка', description: 'Order status' })
   @IsString()
@@ -89,10 +102,6 @@ export class CreateOrderDto {
   @ApiProperty({ example: 36.5, description: 'Good\'s price' })
   @IsNumber()
   price: number
-
-  @ApiProperty({ example: 3, description: 'Good\'s count' })
-  @IsNumber()
-  count: number
 
   @ApiProperty({ example: 'Тирасполь', description: 'City\'s order' })
   @IsString()

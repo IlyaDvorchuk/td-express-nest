@@ -1,5 +1,6 @@
 import mongoose, { Document, HydratedDocument } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import {Shelter} from "../shelters/shelters.schema";
 
 @Schema()
 export class Buyer extends Document {
@@ -38,31 +39,55 @@ export class DeliveryAddress extends Document {
   @Prop({required: true})
   deliveryPrice: number
 
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  userId: string;
 }
 
 export const DeliveryAddressSchema = SchemaFactory.createForClass(DeliveryAddress)
 
-export type OrderDocument = HydratedDocument<Order>
 
-@Schema({ timestamps: true })
-export class Order {
+@Schema()
+export class OrderType extends Document {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'ProductCard', required: true })
   goodId: string;
-
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'SizeQuantity', required: true })
-  typeId: string;
-
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-  userId: string;
-
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Shelter' , required: true})
-  shelterId: string;
 
   @Prop({ required: true })
   goodName: string;
 
   @Prop({ required: true })
   goodPhoto: string;
+
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'SizeQuantity', required: true })
+  typeId: string;
+
+  @Prop({required: true})
+  count: number
+
+  @Prop({  type: mongoose.Schema.Types.ObjectId, ref: 'Shelter', required: true})
+  shelterId: string;
+
+  @Prop({required: true})
+  price: number
+
+}
+
+export const OrderTypeSchema = SchemaFactory.createForClass(OrderType)
+
+export type OrderDocument = HydratedDocument<Order>
+
+@Schema({ timestamps: true })
+export class Order {
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  userId: string;
+
+  @Prop({  type: [OrderTypeSchema] , required: true})
+  orderTypes: OrderType[];
+
+  @Prop({ type: [{type: mongoose.Schema.Types.ObjectId, ref: 'Shelter'}] , required: true})
+  shelterIds: Shelter[];
+
 
   @Prop({ required: true })
   status: string;
@@ -81,9 +106,6 @@ export class Order {
 
   @Prop({required: true})
   price: number
-
-  @Prop({required: true})
-  count: number
 
   @Prop({ required: false, default: '' })
   city: string;

@@ -14,9 +14,46 @@ export class OrderService {
     @InjectModel(Shelter.name) private readonly shelterModel: Model<ShelterDocument>,
   ) {}
 
-  async createOrder(orderDto: CreateOrderDto): Promise<Order> {
-    const order = await this.orderModel.create(orderDto);
+  private async pushSellerOrder(shelter: Shelter, order: Order) {
+    // @ts-ignore
+    shelter.orders.push(order._id);
+    await shelter.save();
+    if (shelter?.isDeliveryMarket) {
+      const relevantOrderTypes = order.orderTypes.filter(orderType => orderType.shelterId === shelter._id);
 
+      // Вычисляем сумму count только для отфильтрованных orderTypes
+      const totalOrderCount = relevantOrderTypes.reduce((sum, orderType) => sum + orderType.count, 0);
+      const apiUrl = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT}/sendMessage`;
+      const productNames = order.orderTypes.map(orderType => orderType.goodName).join(', ');
+      const message = `
+          У продавца ${shelter.shop.nameMarket} заказали товар: ${productNames} в количестве ${totalOrderCount} ценой ${order.price}
+          
+          Данные о покупателе:
+          ${order.buyer.name}
+          ${order.buyer.family}
+          ${order.buyer.phone}
+        `
+      const payload = {
+        chat_id: '6016281493:AAEIcbTY5adYAHn2rA6j2Kl8_KzTMD3iTdw',
+        text: message,
+        parse_mode: 'MarkdownV2',
+      };
+      try {
+        await fetch(apiUrl, {
+          method: 'POST',
+          body: JSON.stringify(payload),
+          headers: { 'Content-Type': 'application/json' },
+        });
+      } catch (error) {
+        console.error('Error sending message to Telegram:', error);
+      }
+    }
+  }
+
+  async createOrder(orderDto: CreateOrderDto): Promise<Order> {
+    console.log('orderDto',orderDto)
+    const order = await this.orderModel.create(orderDto);
+    console.log('order',order)
     const user = await this.userModel.findById(orderDto.userId).exec();
 
     if (user) {
@@ -26,38 +63,12 @@ export class OrderService {
 
     }
 
-    const shelter = await this.shelterModel.findById(orderDto.shelterId).exec();
+    const shelters = await this.shelterModel.find({ _id: { $in: orderDto.shelterIds } }).exec();
 
-    if (shelter) {
-      // @ts-ignore
-      shelter.orders.push(order._id);
-      await shelter.save();
-      if (shelter?.isDeliveryMarket) {
-        const apiUrl = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT}/sendMessage`;
-        const message = `
-          У продавца ${shelter.shop.nameMarket} заказали товар ${order.goodName} в количестве ${order.count} ценой ${order.price}
-          
-          Данные о покупателе:
-          ${order.buyer.name}
-          ${order.buyer.family}
-          ${order.buyer.phone}
-        `
-        const payload = {
-          chat_id: '6016281493:AAEIcbTY5adYAHn2rA6j2Kl8_KzTMD3iTdw',
-          text: message,
-          parse_mode: 'MarkdownV2',
-        };
-        try {
-          await fetch(apiUrl, {
-            method: 'POST',
-            body: JSON.stringify(payload),
-            headers: { 'Content-Type': 'application/json' },
-          });
-        } catch (error) {
-          console.error('Error sending message to Telegram:', error);
-        }
+    for (const shelter of shelters) {
+      if (shelter) {
+        await this.pushSellerOrder(shelter, order);
       }
-
     }
 
     return order;
