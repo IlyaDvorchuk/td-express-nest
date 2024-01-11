@@ -35,7 +35,8 @@ export class CartService {
                     quantity: dto.quantity,
                     size: dto?.size,
                     typeId: dto.typeId,
-                    color: dto?.color
+                    color: dto?.color,
+                    nameShelter: dto?.nameShelter
                 });
 
                 await cart.save();
@@ -113,7 +114,7 @@ export class CartService {
                 mainPhoto: productCard.mainPhoto,
                 size: undefined,
                 color: undefined,
-                nameShelter: productCard?.nameShelter
+                nameShelter: item?.nameShelter
             }
             if (item.size) answer.size = item.size
             if (item.color) answer.color = item.color

@@ -3,5 +3,6 @@ export class CreateCartDto {
   quantity: number;
   size?: string;
   color?: string;
-  typeId?: string
+  typeId?: string;
+  nameShelter: string
 }
