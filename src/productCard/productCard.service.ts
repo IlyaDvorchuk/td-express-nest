@@ -93,9 +93,16 @@ export class ProductCardService {
 
   }
 
-  async getProductCardById(id: string): Promise<ProductCard> {
-    const query = this.productCardRepository.findOne({ _id: id, published: true });
-    return query.exec();
+  async getProductCardById(id: string, userId?: string): Promise<ProductCard> {
+    const query = await this.productCardRepository.findOne({ _id: id, published: true });
+    if (!query) {
+      throw new HttpException(
+          'Не удалось найти товар',
+          HttpStatus.NOT_FOUND
+      );
+    }
+    const cardWithFavorite = await this.checkFavorites([query], userId)
+    return cardWithFavorite[0];
   }
 
   async getProductCardsById(productIds: string[]): Promise<ProductCard[]> {

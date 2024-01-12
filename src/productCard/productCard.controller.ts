@@ -106,8 +106,11 @@ export class ProductCardController {
 
   //получение товара по id
   @Get(':id')
-  async getProductCardById(@Param('id') id: string) {
-    return this.productCardService.getProductCardById(id);
+  async getProductCardById(
+      @Param('id',) id: string,
+      @Query('userId') userId?: string
+  ) {
+    return this.productCardService.getProductCardById(id, userId);
   }
 
   //создание карточки товара
