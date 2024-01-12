@@ -1,4 +1,4 @@
-import {MiddlewareConsumer, Module} from "@nestjs/common";
+import {forwardRef, MiddlewareConsumer, Module} from "@nestjs/common";
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
@@ -17,6 +17,8 @@ import { CategoriesModule } from "../categories/categories.module";
 import { QuestionModule } from 'src/questionary/questionary.module';
 import { ProductIdMiddleware } from "../middlewares/randonUuid.middleware";
 import {MulterModule} from "@nestjs/platform-express";
+import {FavoriteModule} from "../favorite/favorite.module";
+import {Favorites, FavoritesSchema} from "../favorite/favorite-item.schema";
 
 
 @Module({
@@ -25,10 +27,12 @@ import {MulterModule} from "@nestjs/platform-express";
       { name: ProductCard.name, schema: ProductCardSchema },
       { name: TypeQuantity.name, schema: TypeQuantitySchema },
       { name: Comment.name, schema: CommentSchema },
+      { name: Favorites.name, schema: FavoritesSchema },
     ]),
     PassportModule,
     CategoriesModule,
     QuestionModule,
+    forwardRef(() =>  FavoriteModule),
     JwtModule.register({
       secret: process.env.PRIVATE_KEY || 'SECRET',
       signOptions: {

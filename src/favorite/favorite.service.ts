@@ -44,8 +44,9 @@ export class FavoriteService {
 
     async removeFromFavorite(userId: string, productId: string) {
         const favorites = await this.findFavoriteById(userId);
+
         if (favorites) {
-            const itemIndex = favorites.items.findIndex((item) => item.productId === productId);
+            const itemIndex = favorites.items.findIndex((item) => item.productId.toString() === productId);
             if (itemIndex !== -1) {
                 favorites.items.splice(itemIndex, 1);
                 await favorites.save();

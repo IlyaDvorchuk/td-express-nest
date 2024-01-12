@@ -38,6 +38,7 @@ export class ProductCardController {
     @Query('maxPrice') maxPrice: number,
     @Query('colors') colors: string[] = [],
     @Query('size') size: string = '',
+    @Query('userId') userId: string = '',
   ) {
     return this.productCardService.searchProductCardsByCategory(
       category,
@@ -46,7 +47,7 @@ export class ProductCardController {
       minPrice,
       maxPrice,
         colors,
-      size,
+        userId
     );
   }
 
@@ -60,6 +61,7 @@ export class ProductCardController {
     @Query('maxPrice') maxPrice: number = Number.MAX_SAFE_INTEGER,
     @Query('colors') colors: string[] = [],
     @Query('size') size: string = '',
+    @Query('userId') userId: string = '',
   ) {
     return this.productCardService.searchProductCards(
       query,
@@ -67,7 +69,8 @@ export class ProductCardController {
       limit,
       minPrice,
       maxPrice,
-        colors
+        colors,
+        userId
     );
   }
 
@@ -75,9 +78,11 @@ export class ProductCardController {
   @Get('/hot-offers')
   async getHotOffers(
     @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10
+    @Query('limit') limit: number = 10,
+    @Query('userId') userId: string
+
   ) {
-    return await this.productCardService.getHotOffers(page, limit);
+    return await this.productCardService.getHotOffers(page, limit, userId);
   }
 
   // Получение новых товаров
@@ -85,9 +90,10 @@ export class ProductCardController {
   @Get('/new')
   async getNewProductCards(
     @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10
+    @Query('limit') limit: number = 10,
+  @Query('userId') userId: string
   ) {
-    return await this.productCardService.getNewProductCards(page, limit);
+    return await this.productCardService.getNewProductCards(page, limit, userId);
   }
 
 

@@ -9,6 +9,7 @@ import { ProductCard, ProductCardSchema } from 'src/productCard/productCard.sche
 import { Order, OrderSchema } from 'src/order/order.schema';
 import { User, UserSchema } from 'src/users/users.schema';
 import {NotificationSchema, Notification} from "../notification/notification.schema";
+import {Favorites, FavoritesSchema} from "../favorite/favorite-item.schema";
 
 @Global()
 @Module({
@@ -21,6 +22,7 @@ import {NotificationSchema, Notification} from "../notification/notification.sch
       { name: Order.name, schema: OrderSchema },
       { name: User.name, schema: UserSchema },
       { name: Notification.name, schema: NotificationSchema },
+      { name: Favorites.name, schema: FavoritesSchema },
     ]),
     JwtModule.register({
       secret: process.env.PRIVATE_KEY || 'SECRET',

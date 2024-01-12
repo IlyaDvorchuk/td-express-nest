@@ -10,6 +10,7 @@ import * as path from "path";
 import {isBase64String} from "../utils/isBase64String";
 import * as fs from "fs";
 import {Notification, NotificationDocument} from "../notification/notification.schema";
+import {Favorites, FavoritesDocument} from "../favorite/favorite-item.schema";
 
 @Injectable()
 export class SheltersService {
@@ -18,6 +19,7 @@ export class SheltersService {
               @InjectModel(Order.name) private readonly orderModel: Model<OrderDocument>,
               @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
               @InjectModel(Notification.name) private readonly notificationModel: Model<NotificationDocument>,
+              @InjectModel(Favorites.name) private favoritesRepository: Model<FavoritesDocument>,
   ) {
   }
 
@@ -112,6 +114,24 @@ export class SheltersService {
     return shelter.productCards.reverse();
   }
 
+  private async checkFavorites(goods, userId?: string) {
+    if (!userId) return goods
+    let favorites = []
+    const favoriteItem = await this.favoritesRepository.findOne({userId});
+    if (favoriteItem) {
+      favorites = favoriteItem.items.map(item => item.productId.toString());
+    }
+
+    return goods.map((offer) => {
+      const offerObject = offer.toObject();
+      return {
+        ...offerObject,
+        isFavorite: favorites.includes(offer._id.toString()),
+      };
+    });
+
+  }
+
   async getCardsByName(
       name: string,
       page: number,
@@ -119,6 +139,7 @@ export class SheltersService {
       minPrice?: number,
       maxPrice?: number,
       colors?: string[],
+      userId?: string
   ) {
     const shelter = await this.shelterRepository
         .findOne({ 'shop.nameMarket': name })
@@ -127,7 +148,8 @@ export class SheltersService {
           options: {
             skip: (page - 1) * limit, // Пропустить элементы предыдущих страниц
             limit: limit // Ограничить количество элементов на странице
-          }
+          },
+          match: { published: true },
         })
         .exec();
 
@@ -160,9 +182,10 @@ export class SheltersService {
       return price > max ? price : max;
     }, 0);
 
+    const productCardsWithFavorites = await this.checkFavorites(productCards, userId);
 
     return {
-      productCards,
+      productCards: productCardsWithFavorites,
       minPriceRange,
       maxPriceRange
     };

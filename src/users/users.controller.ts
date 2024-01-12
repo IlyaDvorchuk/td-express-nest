@@ -1,6 +1,6 @@
 import {
   Body,
-  Controller,
+  Controller, Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -15,7 +15,6 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ValidationPipe } from "../pipes/validation.pipe";
 import {JwtAuthGuard} from "../middlewares/auth.middleware";
-import { CreateNotificationDto } from "src/notification/dto/notification.dto";
 import { CreateCartDto } from "src/cart/dto/create-cart.dto";
 
 @ApiTags('Пользователи')
@@ -75,10 +74,10 @@ export class UsersController {
 
   //удалить из избранного
   @UseGuards(JwtAuthGuard)
-  @Get('/removeFromFavorite')
-  removeFromFavorite(@Req() req, @Body() productCardId: string,) {
+  @Delete('/removeFromFavorite/:goodId')
+  removeFromFavorite(@Req() req, @Param('goodId') goodId: string) {
     const userId = req.user
-    return this.usersService.removeFromFavorite(userId, productCardId)
+    return this.usersService.removeFromFavorite(userId, goodId)
   }
 
 

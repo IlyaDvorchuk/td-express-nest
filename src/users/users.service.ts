@@ -153,12 +153,19 @@ export class UsersService {
   }
 
   async removeFromFavorite(userId: string, productCardId: string) {
+
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
     }
 
-    await this.favoriteService.removeFromFavorite(userId, productCardId)
+    try {
+      await this.favoriteService.removeFromFavorite(userId, productCardId)
+    return true
+    } catch (e) {
+      console.log('e', e)
+      return false
+    }
 
     //product.isCart = false;
     //await this.productCardService.updateProductCard(productCardId, product);

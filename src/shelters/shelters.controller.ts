@@ -36,8 +36,9 @@ export class SheltersController {
       @Query('minPrice') minPrice: number,
       @Query('maxPrice') maxPrice: number,
       @Query('colors') colors: string[] = [],
+      @Query('userId') userId: string = '',
   ) {
-    return  await this.shelterService.getCardsByName(name, page, limit, minPrice, maxPrice, colors);
+    return  await this.shelterService.getCardsByName(name, page, limit, minPrice, maxPrice, colors, userId);
   }
 
 

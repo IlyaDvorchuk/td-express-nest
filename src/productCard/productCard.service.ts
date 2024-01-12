@@ -14,6 +14,7 @@ import * as uuid from "uuid";
 import * as path from "path";
 import {AddColorDto} from "./dto/add-color.dto";
 import * as sharp from "sharp";
+import {Favorites, FavoritesDocument} from "../favorite/favorite-item.schema";
 
 @Injectable()
 export class ProductCardService {
@@ -21,6 +22,7 @@ export class ProductCardService {
     @InjectModel(ProductCard.name) private productCardRepository: Model<ProductCard>,
     @InjectModel(TypeQuantity.name) private typeRepository: Model<TypeQuantity>,
     @InjectModel(Comment.name) private commentRepository: Model<Comment>,
+    @InjectModel(Favorites.name) private favoritesRepository: Model<FavoritesDocument>,
     private questionService: QuestionaryService,
     private shelterService: SheltersService,
     private categoriesService: CategoriesService,
@@ -71,6 +73,24 @@ export class ProductCardService {
         }
       }
     }
+  }
+
+  private async checkFavorites(goods, userId?: string) {
+    if (!userId) return goods
+    let favorites = []
+    const favoriteItem = await this.favoritesRepository.findOne({userId});
+    if (favoriteItem) {
+      favorites = favoriteItem.items.map(item => item.productId.toString());
+    }
+
+    return goods.map((offer) => {
+      const offerObject = offer.toObject();
+      return {
+        ...offerObject,
+        isFavorite: favorites.includes(offer._id.toString()),
+      };
+    });
+
   }
 
   async getProductCardById(id: string): Promise<ProductCard> {
@@ -490,7 +510,7 @@ export class ProductCardService {
     }
   }
 
-  async getNewProductCards(page: number, limit: number) {
+  async getNewProductCards(page: number, limit: number, userId?: string) {
     const skip = (page - 1) * limit;
 
     const totalCount = await this.productCardRepository.countDocuments({
@@ -507,9 +527,9 @@ export class ProductCardService {
       .skip(skip)
       .limit(limit)
       .exec();
-
+    const productCardsWithFavorites = await this.checkFavorites(productCards, userId);
     return {
-      productCards,
+      productCards: productCardsWithFavorites,
       totalPages,
       currentPage: page,
     };
@@ -522,7 +542,7 @@ export class ProductCardService {
     minPrice?: number,
     maxPrice?: number,
     colors?: string[],
-    size?: string,
+    userId?: string,
   ) {
     let query = this.productCardRepository.find({
       published: true,
@@ -569,9 +589,9 @@ export class ProductCardService {
       return price > max ? price : max;
     }, 0);
 
-
+    const productCardsWithFavorites = await this.checkFavorites(productCards, userId);
     return {
-      productCards,
+      productCards: productCardsWithFavorites,
       minPriceRange,
       maxPriceRange,
       totalPages,
@@ -604,6 +624,7 @@ export class ProductCardService {
     minPrice?: number,
     maxPrice?: number,
     colors?: string[],
+    userId?: string,
   ) {
     const regexQuery = new RegExp(query, 'i');
 
@@ -646,9 +667,9 @@ export class ProductCardService {
       .exec();
 
     const {minPriceRange, maxPriceRange} = this.getRangePrices(productCards)
-
+    const productCardsWithFavorites = await this.checkFavorites(productCards, userId);
     return {
-      productCards,
+      productCards: productCardsWithFavorites,
       totalPages,
       currentPage: page,
       minPriceRange,
@@ -685,32 +706,9 @@ export class ProductCardService {
 
   }
 
-  async getAllProductCards(page: number, limit: number) {
-    const skip = (page - 1) * limit;
-    const totalCount = await this.productCardRepository.countDocuments({
-      published: true,
-      'pricesAndQuantity.quantity': { $gt: 0 }, // Фильтр для количества больше 0
-    });
-    const totalPages = Math.ceil(totalCount / limit);
 
-    const productCards = await this.productCardRepository
-      .find({ published: true, 'pricesAndQuantity.quantity': { $gt: 0 } }) // Фильтр для количества больше 0
-      .skip(skip)
-      .limit(limit)
-      .exec();
 
-    const {minPriceRange, maxPriceRange} = this.getRangePrices(productCards)
-
-    return {
-      productCards,
-      totalPages,
-      minPriceRange,
-      maxPriceRange,
-      currentPage: page,
-    };
-  }
-
-  async getHotOffers(page: number, limit: number) {
+  async getHotOffers(page: number, limit: number, userId?: string) {
     const skip = (page - 1) * limit;
 
     const totalCount = await this.productCardRepository.countDocuments({
@@ -727,10 +725,36 @@ export class ProductCardService {
       .skip(skip)
       .limit(limit)
       .exec();
+    const hotOffersWithFavorites = await this.checkFavorites(hotOffers, userId);
 
     return {
-      productCards: hotOffers,
+      productCards: hotOffersWithFavorites,
       totalPages,
+      currentPage: page,
+    };
+  }
+
+  async getAllProductCards(page: number, limit: number) {
+    const skip = (page - 1) * limit;
+    const totalCount = await this.productCardRepository.countDocuments({
+      published: true,
+      'pricesAndQuantity.quantity': { $gt: 0 }, // Фильтр для количества больше 0
+    });
+    const totalPages = Math.ceil(totalCount / limit);
+
+    const productCards = await this.productCardRepository
+        .find({ published: true, 'pricesAndQuantity.quantity': { $gt: 0 } }) // Фильтр для количества больше 0
+        .skip(skip)
+        .limit(limit)
+        .exec();
+
+    const {minPriceRange, maxPriceRange} = this.getRangePrices(productCards)
+
+    return {
+      productCards,
+      totalPages,
+      minPriceRange,
+      maxPriceRange,
       currentPage: page,
     };
   }
