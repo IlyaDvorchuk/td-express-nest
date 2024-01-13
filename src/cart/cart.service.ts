@@ -114,7 +114,8 @@ export class CartService {
                 mainPhoto: productCard.mainPhoto,
                 size: undefined,
                 color: undefined,
-                nameShelter: item?.nameShelter
+                nameShelter: item?.nameShelter,
+                card: productCard
             }
             if (item.size) answer.size = item.size
             if (item.color) answer.color = item.color

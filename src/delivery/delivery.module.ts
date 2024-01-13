@@ -13,6 +13,7 @@ import {Shelter, ShelterSchema} from "../shelters/shelters.schema";
       { name: Delivery.name, schema: DeliverySchema },
       { name: City.name, schema: CitySchema },
       {name: Shelter.name, schema: ShelterSchema},
+      {name: Shelter.name, schema: ShelterSchema},
     ]),
   ]
 })
