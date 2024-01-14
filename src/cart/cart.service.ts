@@ -99,7 +99,7 @@ export class CartService {
             return []; // Return an empty array if no cart found
         }
         const cartItemsWithPrices = await Promise.all(cart.items.map(async (item) => {
-            const productCard = await this.productCardService.getProductCardById(item.productId);
+            const productCard = await this.productCardService.getProductCardById(item.productId, userId);
 
             if (!productCard) {
                 return null; // Handle the case where productCard is not found

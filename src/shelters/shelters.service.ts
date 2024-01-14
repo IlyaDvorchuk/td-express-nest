@@ -286,9 +286,9 @@ export class SheltersService {
 
       if (typeof shelterShopDto.imageShop === 'string') {
         const staticDir = path.join(__dirname, '..', '..', 'static');
-        console.log('staticDir 202', staticDir);
         if (isBase64String(shelterShopDto.imageShop)) {
-          const base64Data = shelter.imageShop.replace(/^data:image\/[a-z]+;base64,/, '');
+          const base64Data = shelterShopDto.imageShop.replace(/^data:image\/[a-z]+;base64,/, '');
+
           // Используйте значение из product.mainPhoto для пути к файлу
           const filePath = shelter.imageShop;
 
