@@ -113,6 +113,9 @@ export class Order {
   @Prop({required: true})
   orderId: string
 
+  @Prop({required: false, default: null})
+  pointId: string | null
+
   @Prop({default: true})
   isTdMarket: boolean
 }

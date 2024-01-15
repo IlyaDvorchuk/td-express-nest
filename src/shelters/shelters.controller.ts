@@ -10,12 +10,23 @@ export class SheltersController {
   constructor(private shelterService: SheltersService) {
   }
 
+  @Get('delivery-points-user/:sellerId')
+  async getDeliveryPointsForUser(
+      @Param('sellerId') sellerId: string,
+      @Query('pointIds') pointIds: string[]
+  ) {
+    return await this.shelterService.getDeliveryPointsUser(sellerId, pointIds)
+  }
+
   @UseGuards(JwtAuthGuard)
   @Get('delivery-points')
   async getDeliveryPoints(@Req() req) {
     const shelterId = req.user
     return await this.shelterService.getDeliveryPoints(shelterId)
   }
+
+
+
 
   @UseGuards(JwtAuthGuard)
   @Get('cards/:page/:limit')

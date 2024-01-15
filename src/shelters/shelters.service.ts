@@ -50,6 +50,12 @@ export class SheltersService {
     return shelter.deliveryPoints;
   }
 
+  async getDeliveryPointsUser(shelterId: string, pointIds: string[]) {
+    const shelter = await this.shelterRepository.findById(shelterId).populate('deliveryPoints').exec();
+    //@ts-ignore
+    return shelter.deliveryPoints.filter(point => pointIds.includes(point._id.toString()));
+  }
+
   // async countUnreadNotifications(shelter: Shelter): Promise<number> {
   //   const notifications = await shelter.populate('notifications');
   //

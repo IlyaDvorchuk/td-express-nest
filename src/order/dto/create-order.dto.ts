@@ -118,4 +118,7 @@ export class CreateOrderDto {
   @ApiProperty({ example: true, description: 'order td market delivery' })
   @IsBoolean()
   isTdMarket: boolean
+
+  @IsString()
+  pointId?: string
 }
