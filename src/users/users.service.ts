@@ -9,6 +9,7 @@ import { CreateCartDto } from 'src/cart/dto/create-cart.dto';
 import { CartService } from "../cart/cart.service";
 import { FavoriteService } from "../favorite/favorite.service";
 import { ProductCardService } from 'src/productCard/productCard.service';
+import {SheltersService} from "../shelters/shelters.service";
 
 @Injectable()
 export class UsersService {
@@ -17,6 +18,7 @@ export class UsersService {
     private productCardService: ProductCardService,
     private cartService: CartService,
     private favoriteService: FavoriteService,
+    private sellerService: SheltersService,
   ) { }
 
   async createUser(dto: CreateUserDto) {
@@ -101,14 +103,15 @@ export class UsersService {
     return await user.save();
   }
 
-  async addToCart(userId: string, dto: CreateCartDto) {
+  async addToCart(userId: string, dto: CreateCartDto, sellerId: string) {
     try {
       const user = await this.userRepository.findById(userId);
       if (!user) {
         throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
       }
+
       await this.cartService.addToCart(userId, dto)
-      return true
+      return await this.sellerService.updateCount(sellerId, true)
       //product.isCart = true;
       //await this.productCardService.updateProductCard(dto.productId, product);
     } catch (e) {
@@ -117,15 +120,18 @@ export class UsersService {
 
   }
 
-  async removeFromCart(userId: string, productCardId: string[]) {
+  async removeFromCart(userId: string, productCardId: string[], sellerIds: string[]) {
     try {
 
       const user = await this.userRepository.findById(userId);
       if (!user) {
         throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
       }
-
+      console.log('productCardId', productCardId)
       await this.cartService.removeFromCart(userId, productCardId)
+      for (const sellerId of sellerIds) {
+        await this.sellerService.updateCount(sellerId,);
+      }
       return true
       // product.isCart = false;
       //await this.productCardService.updateProductCard(productCardId, product);
@@ -143,17 +149,17 @@ export class UsersService {
     }
   }
 
-  async addToFavorites(userId: string, productId: string) {
+  async addToFavorites(userId: string, productId: string, sellerId: string) {
     try {
       await this.favoriteService.addToFavorite(userId, productId)
+      await this.sellerService.updateCount(sellerId, true, true)
       return true
     } catch (e) {
       return false
     }
   }
 
-  async removeFromFavorite(userId: string, productCardId: string) {
-
+  async removeFromFavorite(userId: string, productCardId: string, sellerId: string) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND);
@@ -161,6 +167,7 @@ export class UsersService {
 
     try {
       await this.favoriteService.removeFromFavorite(userId, productCardId)
+      await this.sellerService.updateCount(sellerId, false, true)
     return true
     } catch (e) {
       console.log('e', e)

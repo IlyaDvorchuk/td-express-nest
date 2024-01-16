@@ -16,6 +16,7 @@ import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { ValidationPipe } from "../pipes/validation.pipe";
 import {JwtAuthGuard} from "../middlewares/auth.middleware";
 import { CreateCartDto } from "src/cart/dto/create-cart.dto";
+import {DeleteCartDto} from "./dto/delete-cart.dto";
 
 @ApiTags('Пользователи')
 @Controller('users')
@@ -25,19 +26,19 @@ export class UsersController {
 
   //добавить в корзину
   @UseGuards(JwtAuthGuard)
-  @Post('/addToCart')
-  addItemToCart(@Req() req, @Body() dto: CreateCartDto) {
+  @Post('/addToCart/:sellerId')
+  addItemToCart(@Req() req,  @Param('sellerId') sellerId: string, @Body() dto: CreateCartDto) {
     const userId = req.user
-    return this.usersService.addToCart(userId, dto)
+    return this.usersService.addToCart(userId, dto, sellerId)
   }
 
   //удалить из корзины
   @UseGuards(JwtAuthGuard)
   @Post('/deleteCart')
-  deleteItemToCart(@Req() req, @Body() dto: {idsCart: string[]}) {
+  deleteItemToCart(@Req() req, @Body() deleteCartDto: DeleteCartDto) {
     const userId = req.user
-    console.log('dto: {idsCart: string[]}', dto);
-    return this.usersService.removeFromCart(userId, dto.idsCart);
+    console.log('deleteCartDto', deleteCartDto)
+    return this.usersService.removeFromCart(userId, deleteCartDto.productCardIds, deleteCartDto.sellerIds)
   }
 
   @ApiOperation({summary: 'Создание пользователя'})
@@ -46,14 +47,6 @@ export class UsersController {
   @Post()
   create(@Body() userDto: CreateUserDto) {
     return this.usersService.createUser(userDto)
-  }
-
-  //удалить из корзины
-  @UseGuards(JwtAuthGuard)
-  @Post('/removeFromCart')
-  removeFromCart(@Req() req, @Body() productCardIds: string[]) {
-    const userId = req.user
-    return this.usersService.removeFromCart(userId, productCardIds)
   }
 
   //показать избранное
@@ -66,18 +59,18 @@ export class UsersController {
 
   //добавить в избранное
   @UseGuards(JwtAuthGuard)
-  @Get('/addToFavorite/:goodId')
-  addToFavorite(@Req() req, @Param('goodId') goodId: string) {
+  @Get('/addToFavorite/:goodId/:sellerId')
+  addToFavorite(@Req() req, @Param('goodId') goodId: string, @Param('sellerId') sellerId: string) {
     const userId = req.user
-    return this.usersService.addToFavorites(userId, goodId)
+    return this.usersService.addToFavorites(userId, goodId, sellerId)
   }
 
   //удалить из избранного
   @UseGuards(JwtAuthGuard)
-  @Delete('/removeFromFavorite/:goodId')
-  removeFromFavorite(@Req() req, @Param('goodId') goodId: string) {
+  @Delete('/removeFromFavorite/:goodId/:sellerId')
+  removeFromFavorite(@Req() req, @Param('goodId') goodId: string, @Param('sellerId') sellerId: string) {
     const userId = req.user
-    return this.usersService.removeFromFavorite(userId, goodId)
+    return this.usersService.removeFromFavorite(userId, goodId, sellerId)
   }
 
 

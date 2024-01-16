@@ -145,6 +145,12 @@ export class Shelter extends Document {
 
   @Prop({ required: true, default: 'td-delivery' })
   rate: 'td-delivery' | 'self-delivery'
+
+  @Prop({default: 0})
+  countCart: number
+
+  @Prop({default: 0})
+  countFavorite: number
 }
 
 export const ShelterSchema = SchemaFactory.createForClass(Shelter)

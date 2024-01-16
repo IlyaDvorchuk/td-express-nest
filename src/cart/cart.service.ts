@@ -62,6 +62,7 @@ export class CartService {
     // Удалить товар из корзины юзера
     async removeFromCart(userId: string, productIds: string[]) {
         const cart = await this.findCartById(userId);
+        console.log('productIds', productIds)
         if (!cart) {
             throw new HttpException(
               "Корзина пользователя не найдена",
@@ -73,6 +74,7 @@ export class CartService {
 
         for (const productId of productIds) {
             const itemIndex = cart.items.findIndex((item) => item.typeId.toString() === productId);
+            console.log('itemIndex', itemIndex)
             if (itemIndex !== -1) {
                 cart.items.splice(itemIndex, 1);
             }

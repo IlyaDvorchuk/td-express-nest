@@ -467,7 +467,6 @@ export class SheltersService {
 
   async getSellerForUser(name: string) {
     const seller = await this.shelterRepository.findOne({ 'shop.nameMarket': name }).exec();
-
     if (seller) {
       return {
         shop: seller.shop,
@@ -520,4 +519,18 @@ export class SheltersService {
     }
   }
 
+
+  async updateCount(id: string, inc?: boolean, isFavorite?: boolean) {
+
+    const updateField = isFavorite ? 'countFavorite' : 'countCart';
+
+    const query = this.shelterRepository.findOneAndUpdate(
+        { _id: id },
+        { $inc: { [updateField]: inc ? 1 : -1 } },
+        { new: true }
+    );
+
+    const result = await query.exec();
+    return result !== null;
+  }
 }
