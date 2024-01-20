@@ -63,7 +63,7 @@ export class DeliveryService {
     const deliveryShelter = await this.deliveryRepository.findOne({ shelterId });
 
     const seller = await this.shelterRepository.findById(shelterId)
-    if (!deliveryShelter || seller?.rate === 'td-delivery') {
+    if (!deliveryShelter || seller?.rate === 'td-delivery' || deliveryShelter.cities.length === 0) {
       return MARKET_DELIVERY
     }
 
