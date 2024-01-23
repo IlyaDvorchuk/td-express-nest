@@ -577,13 +577,14 @@ export class ProductCardService {
       });
     }
 
+    const totalCount = await this.productCardRepository.count(query);
+
     const productCards = await this.productCardRepository
         .find(query)
         .skip((page - 1) * limit)
         .limit(limit)
         .exec();
 
-    const totalCount = productCards.length;
     const totalPages = Math.ceil(totalCount / limit);
 
     const minPriceRange = productCards.reduce((min, product) => {
@@ -603,6 +604,7 @@ export class ProductCardService {
       maxPriceRange,
       totalPages,
       currentPage: page,
+      totalCount
     }
   }
 
