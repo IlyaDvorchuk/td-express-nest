@@ -87,7 +87,6 @@ export class OrderService {
 
   async getOrdersSelfDelivery(): Promise<Order[]> {
     return this.orderModel.find({
-      deliveryAddress: {$ne: null},
       isTdMarket: false,
     });
   }
