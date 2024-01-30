@@ -64,7 +64,7 @@ export class AuthShelterController {
     const payload = {
       chat_id: '6016281493:AAEIcbTY5adYAHn2rA6j2Kl8_KzTMD3iTdw',
       text: message,
-      parse_mode: 'MarkdownV2',
+      parse_mode: 'HTML',
     };
     try {
       await fetch(apiUrl, {

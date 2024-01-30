@@ -18,7 +18,6 @@ export class OrderService {
     // @ts-ignore
     shelter.orders.push(order._id);
     await shelter.save();
-    if (shelter?.isDeliveryMarket) {
       const relevantOrderTypes = order.orderTypes.filter(orderType => orderType.shelterId === shelter._id);
 
       // Вычисляем сумму count только для отфильтрованных orderTypes
@@ -33,25 +32,31 @@ export class OrderService {
           ${order.buyer.family}
           ${order.buyer.phone}
         `
-      const payload = {
-        chat_id: '6016281493:AAEIcbTY5adYAHn2rA6j2Kl8_KzTMD3iTdw',
+      const payloadIlya = {
+        chat_id: '5649067326',
         text: message,
-        parse_mode: 'MarkdownV2',
+        parse_mode: 'HTML',
       };
+
+
       try {
         await fetch(apiUrl, {
           method: 'POST',
-          body: JSON.stringify(payload),
+          body: JSON.stringify(payloadIlya),
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        await fetch(apiUrl, {
+          method: 'POST',
+          body: JSON.stringify(payloadIlya),
           headers: { 'Content-Type': 'application/json' },
         });
       } catch (error) {
         console.error('Error sending message to Telegram:', error);
       }
-    }
   }
 
   async createOrder(orderDto: CreateOrderDto): Promise<Order> {
-    console.log('orderDto',orderDto)
     const order = await this.orderModel.create(orderDto);
     console.log('order',order)
     const user = await this.userModel.findById(orderDto.userId).exec();
