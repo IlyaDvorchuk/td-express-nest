@@ -23,6 +23,7 @@ import { OrderModule } from "./order/order.module";
 import { ColorsModule } from './colors/colors.module';
 import { SuccessPaymentModule } from './success-payment/success-payment.module';
 import {ReviewsModule} from "./reviews/reviews.module";
+import {FeedbackModule} from "./feedback/feedback.module";
 
 @Module({
   controllers: [],
@@ -65,6 +66,7 @@ import {ReviewsModule} from "./reviews/reviews.module";
     ColorsModule,
     SuccessPaymentModule,
       ReviewsModule,
+      FeedbackModule
   ]
 })
 
