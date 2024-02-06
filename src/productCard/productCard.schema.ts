@@ -53,6 +53,39 @@ export class AdditionalInformation extends Document {
 
   @Prop({ default: [] })
   seasons: string[];
+
+  @Prop({ default: '' })
+  pockets: string;
+
+  @Prop({ default: '' })
+  accessoriesColor: string;
+
+  @Prop({ default: '' })
+  brand: string;
+
+  @Prop({ default: '' })
+  claspType: string;
+
+  @Prop({ default: '' })
+  countryOfOrigin: string;
+
+  @Prop({ default: '' })
+  decorativeElements: string;
+
+  @Prop({ default: '' })
+  liningMaterial: string;
+
+  @Prop({ default: '' })
+  numberOfBranches: string;
+
+  @Prop({ default: '' })
+  quantityInStock: string;
+
+  @Prop({ default: '' })
+  upperMaterial: string;
+
+  @Prop({ default: '' })
+  sex: string;
 }
 
 export const AdditionalInformationSchema = SchemaFactory.createForClass(AdditionalInformation);

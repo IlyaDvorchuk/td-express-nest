@@ -9,21 +9,19 @@ export class CategoriesController {
   }
 
   @Post('/category')
-
-
   async saveCategory(@Body() dtoCat) {
     return this.categoriesService.saveCategory(dtoCat)
   }
-  //
-  // @Post('/subcategories')
-  // async saveSubcategories(@Body() dtoCat) {
-  //   return this.categoriesService.saveSubcats(dtoCat)
-  // }
-  //
-  // @Post('/sections')
-  // async saveSections(@Body() dtoCat) {
-  //   return this.categoriesService.saveSections(dtoCat)
-  // }
+
+  @Post('/subcategories')
+  async saveSubcategories(@Body() dtoCat) {
+    return this.categoriesService.saveSubcats(dtoCat)
+  }
+
+  @Post('/sections')
+  async saveSections(@Body() dtoCat) {
+    return this.categoriesService.saveSections(dtoCat)
+  }
   //
   // @Post('/ctosub')
   // async cattoSub(@Body() dtoCat) {

@@ -83,6 +83,39 @@ class AdditionalInformation {
   @ApiProperty({ example: 'Лето, Осень', description: 'Сезоны товара' })
   @IsArray()
   readonly seasons?: string[];
+
+  @IsString()
+  readonly pockets?: string;
+
+  @IsString()
+  readonly accessoriesColor?: string;
+
+  @IsString()
+  readonly brand?: string;
+
+  @IsString()
+  readonly claspType?: string;
+
+  @IsString()
+  readonly countryOfOrigin?: string;
+
+  @IsString()
+  readonly decorativeElements?: string;
+
+  @IsString()
+  readonly liningMaterial?: string;
+
+  @IsString()
+  readonly numberOfBranches?: string;
+
+  @IsString()
+  readonly quantityInStock?: string;
+
+  @IsString()
+  readonly upperMaterial?: string;
+
+  @IsString()
+  readonly sex?: string;
 }
 
 class DeliveryPoints {
