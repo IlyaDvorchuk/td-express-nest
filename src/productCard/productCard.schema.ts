@@ -98,7 +98,7 @@ export class PricesAndQuantity extends Document {
   @Prop({ required: true })
   priceBeforeDiscount: number;
 
-  @Prop({ required: true })
+  @Prop({ required: false })
   quantity: number;
 }
 
@@ -185,8 +185,8 @@ export const ProductPriceRangeSchema = SchemaFactory.createForClass(ProductPrice
 
 @Schema()
 export class TypeQuantity extends Document {
-  @Prop({required: true})
-  size: string
+  @Prop({required: false})
+  size: string | undefined
 
   @Prop({required: true})
   quantity: string

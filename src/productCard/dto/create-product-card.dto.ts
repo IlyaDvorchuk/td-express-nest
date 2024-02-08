@@ -142,7 +142,7 @@ class Color {
 class SizeQuantity {
   @ApiProperty({ example: 'XXL', description: 'Размер' })
   @IsString()
-  readonly size: string;
+  readonly size?: string | undefined;
 
   @ApiProperty({ example: '45', description: 'Количество' })
   @IsString()
