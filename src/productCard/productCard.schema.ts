@@ -199,6 +199,20 @@ export class TypeQuantity extends Document {
 export const TypeQuantitySchema = SchemaFactory.createForClass(TypeQuantity)
 
 @Schema()
+export class DialColor extends Document {
+  @Prop({ required: true })
+  name: string;
+
+  @Prop({ required: true })
+  color: string;
+
+  @Prop({ required: false })
+  image?: string | undefined;
+
+
+}
+
+@Schema()
 export class ColorImage extends Document {
   @Prop({ required: true })
   name: string;
@@ -208,6 +222,9 @@ export class ColorImage extends Document {
 
   @Prop({ required: false })
   image?: string | undefined;
+
+  @Prop({ type: DialColor, required: false })
+  dialColor?: DialColor;
 }
 
 export const ColorImageSchema = SchemaFactory.createForClass(ColorImage)

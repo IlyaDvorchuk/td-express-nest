@@ -153,6 +153,14 @@ class SizeQuantity {
   readonly color?: Color | undefined
 }
 
+class DialColor {
+  @IsString()
+  readonly name?: string | undefined
+
+  @IsString()
+  readonly color?: string | undefined
+}
+
 class Colors {
   @ApiProperty({ example: 'XXL', description: 'Размер' })
   @IsString()
@@ -161,6 +169,12 @@ class Colors {
   @ApiProperty({ example: 'Беспорядочный набор символов', description: 'Фотография' })
   @IsString()
   image: string
+
+  @IsString()
+  color?: string | undefined
+
+  @ValidateNested()
+  dialColor?: DialColor | undefined
 }
 
 
@@ -216,6 +230,10 @@ export class CreateProductCardDto {
   @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
   @ValidateNested()
   readonly typeQuantity?: SizeQuantity[]
+
+  @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
+  @ValidateNested()
+  colors?: (Colors | undefined)[]
 }
 
 export class UpdateProductCardDto extends CreateProductCardDto {
@@ -223,7 +241,5 @@ export class UpdateProductCardDto extends CreateProductCardDto {
   @IsString()
   readonly _id: string
 
-  @ApiProperty({ example: 'Delivery point 1', description: 'Delivery point name' })
-  @ValidateNested()
-  colors?: (Colors | undefined)[]
+
 }
